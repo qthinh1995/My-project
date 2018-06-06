@@ -1,0 +1,41 @@
+@define-mixin testMixin {
+  font-size: 40px;
+  line-height: 20px;
+}
+
+@define-mixin textHover {
+  &:hover{
+    color: $text-color-hover;
+    cursor: pointer;
+  }
+
+  &.active{
+    color: $text-color-active;
+      &:hover{
+      color: $text-color-2;
+      cursor: pointer;
+    }
+  }
+}
+
+@define-mixin aDefault {
+  a{
+    color: $text-color;
+    text-decoration: inherit;
+    @mixin textHover{}
+  }
+}
+
+@define-mixin news-title-1 {
+  .title-area{
+    border-bottom: 1px solid $text-color-active;
+    margin-bottom: 10px;
+    
+    .title{
+      line-height: 36px;
+      border-bottom: 4px solid $text-color-active;
+      padding: 5px 0;
+      color: $text-color-active;
+    }
+  }
+}

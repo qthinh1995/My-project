@@ -1,0 +1,9 @@
+/* 1. Mixin */
+/*@import './mixin/_mixins.scss';
+@import './mixin/_variables.scss';
+@import './mixin/_fonts.scss';*/
+/* 2. Components */
+/*@import './components/lang-picker.scss';
+@import './components/spinner.scss';*/
+/* 2. Layouts */
+@import './layout-IBM-Watson-POC/style.scss';

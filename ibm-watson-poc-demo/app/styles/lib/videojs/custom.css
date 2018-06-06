@@ -1,0 +1,7 @@
+.video-js .vjs-control-bar{
+
+}
+.video-js .vjs-current-time, .vjs-no-flex .vjs-current-time,
+.video-js .vjs-duration, .vjs-no-flex .vjs-dur ation, .video-js .vjs-time-divider{
+	display: block;
+}

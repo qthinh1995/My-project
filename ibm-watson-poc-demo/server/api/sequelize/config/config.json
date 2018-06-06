@@ -1,0 +1,28 @@
+{
+  "development": {
+    "username": "root",
+    "password": "songoku0270",
+    "database": "SequelizeDB",
+    "host": "127.0.0.1",
+    "dialect": "mysql",
+    "logging": false
+  },
+  "test": {
+    "username": "root",
+    "password": null,
+    "database": "database_test",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  },
+  "production": {
+    "username": "root",
+    "password": "songoku0270",
+    "database": "database_production",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  },
+  "development-test": {
+    "dialect": "sqlite",
+    "storage": "./db.development.sqlite"
+  }
+}

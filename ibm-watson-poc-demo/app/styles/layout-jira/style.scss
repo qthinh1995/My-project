@@ -1,0 +1,52 @@
+$width: 20%;
+$height: 20%;
+$colorBorder: #999;
+
+.tecnical-map-container{
+
+	.technical-component{
+		width: $width;
+		height: $height;
+		border: 3px solid $colorBorder;
+		position: fixed;
+		border-radius: 50%;
+
+		&.main{
+			top: 40%;
+			left: 40%;
+		}
+		&.left-top{
+			top: 0;
+			left: 0;
+		}
+		&.left-middle{
+			top: 40%;
+			left: 0;
+		}
+		&.left-bottom{
+			bottom: 0;
+			left: 0;
+		}
+		&.right-top{
+			top: 0;
+			right: 0;
+		}
+		&.right-middle{
+			top: 40%;
+			right: 0;
+		}
+		&.right-bottom{
+			bottom: 0;
+			right: 0;
+		}
+
+		.info-list{
+			position: absolute;
+			right: -20%;
+		}
+	}
+
+	.hidden-area{
+		display: none;
+	}
+}

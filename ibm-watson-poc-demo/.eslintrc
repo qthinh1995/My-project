@@ -1,0 +1,96 @@
+{
+	"parser": "babel-eslint",
+	"extends": "eslint-config-airbnb",
+	"plugins": [
+		"react",
+		"jsx-a11y"
+	],
+	"settings": {
+		"import/resolver": {
+			"node": {
+				"moduleDirectory": [
+					"node_modules",
+					"app"
+				]
+			}
+		}
+	},
+	"env": {
+		"browser": true,
+		"node": true,
+		"es6": true,
+		"mocha": true
+	},
+	"globals": {
+		"chai": true,
+		"sinon": true
+	},
+	"rules": {
+		"react/jsx-no-duplicate-props": 2,
+		"react/jsx-no-undef": 2,
+		"react/jsx-quotes": 0,
+		"react/jsx-uses-react": 2,
+		"react/jsx-uses-vars": 2,
+		"react/jsx-closing-bracket-location": [
+			2,
+			"after-props"
+		],
+		"react/no-did-mount-set-state": 2,
+		"react/no-did-update-set-state": 2,
+		"react/no-multi-comp": 2,
+		"react/no-unknown-property": 2,
+		"react/prop-types": 2,
+		"react/react-in-jsx-scope": 2,
+		"react/require-extension": 2,
+		"react/self-closing-comp": 2,
+		"react/wrap-multilines": 2,
+		"react/sort-comp": 0,
+		"react/jsx-no-bind": 1,
+		"quotes": [
+			2,
+			"single",
+			"avoid-escape"
+		],
+		"comma-dangle": [
+			2,
+			"never"
+		],
+		"array-bracket-spacing": [
+			2,
+			"always"
+		],
+		"no-undef": 2,
+		"no-underscore-dangle": 0,
+		"func-names": 0,
+		"no-else-return": 0,
+		"no-console": 1,
+		"no-throw-literal": 0,
+		"id-length": 0,
+		"no-unused-expressions": 0,
+		"no-param-reassign": 0,
+		"no-confusing-arrow": 0,
+		"global-require": 0,
+		"import/no-unresolved": 0,
+		"max-len":"off",
+		"semi": "off",
+		"jsx-quotes": "off",
+		"object-curly-spacing": "off",
+		"react/jsx-indent": "off",
+		"react/jsx-space-before-closing": "off",
+		"no-trailing-spaces": "off",
+		"react/jsx-curly-spacing": "off",
+		"no-script-url": "off",
+		"space-infix-ops": "off",
+		"jsx-a11y/img-has-alt": "off",
+		"react/prefer-stateless-function": "off",
+		"no-multi-spaces": "off",
+		"react/jsx-equals-spacing": "off",
+		"jsx-a11y/img-redundant-alt": "warn",
+		"indent": "off",
+		"spaced-comment": "off",
+		"prefer-template": "warn",
+		"react/jsx-indent-props": "off",
+		"react/jsx-boolean-value": "off",
+		"arrow-body-style": "off"
+	}
+}
