@@ -3,15 +3,12 @@ import connect from 'connect-alt'
 
 @connect(({ requests: { inProgress }, session: { session } }) => ({ inProgress, session }))
 
-export default class IBMWatsonPOCHome extends Component {
+export default class Spuqre extends Component {
     static propTypes = {
-        inProgress: PropTypes.bool, 
-        session: PropTypes.object
+      
     }
     static contextTypes = {
-        locales: PropTypes.array.isRequired,
-        flux: PropTypes.object.isRequired,
-        i18n: PropTypes.func.isRequired
+       
     }
 
     state = {
@@ -19,11 +16,7 @@ export default class IBMWatsonPOCHome extends Component {
     }
 
     componentWillMount() {
-        console.log('----------componentWillMount home')
-        const { flux } = this.context
-        // console.log(flux.stores.helmet.state)
-        flux.getActions('helmet').update({ title: 'home page title', description: 'home page description' })
-        flux.getActions('users').index()
+    
     }
 
     componentDidMount() {
@@ -36,7 +29,7 @@ export default class IBMWatsonPOCHome extends Component {
         return (
             <div>
                 <h1>
-                    IBM-Watson-POC page. 
+                    Caro Game
                 </h1>   
 				<div className="input-group mb-3">
 					<div className="input-group-prepend">
