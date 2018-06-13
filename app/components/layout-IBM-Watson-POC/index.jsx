@@ -17,7 +17,7 @@ export default class IBMWatsonPOCHome extends Component {
     }
 
     state = {
-        caroMap: Array(9).fill(Array(9).fill(null))
+        caroMap: Array(20).fill(Array(40).fill(null))
     }
 
     componentWillMount() {

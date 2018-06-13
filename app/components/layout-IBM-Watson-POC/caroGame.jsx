@@ -6,7 +6,7 @@ import CaroSquare from './CaroSquare'
 
 export default class CaroGame extends Component {
     static propTypes = {
-        caroMap: PropTypes.array,
+        caroMap: PropTypes.array
     }
     // static contextTypes = {
 
@@ -28,7 +28,7 @@ export default class CaroGame extends Component {
         console.log('----------render')
         const { caroMap } = this.props;
         return (
-            <div>
+            <div className="caro-board">
                 {caroMap.map((row) => {
                     return (
                         <div className="row">

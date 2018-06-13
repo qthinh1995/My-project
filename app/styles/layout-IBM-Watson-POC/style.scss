@@ -2,8 +2,12 @@ div{
 	font-weight: normal;
 }
 .square{
-	border: 1px solid black;
-	height: 10px;
-	width: 10px;
-	
+	border: 1px solid #CCC;
+	height: 30px;
+	width: 30px;
+	margin-right: -1px;
+	margin-bottom: -1px;
+}
+.caro-board{
+	margin-left: 40px;
 }
