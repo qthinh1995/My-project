@@ -6,7 +6,9 @@ import connect from 'connect-alt'
 
 export default class CaroSquare extends Component {
     static propTypes = {
-        square: PropTypes.int
+        square: PropTypes.string,
+        onClickSquare: PropTypes.func
+
     }
     static contextTypes = {
 
@@ -25,11 +27,11 @@ export default class CaroSquare extends Component {
     }
 
     render() {
-        const {square} = this.props;
+        const { square, onClickSquare } = this.props;
         console.log('----------render')
 
         return (
-            <div className="square">
+            <div className="square" onClick={() => onClickSquare()} >
                {square}
             </div >
         )

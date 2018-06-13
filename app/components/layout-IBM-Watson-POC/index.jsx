@@ -32,6 +32,12 @@ export default class IBMWatsonPOCHome extends Component {
 
     }
 
+    onClickSquare({ x, y}) {
+        const { caroMap } = this.state;
+        caroMap[x][y] = 'X'
+        this.setState({ caroMap })
+    }
+
     render() {
         console.log('----------render')
         const {caroMap} = this.state;
@@ -41,7 +47,7 @@ export default class IBMWatsonPOCHome extends Component {
                     Caro Game
                 </h1>
                 <div className="input-group mb-3">
-                    <CaroGame caroMap = {caroMap} />
+                    <CaroGame caroMap = {caroMap} onClickSquare={({ x, y }) => this.onClickSquare({ x, y})} />
                 </div>
             </div >
         )
