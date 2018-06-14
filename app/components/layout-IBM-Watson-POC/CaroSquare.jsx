@@ -34,7 +34,7 @@ export default class CaroSquare extends Component {
         const { caroMap, y, x, onClickSquare, isClickX } = this.props
         if (!caroMap[y][x]) {
             const square = isClickX ? 'X' : 'O'
-            onClickSquare({ icon: square })
+            onClickSquare(square)
             this.setState({ square })
         }
     }
