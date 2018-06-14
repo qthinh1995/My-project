@@ -1,8 +1,14 @@
 import React, { Component, PropTypes } from 'react'
 import connect from 'connect-alt'
+// import { cloneDeep } from 'lodash'
 import CaroGame from './CaroGame'
 
-
+// const row = 20;
+// const col = 40;
+const arrayMap = Array(20)
+for (let i = 0; i < arrayMap.length; i++) {
+    arrayMap[i] =  Array(40).fill(null)
+}
 @connect(({ requests: { inProgress }, session: { session } }) => ({ inProgress, session }))
 
 export default class IBMWatsonPOCHome extends Component {
@@ -15,9 +21,10 @@ export default class IBMWatsonPOCHome extends Component {
         flux: PropTypes.object.isRequired,
         i18n: PropTypes.func.isRequired
     }
+    
 
     state = {
-        caroMap: Array(20).fill(Array(40).fill(null))
+        caroMap: arrayMap
     }
 
     componentWillMount() {
@@ -34,7 +41,10 @@ export default class IBMWatsonPOCHome extends Component {
 
     onClickSquare({ x, y}) {
         const { caroMap } = this.state;
-        caroMap[x][y] = 'X'
+        console.log(x, ' ', y)
+        
+        caroMap[y][x] = 'X'
+        console.log(caroMap)
         this.setState({ caroMap })
     }
 

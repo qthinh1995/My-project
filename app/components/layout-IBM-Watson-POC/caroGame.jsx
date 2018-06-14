@@ -30,12 +30,12 @@ export default class CaroGame extends Component {
         const { caroMap, onClickSquare } = this.props;
         return (
             <div className="caro-board">
-                {caroMap.map((row, x) => {
+                {caroMap.map((row, y) => {
                     return (
-                        <div className="row" key={x} >
-                            {row.map((square, y) => {
+                        <div className="row" key={y} >
+                            {row.map((square, x) => {
                                 return (
-                                    <CaroSquare square={square} onClickSquare={() => onClickSquare({ x, y })} key={y} />
+                                    <CaroSquare square={square} onClickSquare={() => onClickSquare({ x, y })} key={x} />
                                 )
                             })}
                         </div>
