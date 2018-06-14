@@ -24,7 +24,8 @@ export default class IBMWatsonPOCHome extends Component {
     
 
     state = {
-        caroMap: arrayMap
+        caroMap: arrayMap,
+        isClickX: true
     }
 
     componentWillMount() {
@@ -39,25 +40,23 @@ export default class IBMWatsonPOCHome extends Component {
 
     }
 
-    onClickSquare({ x, y}) {
-        const { caroMap } = this.state;
-        console.log(x, ' ', y)
-        
-        caroMap[y][x] = 'X'
-        console.log(caroMap)
-        this.setState({ caroMap })
+    onClickSquare({ x, y, icon }) {
+        const { caroMap, isClickX } = this.state 
+        caroMap[y][x] = icon
+        this.setState({ caroMap, isClickX: !isClickX })
+        // this.checkWin(x, y);
     }
 
     render() {
         console.log('----------render')
-        const {caroMap} = this.state;
+        const { caroMap, isClickX} = this.state;
         return (
             <div>
                 <h1>
                     Caro Game
                 </h1>
                 <div className="input-group mb-3">
-                    <CaroGame caroMap = {caroMap} onClickSquare={({ x, y }) => this.onClickSquare({ x, y})} />
+                    <CaroGame caroMap = {caroMap} isClickX={isClickX} onClickSquare={({ x, y, icon }) => this.onClickSquare({ x, y, icon })} />
                 </div>
             </div >
         )

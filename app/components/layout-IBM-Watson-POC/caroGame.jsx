@@ -7,7 +7,8 @@ import CaroSquare from './CaroSquare'
 export default class CaroGame extends Component {
     static propTypes = {
         caroMap: PropTypes.array,
-        onClickSquare: PropTypes.func
+        onClickSquare: PropTypes.func,
+        isClickX: PropTypes.boolean
     }
     // static contextTypes = {
 
@@ -27,7 +28,7 @@ export default class CaroGame extends Component {
 
     render() {
         console.log('----------render')
-        const { caroMap, onClickSquare } = this.props;
+        const { caroMap, onClickSquare, isClickX } = this.props;
         return (
             <div className="caro-board">
                 {caroMap.map((row, y) => {
@@ -35,7 +36,7 @@ export default class CaroGame extends Component {
                         <div className="row" key={y} >
                             {row.map((square, x) => {
                                 return (
-                                    <CaroSquare square={square} onClickSquare={() => onClickSquare({ x, y })} key={x} />
+                                    <CaroSquare square={square} caroMap={caroMap} x={x} y={y} isClickX={isClickX} onClickSquare={(icon) => onClickSquare({ x, y, icon })} key={x} />
                                 )
                             })}
                         </div>

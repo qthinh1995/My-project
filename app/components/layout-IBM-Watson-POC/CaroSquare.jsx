@@ -7,15 +7,19 @@ import connect from 'connect-alt'
 export default class CaroSquare extends Component {
     static propTypes = {
         square: PropTypes.string,
-        onClickSquare: PropTypes.func
-
+        onClickSquare: PropTypes.func,
+        caroMap: PropTypes.array,
+        y: PropTypes.number,
+        x: PropTypes.number,
+        isClickX: PropTypes.boolean
     }
     static contextTypes = {
 
     }
 
     state = {
-
+        square: null,
+        isClickX: true
     }
 
     componentWillMount() {
@@ -26,12 +30,22 @@ export default class CaroSquare extends Component {
 
     }
 
+    onClickSquare() {
+        const { caroMap, y, x, onClickSquare, isClickX } = this.props
+        if (!caroMap[y][x]) {
+            const square = isClickX ? 'X' : 'O'
+            onClickSquare({ icon: square })
+            this.setState({ square })
+        }
+    }
+
     render() {
-        const { square, onClickSquare } = this.props;
+        const { square } = this.state;
+
         console.log('----------render')
 
         return (
-            <div className="square" onClick={() => onClickSquare()} >
+            <div className="square" onClick={() => this.onClickSquare()} >
                {square}
             </div >
         )
