@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react'
 import connect from 'connect-alt'
-// import { cloneDeep } from 'lodash'
+import { get } from 'lodash'
 import CaroGame from './CaroGame'
 
 // const row = 20;
@@ -55,7 +55,7 @@ export default class IBMWatsonPOCHome extends Component {
         const lastPosition = caroMap[y][x];
         let count = 0;
         for (let u = -4; u < 5; u++) {
-            if (caroMap[y][x + u] === lastPosition) {
+            if (get(caroMap, `[${y}][${x + u}]`) === lastPosition) {
                 count++;
             } else {
                 count = 0;
@@ -67,7 +67,7 @@ export default class IBMWatsonPOCHome extends Component {
 
         count = 0;
         for (let u = -4; u < 5; u++) {
-            if (caroMap[y + u][x] === lastPosition) {
+            if (get(caroMap, `[${y + u}][${x}]`) === lastPosition) {
                 count++;
             } else {
                 count = 0;
@@ -79,7 +79,7 @@ export default class IBMWatsonPOCHome extends Component {
 
         count = 0;
         for (let u = -4; u < 5; u++) {
-            if (caroMap[y + u][x + u] === lastPosition) {
+            if (get(caroMap, `[${y + u}][${x + u}]`) === lastPosition) {
                 count++;
             } else {
                 count = 0;
@@ -88,10 +88,10 @@ export default class IBMWatsonPOCHome extends Component {
                 return lastPosition;
             }
         }
-       
+
         count = 0;
         for (let u = -4; u < 5; u++) {
-            if (caroMap[y - u][x + u] === lastPosition) {
+            if (get(caroMap, `[${y - u}][${x + u}]`) === lastPosition) {
                 count++;
             } else {
                 count = 0;
@@ -100,12 +100,12 @@ export default class IBMWatsonPOCHome extends Component {
                 return lastPosition;
             }
         }
-        
+
         return false;
     }
     toggleDarkTheme() {
         const { isDarkTheme } = this.state;
-        this.setState({isDarkTheme: !isDarkTheme})
+        this.setState({ isDarkTheme: !isDarkTheme })
     }
 
     render() {
@@ -116,8 +116,8 @@ export default class IBMWatsonPOCHome extends Component {
                 <h1>
                     Caro Game
                 </h1>
-                <input type="checkbox" name="vehicle" value="Bike" onChange={() => this.toggleDarkTheme()}/>Dark Theme
-                <div className={`input-group mb-3 ${isDarkTheme? 'dark-theme': ''}`}>
+                <input type="checkbox" name="vehicle" value="Bike" onChange={() => this.toggleDarkTheme()} />Dark Theme
+                <div className={`input-group mb-3 ${isDarkTheme ? 'dark-theme' : ''}`}>
                     <CaroGame hasWinner={hasWinner} caroMap={caroMap} isClickX={isClickX} onClickSquare={({ x, y, icon }) => this.onClickSquare({ x, y, icon })} />
                 </div>
             </div >
