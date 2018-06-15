@@ -8,7 +8,8 @@ export default class CaroGame extends Component {
     static propTypes = {
         caroMap: PropTypes.array,
         onClickSquare: PropTypes.func,
-        isClickX: PropTypes.boolean
+        isClickX: PropTypes.boolean,
+        hasWinner: PropTypes.string
     }
     // static contextTypes = {
 
@@ -28,15 +29,16 @@ export default class CaroGame extends Component {
 
     render() {
         console.log('----------render')
-        const { caroMap, onClickSquare, isClickX } = this.props;
+        const { caroMap, onClickSquare, isClickX, hasWinner } = this.props;
         return (
             <div className="caro-board">
+                {hasWinner && <h2>The winner is {hasWinner}</h2>}
                 {caroMap.map((row, y) => {
                     return (
                         <div className="row" key={y} >
                             {row.map((square, x) => {
                                 return (
-                                    <CaroSquare square={square} caroMap={caroMap} x={x} y={y} isClickX={isClickX} onClickSquare={(icon) => onClickSquare({ x, y, icon })} key={x} />
+                                    <CaroSquare square={square} caroMap={caroMap} x={x} y={y} isClickX={isClickX} onClickSquare={hasWinner? '' : (icon) => onClickSquare({ x, y, icon })} key={x} />
                                 )
                             })}
                         </div>

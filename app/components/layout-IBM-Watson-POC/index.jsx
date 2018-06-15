@@ -26,7 +26,8 @@ export default class IBMWatsonPOCHome extends Component {
     state = {
         caroMap: arrayMap,
         isClickX: true,
-        isGameOver: false
+        hasWinner: false,
+        isDarkTheme: false
     }
 
     componentWillMount() {
@@ -44,8 +45,8 @@ export default class IBMWatsonPOCHome extends Component {
     onClickSquare({ x, y, icon }) {
         const { caroMap, isClickX } = this.state
         caroMap[y][x] = icon
-        const isGameOver = this.checkWin(x, y);
-        this.setState({ caroMap, isClickX: !isClickX, isGameOver })
+        const hasWinner = this.checkWin(x, y);
+        this.setState({ caroMap, isClickX: !isClickX, hasWinner })
         // this.checkWin(x, y);
     }
 
@@ -60,7 +61,7 @@ export default class IBMWatsonPOCHome extends Component {
                 count = 0;
             }
             if (count === 5) {
-                return true;
+                return lastPosition;
             }
         }
 
@@ -72,7 +73,7 @@ export default class IBMWatsonPOCHome extends Component {
                 count = 0;
             }
             if (count === 5) {
-                return true;
+                return lastPosition;
             }
         }
 
@@ -84,7 +85,7 @@ export default class IBMWatsonPOCHome extends Component {
                 count = 0;
             }
             if (count === 5) {
-                return true;
+                return lastPosition;
             }
         }
        
@@ -96,24 +97,28 @@ export default class IBMWatsonPOCHome extends Component {
                 count = 0;
             }
             if (count === 5) {
-                return true;
+                return lastPosition;
             }
         }
         
         return false;
     }
+    toggleDarkTheme() {
+        const { isDarkTheme } = this.state;
+        this.setState({isDarkTheme: !isDarkTheme})
+    }
 
     render() {
         console.log('----------render')
-        const { caroMap, isClickX, isGameOver } = this.state;
+        const { caroMap, isClickX, hasWinner, isDarkTheme } = this.state;
         return (
             <div>
                 <h1>
                     Caro Game
                 </h1>
-                {isGameOver && <h2>Game Over</h2>}
-                <div className="input-group mb-3">
-                    <CaroGame caroMap={caroMap} isClickX={isClickX} onClickSquare={({ x, y, icon }) => this.onClickSquare({ x, y, icon })} />
+                <input type="checkbox" name="vehicle" value="Bike" onChange={() => this.toggleDarkTheme()}/>Dark Theme
+                <div className={`input-group mb-3 ${isDarkTheme? 'dark-theme': ''}`}>
+                    <CaroGame hasWinner={hasWinner} caroMap={caroMap} isClickX={isClickX} onClickSquare={({ x, y, icon }) => this.onClickSquare({ x, y, icon })} />
                 </div>
             </div >
         )
