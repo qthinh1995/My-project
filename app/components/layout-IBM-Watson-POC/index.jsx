@@ -26,8 +26,7 @@ export default class IBMWatsonPOCHome extends Component {
     state = {
         caroMap: arrayMap,
         isClickX: true,
-        hasWinner: false,
-        isDarkTheme: false
+        hasWinner: false
     }
 
     componentWillMount() {
@@ -103,21 +102,24 @@ export default class IBMWatsonPOCHome extends Component {
 
         return false;
     }
-    toggleDarkTheme() {
-        const { isDarkTheme } = this.state;
-        this.setState({ isDarkTheme: !isDarkTheme })
+    toggleDarkTheme(e) {
+        if (e.checked) {
+            document.body.classList.add('dark-theme')
+        } else {
+            document.body.classList.remove('dark-theme')
+        }
     }
 
     render() {
         console.log('----------render')
-        const { caroMap, isClickX, hasWinner, isDarkTheme } = this.state;
+        const { caroMap, isClickX, hasWinner } = this.state;
         return (
             <div>
                 <h1>
                     Caro Game
                 </h1>
-                <input type="checkbox" name="vehicle" value="Bike" onChange={() => this.toggleDarkTheme()} />Dark Theme
-                <div className={`input-group mb-3 ${isDarkTheme ? 'dark-theme' : ''}`}>
+                <input type="checkbox" name="vehicle" onChange={(e) => this.toggleDarkTheme(e.target)}/>Dark Theme
+                <div className="input-group mb-3">
                     <CaroGame hasWinner={hasWinner} caroMap={caroMap} isClickX={isClickX} onClickSquare={({ x, y, icon }) => this.onClickSquare({ x, y, icon })} />
                 </div>
             </div >
