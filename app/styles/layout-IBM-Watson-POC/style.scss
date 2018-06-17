@@ -4,6 +4,16 @@ div{
 .dark-theme{
 	background: black;
 	color: lightseagreen;
+
+	.square{
+		color: lightseagreen;
+		border-color: darkslategrey;
+	}
+	button{
+		color: lightseagreen;
+		border-color: darkslategrey;
+		background: black
+	}
 }
 .square{
 	border: 1px solid #CCC;
@@ -17,11 +27,6 @@ div{
 	-moz-user-select: none; /* Firefox */
 	-ms-user-select: none; /* IE10+/Edge */
 	user-select: none; /* Standard */
-	
-	.dark-theme &{
-		color: lightseagreen;
-		border-color: darkslategrey;
-	}
 }
 .caro-board{
 	margin-left: 40px;

@@ -1,14 +1,10 @@
 import React, { Component, PropTypes } from 'react'
 import connect from 'connect-alt'
-import { get } from 'lodash'
 import CaroGame from './CaroGame'
 
 // const row = 20;
 // const col = 40;
-const arrayMap = Array(20)
-for (let i = 0; i < arrayMap.length; i++) {
-    arrayMap[i] = Array(40).fill(null)
-}
+
 @connect(({ requests: { inProgress }, session: { session } }) => ({ inProgress, session }))
 
 export default class IBMWatsonPOCHome extends Component {
@@ -24,9 +20,9 @@ export default class IBMWatsonPOCHome extends Component {
 
 
     state = {
-        caroMap: arrayMap,
         isClickX: true,
-        hasWinner: false
+        hasWinner: false,
+        gameMode: ''
     }
 
     componentWillMount() {
@@ -41,67 +37,6 @@ export default class IBMWatsonPOCHome extends Component {
 
     }
 
-    onClickSquare({ x, y, icon }) {
-        const { caroMap, isClickX } = this.state
-        caroMap[y][x] = icon
-        const hasWinner = this.checkWin(x, y);
-        this.setState({ caroMap, isClickX: !isClickX, hasWinner })
-        // this.checkWin(x, y);
-    }
-
-    checkWin(x, y) {
-        const { caroMap } = this.state;
-        const lastPosition = caroMap[y][x];
-        let count = 0;
-        for (let u = -4; u < 5; u++) {
-            if (get(caroMap, `[${y}][${x + u}]`) === lastPosition) {
-                count++;
-            } else {
-                count = 0;
-            }
-            if (count === 5) {
-                return lastPosition;
-            }
-        }
-
-        count = 0;
-        for (let u = -4; u < 5; u++) {
-            if (get(caroMap, `[${y + u}][${x}]`) === lastPosition) {
-                count++;
-            } else {
-                count = 0;
-            }
-            if (count === 5) {
-                return lastPosition;
-            }
-        }
-
-        count = 0;
-        for (let u = -4; u < 5; u++) {
-            if (get(caroMap, `[${y + u}][${x + u}]`) === lastPosition) {
-                count++;
-            } else {
-                count = 0;
-            }
-            if (count === 5) {
-                return lastPosition;
-            }
-        }
-
-        count = 0;
-        for (let u = -4; u < 5; u++) {
-            if (get(caroMap, `[${y - u}][${x + u}]`) === lastPosition) {
-                count++;
-            } else {
-                count = 0;
-            }
-            if (count === 5) {
-                return lastPosition;
-            }
-        }
-
-        return false;
-    }
     toggleDarkTheme(e) {
         if (e.checked) {
             document.body.classList.add('dark-theme')
@@ -110,18 +45,24 @@ export default class IBMWatsonPOCHome extends Component {
         }
     }
 
+    selectGameMode(value) {
+        this.setState({gameMode: value})
+    }
+
     render() {
         console.log('----------render')
-        const { caroMap, isClickX, hasWinner } = this.state;
+        const { gameMode, isClickX } = this.state;
         return (
             <div>
-                <h1>
-                    Caro Game
-                </h1>
-                <input type="checkbox" name="vehicle" onChange={(e) => this.toggleDarkTheme(e.target)}/>Dark Theme
-                <div className="input-group mb-3">
-                    <CaroGame hasWinner={hasWinner} caroMap={caroMap} isClickX={isClickX} onClickSquare={({ x, y, icon }) => this.onClickSquare({ x, y, icon })} />
+                <h1>Caro Game</h1>
+                <label><input type="checkbox" name="vehicle" onChange={(e) => this.toggleDarkTheme(e.target)}/>Dark Theme</label>
+                {!gameMode && <div>
+                    <h3>Select game mode</h3>
+                    <button onClick={() => this.selectGameMode('multy')}>Multy player</button>
+                    <button onClick={() => this.selectGameMode('single')}>Player vs computer</button>
                 </div>
+                }
+                {gameMode && <CaroGame isClickX={isClickX} gameMode={gameMode}/>}
             </div >
         )
     }
