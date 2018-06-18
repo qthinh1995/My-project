@@ -22,13 +22,11 @@ export default class IBMWatsonPOCHome extends Component {
     state = {
         isClickX: true,
         hasWinner: false,
-        gameMode: ''
+        gameMode: 'single'
     }
 
     componentWillMount() {
-        console.log('----------componentWillMount home')
         const { flux } = this.context
-        // console.log(flux.stores.helmet.state)
         flux.getActions('helmet').update({ title: 'home page title', description: 'home page description' })
         flux.getActions('users').index()
     }
@@ -40,17 +38,17 @@ export default class IBMWatsonPOCHome extends Component {
     toggleDarkTheme(e) {
         if (e.checked) {
             document.body.classList.add('dark-theme')
-        } else {
-            document.body.classList.remove('dark-theme')
+            return;
         }
+
+        document.body.classList.remove('dark-theme')
     }
 
     selectGameMode(value) {
-        this.setState({gameMode: value})
+        this.setState({ gameMode: value })
     }
 
     render() {
-        console.log('----------render')
         const { gameMode, isClickX } = this.state;
         return (
             <div>

@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react'
 import connect from 'connect-alt'
-import CaroSquare from './CaroSquare'
+// import CaroSquare from './CaroSquare'
 import { get } from 'lodash'
 
 const arrayMap = Array(20)
@@ -14,12 +14,9 @@ export default class CaroGame extends Component {
     static propTypes = {
         caroMap: PropTypes.array,
         onClickSquare: PropTypes.func,
-        isClickX: PropTypes.boolean,
+        isClickX: PropTypes.bool,
         hasWinner: PropTypes.string
     }
-    // static contextTypes = {
-
-    // }
 
     state = {
         hasWinner: false,
@@ -27,20 +24,14 @@ export default class CaroGame extends Component {
         isClickX: this.props.isClickX
     }
 
-    // componentWillMount() {
-
-    // }
-
-    // componentDidMount() {
-
-    // }
-
-    onClickSquare({ x, y, icon }) {
+    onClickSquare({ x, y }) {
         const { caroMap, isClickX } = this.state
-        caroMap[y][x] = icon
-        const hasWinner = this.checkWin(x, y);
+        if (!caroMap[y][x]) {
+            caroMap[y][x] = isClickX ? 'X' : 'O'
+		}
+		
+		const hasWinner = this.checkWin(x, y);
         this.setState({ caroMap, isClickX: !isClickX, hasWinner })
-        // this.checkWin(x, y);
     }
 
     checkWin(x, y) {
@@ -97,8 +88,8 @@ export default class CaroGame extends Component {
     }
 
     render() {
-        console.log('----------render')
-        const { caroMap, isClickX, hasWinner } = this.state;
+        console.log('---------- caroGame')
+        const { caroMap, hasWinner } = this.state;
         return (
             <div className="caro-board">
                 {hasWinner && <h2>The winner is {hasWinner}</h2>}
@@ -107,7 +98,12 @@ export default class CaroGame extends Component {
                         <div className="row" key={y} >
                             {row.map((square, x) => {
                                 return (
-                                    <CaroSquare square={square} caroMap={caroMap} x={x} y={y} isClickX={isClickX} onClickSquare={hasWinner? '' : (icon) => this.onClickSquare({ x, y, icon })} key={x} />
+									<div 
+										className="square"
+										key={ `${x}-${y}` } 
+										onClick={ () => this.onClickSquare({x, y})}>
+											{ square }
+									</div>
                                 )
                             })}
                         </div>
