@@ -56,7 +56,7 @@ export default class IBMWatsonPOCHome extends Component {
                 <label><input type="checkbox" name="vehicle" onChange={(e) => this.toggleDarkTheme(e.target)}/>Dark Theme</label>
                 {!gameMode && <div>
                     <h3>Select game mode</h3>
-                    <button onClick={() => this.selectGameMode('multy')}>Multy player</button>
+                    <button onClick={() => this.selectGameMode('multy')}>Multiple players</button>
                     <button onClick={() => this.selectGameMode('single')}>Player vs computer</button>
                 </div>
                 }

@@ -30,16 +30,54 @@ export default class CaroGame extends Component {
             caroMap[y][x] = isClickX ? 'X' : 'O'
 		}
 		
-		const hasWinner = this.checkWin(x, y);
+		const hasWinner = this.checkWin2({ x, y });
         this.setState({ caroMap, isClickX: !isClickX, hasWinner })
     }
 
-    checkWin(x, y) {
+	// point: { direction: 'h' (horizontal) / 'v' (vertical) / 'dl' (diagonal left) / 'dr' (diagonal right)}
+	checkWin2({ x, y, point = [] }) {
         const { caroMap } = this.state;
-        const lastPosition = caroMap[y][x];
+		const lastPosition = caroMap[y][x];
+		
+		if (point.h === 5 || point.v === 5 
+			|| point.dl === 5 || point.dr === 5) {
+			return lastPosition;
+		}
+
+		if (get(caroMap, `[${y}][${x + 1}]`) === lastPosition) {
+			this.checkWin2({ 
+				x: x + 1, 
+				y, 
+				point: point.h + 1
+			});
+		}
+
+		return false;
+	}
+
+	checkNebour({ x, y, ftype = 'X', dir }) {
+		const { caroMap } = this.state;
+		
+		if (dir === 'hl' || dir === 'dl') { x = x - 1; }
+		if (dir === 'hr' || dir === 'dr') { x = x + 1; }
+		if (dir === 'vl' || dir === 'dl') { y = y - 1; }
+		if (dir === 'vr' || dir === 'dr') { y = y + 1; }
+
+		if (caroMap[y][x] !== ftype) {
+			return {x, y, dir}
+		}
+
+		this.checkNebour({ x, y, ftype, dir });
+
+		return {};
+	}
+
+	checkWin(x, y) {
+		const { caroMap } = this.state;
+		const lastPosition = caroMap[y][x];
         let count = 0;
         for (let u = -4; u < 5; u++) {
-            if (get(caroMap, `[${y}][${x + u}]`) === lastPosition) {
+			if (get(caroMap, `[${y}][${x + u}]`) === lastPosition) {
                 count++;
             } else {
                 count = 0;
@@ -88,7 +126,6 @@ export default class CaroGame extends Component {
     }
 
     render() {
-        console.log('---------- caroGame')
         const { caroMap, hasWinner } = this.state;
         return (
             <div className="caro-board">
