@@ -138,7 +138,7 @@ export default class CaroGame extends Component {
 									<div 
 										className="square"
 										key={ `${x}-${y}` } 
-										onClick={ () => this.onClickSquare({x, y})}>
+										onClick={ square ? '' : () => this.onClickSquare({x, y})}>
 											{ square }
 									</div>
                                 )
