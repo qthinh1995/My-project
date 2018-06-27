@@ -1,12 +1,15 @@
 import React, { Component, PropTypes } from 'react'
 import connect from 'connect-alt'
 // import CaroSquare from './CaroSquare'
-import { get } from 'lodash'
+import { get, values, isEmpty, filter } from 'lodash'
 
 const arrayMap = Array(20)
 for (let i = 0; i < arrayMap.length; i++) {
     arrayMap[i] = Array(40).fill(null)
 }
+let indexObj = 0
+const objectMap = {}
+let nearbyPoints = []
 const nebourArr = [ 'dlt', 'ht', 'vl', 'dlb', 'drt', 'vr', 'drb', 'hb' ];
 
 @connect(({ requests: { inProgress }, session: { session } }) => ({ inProgress, session }))
@@ -30,6 +33,9 @@ export default class CaroGame extends Component {
         const ftype = isClickX ? 'X' : 'O';
         if (!caroMap[y][x]) {
             caroMap[y][x] = ftype;
+            objectMap[indexObj] = { x, y}
+            indexObj++
+            console.log('indexObj', objectMap)
 		}
 		
         const hasWinner = this.checkWin({ x, y });
@@ -37,6 +43,9 @@ export default class CaroGame extends Component {
         nebourArr.forEach(dir => {
             border[dir] = this.checkNebour({ x, y, ftype, dir });
         });
+        const value = values(border)
+
+        this.positionNearly({ value, x, y, caroMap })
         this.checkWin2({ border })
         this.setState({ caroMap, isClickX: !isClickX, hasWinner })
     }
@@ -48,10 +57,26 @@ export default class CaroGame extends Component {
             v: get(border, 'vr.x') - get(border, 'vl.x') - 1,
             dl: get(border, 'drb.x') - get(border, 'dlt.x') - 1,
             dr: get(border, 'drt.x') - get(border, 'dlb.x') - 1
+        }        
+        console.log('score:', score, border, nearbyPoints);
+    }
+    
+    positionNearly({ value = [], x = '', y= '', caroMap }) {
+        if (isEmpty(nearbyPoints)) {
+            nearbyPoints = value
+        } else {
+            nearbyPoints = filter(nearbyPoints, o => {
+                return !(o.x === x && o.y ===y)
+            })
+            value.forEach((item) => {
+                if (caroMap[item.y][item.x]) {
+                    return
+                }
+                const isContain = isEmpty(filter(nearbyPoints, item))
+                nearbyPoints = isContain ? nearbyPoints.concat(item) : nearbyPoints
+            })
         }
-
-        console.log('score:', score, border);
-	}
+    }
 
 	checkNebour({ x, y, ftype = 'X', dir }) {
 		const { caroMap } = this.state;
@@ -125,6 +150,7 @@ export default class CaroGame extends Component {
 
     render() {
         const { caroMap, hasWinner, isClickX } = this.state;
+        console.log('nearbyPoints', nearbyPoints)
         return (
             <div className="caro-board">
                 {!hasWinner &&<h2>It's turn: {isClickX ? 'X' : 'O'}</h2>}
@@ -133,9 +159,15 @@ export default class CaroGame extends Component {
                     return (
                         <div className="row" key={y} >
                             {row.map((square, x) => {
+                                let isNear = false
+                                nearbyPoints.forEach((item) => {
+                                    if (item.x === x && item.y === y) {
+                                        isNear = true
+                                    }
+                                })
                                 return (
 									<div 
-										className="square"
+										className={`square ${isNear ? 'near-square' : ''} `}
 										key={ `${x}-${y}` } 
 										onClick={ square ? '' : () => this.onClickSquare({x, y})}>
 											{ square }

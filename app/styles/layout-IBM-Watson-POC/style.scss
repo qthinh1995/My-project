@@ -30,6 +30,10 @@ div{
 	-moz-user-select: none; /* Firefox */
 	-ms-user-select: none; /* IE10+/Edge */
 	user-select: none; /* Standard */
+
+	&.near-square {
+		background: blue
+	}
 }
 .caro-board{
 	margin-left: 40px;
