@@ -36,29 +36,25 @@ export default class CaroGame extends Component {
             set(caroMap, `[${y}][${x}].value`, ftype);
             squareChecked.push({ x, y, value: ftype })
         }
-		
-        // const hasWinner = this.checkWin({ x, y });
-        const border = {};
-        nebourArr.forEach(dir => {
-            border[dir] = this.checkNebour({ x, y, ftype, dir });
-        });
-        const value = values(border)
+        
+        
+        const border = this.getNebours();
+        this.checkWin2({ border })
 
         nearbyPoints = this.positionNearly({ value, x, y, caroMap })
-        // this.checkWin2({ border })
         this.setState({ caroMap, isClickX: !isClickX })
     }
 
 	// point: { direction: 'h' (horizontal) / 'v' (vertical) / 'dl' (diagonal left) / 'dr' (diagonal right)}
-	// checkWin2({ border = {} }) {
-    //     const score = {
-    //         h: get(border, 'hb.y') - get(border, 'ht.y') - 1,
-    //         v: get(border, 'vr.x') - get(border, 'vl.x') - 1,
-    //         dl: get(border, 'drb.x') - get(border, 'dlt.x') - 1,
-    //         dr: get(border, 'drt.x') - get(border, 'dlb.x') - 1
-    //     }        
-    //     console.log('score:', score, border);
-    // }
+	checkWin2({ border = {} }) {
+        const score = {
+            h: get(border, 'hb.y') - get(border, 'ht.y') - 1,
+            v: get(border, 'vr.x') - get(border, 'vl.x') - 1,
+            dl: get(border, 'drb.x') - get(border, 'dlt.x') - 1,
+            dr: get(border, 'drt.x') - get(border, 'dlb.x') - 1
+        }        
+        console.log('score:', score, border);
+    }
     
     positionNearly({ value = [], x = '', y= '', caroMap }) {
         set(caroMap, `[${y}][${x}].isNear`, false);
@@ -108,6 +104,16 @@ export default class CaroGame extends Component {
 
     //     })
     // }
+
+    getNebours(x, y) {
+        const { isClickX } = this.state;
+        const border = {};
+        const ftype = isClickX ? 'X' : 'O';        
+        nebourArr.forEach(dir => {
+            border[dir] = this.checkNebour({ x, y, ftype, dir });
+        });
+        return values(border)
+    }
 
 	checkNebour({ x, y, ftype = 'X', dir }) {
 		const { caroMap } = this.state;
