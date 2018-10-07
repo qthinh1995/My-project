@@ -2,16 +2,20 @@ import React, { Component, PropTypes } from 'react'
 import connect from 'connect-alt'
 // import CaroSquare from './CaroSquare'
 import { get, set, values, filter, cloneDeep } from 'lodash'
+import socketIOClient from 'socket.io-client';
+
 
 const arrayMap = Array(20)
 for (let i = 0; i < arrayMap.length; i++) {
     arrayMap[i] = Array(40).fill(null)
 }
-let nearbyPoints = []
+const nearbyPoints = []
 const futureNearbyPoints = {}
 const squareChecked = []
 const nebourArr = [ 'dlt', 'ht', 'vl', 'dlb', 'drt', 'vr', 'drb', 'hb' ];
 let i = 0
+const endpoint = 'http://localhost:999'
+const socket = socketIOClient(endpoint);
 
 @connect(({ requests: { inProgress }, session: { session } }) => ({ inProgress, session }))
 
@@ -26,7 +30,8 @@ export default class CaroGame extends Component {
     state = {
         hasWinner: false,
         caroMap: arrayMap,
-        isClickX: this.props.isClickX
+        isClickX: this.props.isClickX,
+        endpoint: ''        
     }
 
     onClickSquare({ x, y }) {
@@ -41,8 +46,21 @@ export default class CaroGame extends Component {
         const border = this.getNebours();
         this.checkWin2({ border })
 
-        nearbyPoints = this.positionNearly({ value, x, y, caroMap })
-        this.setState({ caroMap, isClickX: !isClickX })
+        // nearbyPoints = this.positionNearly({ value, x, y, caroMap })
+        socket.emit('click square', { caroMap, isClickX })         
+        // this.setState({ caroMap, isClickX: !isClickX })
+    }
+
+    componentDidMount() {
+        socket.on('click square', ({ caroMap, isClickX }) => {
+            this.setState({ caroMap, isClickX })
+        })
+        const { caroMap, isClickX } = this.state;
+        socket.emit('click square', { caroMap, isClickX, sync: true })                 
+    }
+
+    componentDidUpdate() {
+
     }
 
 	// point: { direction: 'h' (horizontal) / 'v' (vertical) / 'dl' (diagonal left) / 'dr' (diagonal right)}

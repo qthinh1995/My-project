@@ -32,9 +32,8 @@ export default class IBMWatsonPOCHome extends Component {
     }
 
     componentDidMount() {
-
     }
-
+    
     toggleDarkTheme(e) {
         if (e.checked) {
             document.body.classList.add('dark-theme')

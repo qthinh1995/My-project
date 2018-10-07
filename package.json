@@ -113,6 +113,8 @@
     "scroll-behavior": "^0.5.0",
     "sequelize": "^3.27.0",
     "smtp-server": "^3.4.1",
+    "socket.io": "^2.1.1",
+    "socket.io-client": "^2.1.1",
     "sqlite3": "^3.1.8",
     "style-loader": "^0.13.0",
     "superagent": "^3.0.0",

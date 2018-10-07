@@ -14,14 +14,18 @@ import Router from 'koa-router'
 import convert from 'koa-convert'
 import logtofile from 'log-to-file'
 
-import router from './router' 
+import router from './router'
 import config from '../internals/config/private'
 import { apiPrefix } from '../internals/config/public'
+import http from 'http'
 
 console.log('config--------------: ', config)
 /** Manual module */
 const app = new Koa()
 const env = process.env.NODE_ENV || 'development'
+const server = http.createServer(app.callback())
+const io = require('socket.io')(server);
+let currentState = {};
 
 // add header `X-Response-Time`
 app.use(convert(responseTime()))
@@ -76,12 +80,31 @@ app.use(apiRouter.routes())
 
 setInterval(() => {
   logtofile(new Date())
-}, 1000*60*60)
+}, 1000 * 60 * 60)
+
+io.on('connection', (socket) => {
+  console.log('a user connected');
+  socket.on('disconnect', () => {
+    console.log('user disconnected');
+  });
+
+  socket.on('click square', (value) => {
+    if (!value.sync) {
+      currentState = value;
+    }
+
+    value.isClickX = !value.isClickX;
+    io.sockets.emit('click square', currentState)
+  })
+});
+
+server.listen(999, () => {
+  console.log('Hello')
+});
 
 // mount react-router
 app.use(router)
 
-app.listen(config.port)
 
 // Tell parent process koa-server is started
 if (process.send) process.send('online')
