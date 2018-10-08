@@ -1,7 +1,7 @@
 import path from 'path'
 import debug from 'debug'
 
-import newrelic from 'newrelic'
+// import newrelic from 'newrelic'
 
 import Koa from 'koa'
 import mount from 'koa-mount'
@@ -18,6 +18,9 @@ import router from './router'
 import config from '../internals/config/private'
 import { apiPrefix } from '../internals/config/public'
 import http from 'http'
+// import { isEmpty } from 'lodash'
+import { johnRoom, handleCaroMap } from './utils'
+
 
 console.log('config--------------: ', config)
 /** Manual module */
@@ -25,7 +28,9 @@ const app = new Koa()
 const env = process.env.NODE_ENV || 'development'
 const server = http.createServer(app.callback())
 const io = require('socket.io')(server);
-let currentState = {};
+// let currentState = {};
+// const arrHosts = [];
+let currentHosts = []
 
 // add header `X-Response-Time`
 app.use(convert(responseTime()))
@@ -82,20 +87,45 @@ setInterval(() => {
   logtofile(new Date())
 }, 1000 * 60 * 60)
 
+// arrHosts.forEach(item => {
+//   const nsp = io.of(item)
+//   nsp.on('connection', (socket) => {
+//     socket.on('john room', () => {
+//       nsp.sockets.emit('john room')
+//     })
+//   })
+// })
+
 io.on('connection', (socket) => {
   console.log('a user connected');
   socket.on('disconnect', () => {
     console.log('user disconnected');
   });
 
-  socket.on('click square', (value) => {
-    if (!value.sync) {
-      currentState = value;
-    }
+  johnRoom(socket);
+  handleCaroMap(socket)
 
-    value.isClickX = !value.isClickX;
-    io.sockets.emit('click square', currentState)
+  socket.on('create room', arrHosts => {
+    currentHosts = arrHosts
+    io.sockets.emit('create room', arrHosts)
   })
+
+  socket.on('get hosts', () => {
+    io.sockets.emit('get hosts', currentHosts)
+  })
+
+  // socket.on('click square', (value) => {
+  //   value.isClickX = !value.isClickX;
+  //   currentState = value;
+
+  //   io.sockets.emit('click square', value)
+  // });
+
+  // if (!isEmpty(currentState)) {
+  //   socket.on('get current state', () => {
+  //     io.sockets.emit('get current state', currentState)
+  //   })
+  // }
 });
 
 server.listen(999, () => {

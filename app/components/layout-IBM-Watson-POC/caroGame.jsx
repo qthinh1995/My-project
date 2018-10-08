@@ -24,7 +24,8 @@ export default class CaroGame extends Component {
         caroMap: PropTypes.array,
         onClickSquare: PropTypes.func,
         isClickX: PropTypes.bool,
-        hasWinner: PropTypes.string
+        hasWinner: PropTypes.string,
+        hostName: PropTypes.string
     }
 
     state = {
@@ -36,6 +37,7 @@ export default class CaroGame extends Component {
 
     onClickSquare({ x, y }) {
         const { caroMap, isClickX } = this.state;
+        const { hostName } = this.props
         const ftype = isClickX ? 'X' : 'O';
         if (!get(caroMap, `[${y}][${x}].value`)) {
             set(caroMap, `[${y}][${x}].value`, ftype);
@@ -47,16 +49,24 @@ export default class CaroGame extends Component {
         this.checkWin2({ border })
 
         // nearbyPoints = this.positionNearly({ value, x, y, caroMap })
-        socket.emit('click square', { caroMap, isClickX })         
+        const value = { caroMap, isClickX }
+        socket.emit('handle caro map', { value, roomName: hostName })         
         // this.setState({ caroMap, isClickX: !isClickX })
     }
 
     componentDidMount() {
-        socket.on('click square', ({ caroMap, isClickX }) => {
+        // const { caroMap, isClickX } = this.state;
+        // socket.emit('get current state')
+        this.receive()                
+    }
+
+    receive() {
+        socket.on('handle caro map', ({ caroMap, isClickX }) => {
             this.setState({ caroMap, isClickX })
         })
-        const { caroMap, isClickX } = this.state;
-        socket.emit('click square', { caroMap, isClickX, sync: true })                 
+        socket.on('get current state', ({ caroMap, isClickX }) => {
+            this.setState({ caroMap, isClickX })
+        })
     }
 
     componentDidUpdate() {
