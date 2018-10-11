@@ -25,11 +25,12 @@ export default class IBMWatsonPOCHome extends Component {
     state = {
         isClickX: true,
         hasWinner: false,
-        gameMode: 'single',
+        gameMode: 'multy',
         userName: '',
         isSubmit: false,
-        arrHosts: [],
-        hostName: ''
+        // arrHosts: [],
+        hostName: '',
+        roomName: ''
     }
 
     componentWillMount() {
@@ -39,19 +40,26 @@ export default class IBMWatsonPOCHome extends Component {
     }
 
     componentDidMount() {
-        socket.emit('get hosts')
-        this.receiveHosts()
+        // socket.emit('get hosts')
+        this.socketOn()
     }
 
-    receiveHosts() {
+    socketOn() {
         socket.on('create room', arrHosts => {
+            console.log(arrHosts)
             this.setState({ arrHosts })
         })
-        socket.on('get hosts', currentHosts => {
-            this.setState({ arrHosts: currentHosts })
+       
+        socket.on('submit user name', userName => {
+            const roomName = userName + "'s room";
+            this.setState({ isSubmit: true, userName, roomName })
+            socket.on('get hosts', currentHosts => {
+                console.log('get hosts', currentHosts)
+                this.setState({ arrHosts: currentHosts })
+            })
         })
     }
-    
+
     toggleDarkTheme(e) {
         if (e.checked) {
             document.body.classList.add('dark-theme')
@@ -70,54 +78,77 @@ export default class IBMWatsonPOCHome extends Component {
     }
 
     onSubmitName() {
-        this.setState({ isSubmit: true })
+        const { userName } = this.state;
+        if (userName) {
+            socket.emit('submit user name', this.state.userName)
+        } else {
+            alert('User name is required');
+        }
     }
 
     createRoom() {
-        const { userName, arrHosts } = this.state
-        if (userName) {
-            arrHosts.push(userName)
+        const { roomName, arrHosts } = this.state
+        if (roomName) {
+            arrHosts.push(roomName)
             socket.emit('create room', arrHosts)
-            this.johnRoom(userName)
+            this.johnRoom(roomName)
         }
     }
 
     johnRoom(item) {
         socket.emit('john room', { roomName: item })
-        this.setState({ hostName: item})        
+        this.setState({ hostName: item })
+    }
+
+    renderListRoom() {
+        const { userName, roomName, arrHosts } = this.state;
+        return (
+            <div>
+                <h2 className={'area-name'} >
+                    {`Hello ${userName}`}
+                </h2>
+                <div className="room-panel">
+                    <div className="list-room">
+                        <h3>List room</h3>
+                        {arrHosts && arrHosts.map((item, i) => {
+                            return (
+                                <div key={i} onClick={() => this.johnRoom(item)} > {item} </div>
+                            )
+                        })}
+                    </div>
+                    <div className="create-room">
+                        <input className="input-name" onChange={(e) => this.onChangeName(e)} value={roomName} />
+                        <input type="button" value="Create Room" onClick={() => this.createRoom()} />
+                    </div>
+                </div>
+            </div>
+        )
     }
 
     render() {
-        const { gameMode, isClickX, userName, isSubmit, arrHosts, hostName } = this.state;
+        const { gameMode, isClickX, userName, isSubmit, hostName } = this.state;
         const areaName = 'area-name'
         return (
             <div>
                 <h1>Caro Game</h1>
-                <label><input type="checkbox" name="vehicle" onChange={(e) => this.toggleDarkTheme(e.target)}/>Dark Theme</label>
-                { !isSubmit && 
+                <label><input type="checkbox" name="vehicle" onChange={(e) => this.toggleDarkTheme(e.target)} />Dark Theme</label>
+                {!isSubmit &&
                     <div className={areaName} >
+                        Your user name:
                         <input className="input-name" onChange={(e) => this.onChangeName(e)} value={userName} />
                         <input type="button" value="OK" onClick={() => this.onSubmitName()} />
                     </div>
                 }
-                { isSubmit &&
-                    <div className={areaName} >
-                        {userName}
-                    </div>
-                }
-                <input type="button" value="Create Room" onClick={() => this.createRoom()} />
-                { arrHosts.map((item, i) => {
-                    return (
-                        <span key= {i} onClick={() => this.johnRoom(item)} > {item} </span>
-                    )
-                })}
+
+                {isSubmit && this.renderListRoom()}
+
                 {!gameMode && <div>
                     <h3>Select game mode</h3>
                     <button onClick={() => this.selectGameMode('multy')}>Multiple players</button>
                     <button onClick={() => this.selectGameMode('single')}>Player vs computer</button>
                 </div>
                 }
-                { hostName && gameMode && <CaroGame isClickX={isClickX} gameMode={gameMode} hostName={hostName} />}
+                {hostName && gameMode && <CaroGame isClickX={isClickX} gameMode={gameMode} hostName={hostName} socket={socket} />}
             </div >
         )
     }

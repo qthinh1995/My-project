@@ -102,12 +102,27 @@ io.on('connection', (socket) => {
     console.log('user disconnected');
   });
 
-  johnRoom(socket);
-  handleCaroMap(socket)
+  socket.on('submit user name', ( userName ) => {
+    socket.userName = userName
+    socket.emit('submit user name', userName)
+    socket.emit('get hosts', currentHosts)
+    console.log('new User: ', userName)
+  });
+
+  socket.on('john room', ({ roomName }) => {
+    socket.join(roomName)
+
+    console.log('vao duoc phong roi', socket.adapter.rooms)
+  });
+
+  socket.on('handle caro map', ({ value, roomName }) => {
+    console.log(roomName)
+    io.sockets.in(roomName).emit('handle caro map', value)
+  })
 
   socket.on('create room', arrHosts => {
     currentHosts = arrHosts
-    io.sockets.emit('create room', arrHosts)
+    io.socket.emit('get hosts', currentHosts)
   })
 
   socket.on('get hosts', () => {

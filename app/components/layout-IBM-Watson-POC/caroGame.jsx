@@ -2,7 +2,7 @@ import React, { Component, PropTypes } from 'react'
 import connect from 'connect-alt'
 // import CaroSquare from './CaroSquare'
 import { get, set, values, filter, cloneDeep } from 'lodash'
-import socketIOClient from 'socket.io-client';
+// import socketIOClient from 'socket.io-client';
 
 
 const arrayMap = Array(20)
@@ -14,8 +14,8 @@ const futureNearbyPoints = {}
 const squareChecked = []
 const nebourArr = [ 'dlt', 'ht', 'vl', 'dlb', 'drt', 'vr', 'drb', 'hb' ];
 let i = 0
-const endpoint = 'http://localhost:999'
-const socket = socketIOClient(endpoint);
+// const endpoint = 'http://localhost:999'
+let socket = {};
 
 @connect(({ requests: { inProgress }, session: { session } }) => ({ inProgress, session }))
 
@@ -25,12 +25,15 @@ export default class CaroGame extends Component {
         onClickSquare: PropTypes.func,
         isClickX: PropTypes.bool,
         hasWinner: PropTypes.string,
-        hostName: PropTypes.string
+        hostName: PropTypes.string,
+        socket: PropTypes.object,
+        gameMode: PropTypes.string
     }
 
     state = {
         hasWinner: false,
         caroMap: arrayMap,
+        gameMode: this.props.gameMode,
         isClickX: this.props.isClickX,
         endpoint: ''        
     }
@@ -50,13 +53,14 @@ export default class CaroGame extends Component {
 
         // nearbyPoints = this.positionNearly({ value, x, y, caroMap })
         const value = { caroMap, isClickX }
-        socket.emit('handle caro map', { value, roomName: hostName })         
+        socket.emit('handle caro map', { value, roomName: hostName })       
         // this.setState({ caroMap, isClickX: !isClickX })
     }
 
     componentDidMount() {
         // const { caroMap, isClickX } = this.state;
         // socket.emit('get current state')
+        socket = this.props.socket;
         this.receive()                
     }
 
@@ -219,7 +223,7 @@ export default class CaroGame extends Component {
             <div className="caro-board">
                 {!hasWinner &&<h2>It's turn: {isClickX ? 'X' : 'O'}</h2>}
                 {hasWinner && <h2>The winner is {hasWinner}</h2>}
-                <button onClick={() => this.simulator()}> Click </button>
+                {/* <button onClick={() => this.simulator()}> Click </button> */}
                 {caroMap.map((row, y) => {
                     return (
                         <div className="row" key={y} >
