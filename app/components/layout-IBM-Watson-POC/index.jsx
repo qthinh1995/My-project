@@ -7,6 +7,10 @@ import socketIOClient from 'socket.io-client'
 // const col = 40;
 const endpoint = 'http://localhost:999'
 const socket = socketIOClient(endpoint)
+const arrayMap = Array(20)
+for (let i = 0; i < arrayMap.length; i++) {
+    arrayMap[i] = Array(40).fill(null)
+}
 
 @connect(({ requests: { inProgress }, session: { session } }) => ({ inProgress, session }))
 
@@ -30,7 +34,8 @@ export default class IBMWatsonPOCHome extends Component {
         isSubmit: false,
         // arrHosts: [],
         hostName: '',
-        roomName: ''
+        roomName: '',
+        type: ''
     }
 
     componentWillMount() {
@@ -48,6 +53,10 @@ export default class IBMWatsonPOCHome extends Component {
         socket.on('create room', arrHosts => {
             console.log(arrHosts)
             this.setState({ arrHosts })
+        })
+
+        socket.on('receive ftype', typeReceive => {
+            this.setState({ type: typeReceive })
         })
        
         socket.on('submit user name', userName => {
@@ -80,17 +89,16 @@ export default class IBMWatsonPOCHome extends Component {
     onSubmitName() {
         const { userName } = this.state;
         if (userName) {
-            socket.emit('submit user name', this.state.userName)
+            socket.emit('submit user name', userName)
         } else {
             alert('User name is required');
         }
     }
 
     createRoom() {
-        const { roomName, arrHosts } = this.state
+        const { roomName } = this.state
         if (roomName) {
-            arrHosts.push(roomName)
-            socket.emit('create room', arrHosts)
+            socket.emit('create room', { roomName, arrayMap })
             this.johnRoom(roomName)
         }
     }
@@ -126,7 +134,7 @@ export default class IBMWatsonPOCHome extends Component {
     }
 
     render() {
-        const { gameMode, isClickX, userName, isSubmit, hostName } = this.state;
+        const { gameMode, isClickX, userName, isSubmit, hostName, type } = this.state;
         const areaName = 'area-name'
         return (
             <div>
@@ -148,7 +156,8 @@ export default class IBMWatsonPOCHome extends Component {
                     <button onClick={() => this.selectGameMode('single')}>Player vs computer</button>
                 </div>
                 }
-                {hostName && gameMode && <CaroGame isClickX={isClickX} gameMode={gameMode} hostName={hostName} socket={socket} />}
+                { type && hostName && gameMode &&
+                    <CaroGame isClickX={isClickX} gameMode={gameMode} hostName={hostName} socket={socket} arrayMap={arrayMap} type={type} />}
             </div >
         )
     }

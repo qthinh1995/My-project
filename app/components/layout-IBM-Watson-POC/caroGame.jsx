@@ -5,20 +5,15 @@ import { get, set, values, filter, cloneDeep } from 'lodash'
 // import socketIOClient from 'socket.io-client';
 
 
-const arrayMap = Array(20)
-for (let i = 0; i < arrayMap.length; i++) {
-    arrayMap[i] = Array(40).fill(null)
-}
 const nearbyPoints = []
 const futureNearbyPoints = {}
-const squareChecked = []
+// const squareChecked = []
 const nebourArr = [ 'dlt', 'ht', 'vl', 'dlb', 'drt', 'vr', 'drb', 'hb' ];
 let i = 0
 // const endpoint = 'http://localhost:999'
 let socket = {};
 
 @connect(({ requests: { inProgress }, session: { session } }) => ({ inProgress, session }))
-
 export default class CaroGame extends Component {
     static propTypes = {
         caroMap: PropTypes.array,
@@ -27,24 +22,27 @@ export default class CaroGame extends Component {
         hasWinner: PropTypes.string,
         hostName: PropTypes.string,
         socket: PropTypes.object,
-        gameMode: PropTypes.string
+        gameMode: PropTypes.string,
+        arrayMap: PropTypes.array,
+        type: PropTypes.string
     }
 
     state = {
         hasWinner: false,
-        caroMap: arrayMap,
+        caroMap: this.props.arrayMap,
         gameMode: this.props.gameMode,
-        isClickX: this.props.isClickX,
-        endpoint: ''        
+        endpoint: '',
+        allowType: 'X'
     }
 
     onClickSquare({ x, y }) {
-        const { caroMap, isClickX } = this.state;
-        const { hostName } = this.props
-        const ftype = isClickX ? 'X' : 'O';
-        if (!get(caroMap, `[${y}][${x}].value`)) {
-            set(caroMap, `[${y}][${x}].value`, ftype);
-            squareChecked.push({ x, y, value: ftype })
+        const { allowType, caroMap } = this.state;
+        const { hostName, type } = this.props
+        // const ftype = isClickX ? 'X' : 'O';
+        if (type === allowType && !get(caroMap, `[${y}][${x}].value`)) {
+            socket.emit('handle caro map', { x, y, roomName: hostName, type })                   
+            // set(caroMap, `[${y}][${x}].value`, ftype);
+            // squareChecked.push({ x, y, value: ftype })
         }
         
         
@@ -52,8 +50,6 @@ export default class CaroGame extends Component {
         this.checkWin2({ border })
 
         // nearbyPoints = this.positionNearly({ value, x, y, caroMap })
-        const value = { caroMap, isClickX }
-        socket.emit('handle caro map', { value, roomName: hostName })       
         // this.setState({ caroMap, isClickX: !isClickX })
     }
 
@@ -65,8 +61,8 @@ export default class CaroGame extends Component {
     }
 
     receive() {
-        socket.on('handle caro map', ({ caroMap, isClickX }) => {
-            this.setState({ caroMap, isClickX })
+        socket.on('handle caro map', ({ caroMap, nextType }) => {
+            this.setState({ caroMap, allowType: nextType })
         })
         socket.on('get current state', ({ caroMap, isClickX }) => {
             this.setState({ caroMap, isClickX })
@@ -218,11 +214,12 @@ export default class CaroGame extends Component {
     }
 
     render() {
-        const { caroMap, hasWinner, isClickX } = this.state;
+        const { caroMap, hasWinner, allowType } = this.state;
+        const { gameMode } = this.props
         return (
             <div className="caro-board">
-                {!hasWinner &&<h2>It's turn: {isClickX ? 'X' : 'O'}</h2>}
-                {hasWinner && <h2>The winner is {hasWinner}</h2>}
+                {!hasWinner &&<h2>It's turn: {allowType}</h2>}
+                {hasWinner && <h2>The winner is {allowType}</h2>}
                 {/* <button onClick={() => this.simulator()}> Click </button> */}
                 {caroMap.map((row, y) => {
                     return (
@@ -234,7 +231,7 @@ export default class CaroGame extends Component {
 									<div 
 										className={`square ${isNear ? 'near-square' : ''} `}
 										key={ `${x}-${y}` } 
-										onClick={ value ? '' : () => this.onClickSquare({x, y})}>
+										onClick={ value ? '' : () => { gameMode === 'multy' ? this.onClickSquare({x, y}) : this.onClickSquareSingle({x, y}) }}>
 											{ value }
 									</div>
                                 )
