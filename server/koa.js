@@ -113,12 +113,9 @@ io.on('connection', (socket) => {
   socket.on('john room', ({ roomName }) => {
     socket.join(roomName)
     const length = get(socket, `adapter.rooms[${roomName}].length`)
-    console.log(length)
     if (length === 1) {
-      console.log(1)
       socket.emit('receive ftype', 'X')
     } else if (length === 2) {
-      console.log(2)
       socket.emit('receive ftype', 'O')
     } else {
       socket.emit('receive ftype', 'view')
@@ -127,13 +124,11 @@ io.on('connection', (socket) => {
     console.log('vao duoc phong roi', socket.adapter.rooms[roomName].length)
   });
 
-  socket.on('handle caro map', ({ x, y, roomName, type }) => {
-    console.log(roomName)
+  socket.on('handle caro map', ({ x, y, roomName, type, isWinner }) => {
     const { arrayMap } = currentHosts[roomName]
-    const nextType = changeAllowType(type)
+    const nextType = isWinner? type: changeAllowType(type)
     set(arrayMap, `[${y}][${x}].value`, type);
-    console.log(currentHosts[roomName].arrayMap === arrayMap)
-    io.sockets.in(roomName).emit('handle caro map', { caroMap: arrayMap, nextType })
+    io.sockets.in(roomName).emit('handle caro map', { caroMap: arrayMap, nextType, isWinner })
   })
 
   socket.on('create room', ({ roomName, arrayMap }) => {

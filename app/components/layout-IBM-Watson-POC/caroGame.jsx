@@ -28,7 +28,7 @@ export default class CaroGame extends Component {
     }
 
     state = {
-        hasWinner: false,
+        isWinner: false,
         caroMap: this.props.arrayMap,
         gameMode: this.props.gameMode,
         endpoint: '',
@@ -39,15 +39,24 @@ export default class CaroGame extends Component {
         const { allowType, caroMap } = this.state;
         const { hostName, type } = this.props
         // const ftype = isClickX ? 'X' : 'O';
-        if (type === allowType && !get(caroMap, `[${y}][${x}].value`)) {
-            socket.emit('handle caro map', { x, y, roomName: hostName, type })                   
+        if (type === allowType) {
+            let count = 0
+            nebourArr.every((dir) => {
+                count = this.checkWin({ x, y, caroMap, lastPosition: type, dir });
+                if (count === 4) {
+                    return false;
+                }
+                return true
+            });
+            const isWinner = count === 4
+            socket.emit('handle caro map', { x, y, roomName: hostName, type, isWinner })                   
             // set(caroMap, `[${y}][${x}].value`, ftype);
             // squareChecked.push({ x, y, value: ftype })
         }
         
         
-        const border = this.getNebours();
-        this.checkWin2({ border })
+        // const border = this.getNebours();
+        // this.checkWin2({ border })
 
         // nearbyPoints = this.positionNearly({ value, x, y, caroMap })
         // this.setState({ caroMap, isClickX: !isClickX })
@@ -61,8 +70,8 @@ export default class CaroGame extends Component {
     }
 
     receive() {
-        socket.on('handle caro map', ({ caroMap, nextType }) => {
-            this.setState({ caroMap, allowType: nextType })
+        socket.on('handle caro map', ({ caroMap = {}, nextType = '', isWinner } = {}) => {
+            this.setState({ caroMap, allowType: nextType, isWinner })
         })
         socket.on('get current state', ({ caroMap, isClickX }) => {
             this.setState({ caroMap, isClickX })
@@ -160,66 +169,35 @@ export default class CaroGame extends Component {
 		return { x, y };
 	}
 
-	checkWin({ x, y }) {
-		const { caroMap } = this.state;
-		const lastPosition = caroMap[y][x];
-        let count = 0;
-        for (let u = -4; u < 5; u++) {
-			if (get(caroMap, `[${y}][${x + u}]`) === lastPosition) {
-                count++;
+    checkWin({ x, y, caroMap, lastPosition, count = 0, dir } = {}) {
+        if ([ 'dlt', 'vl', 'dlb' ].indexOf(dir) > -1) { x--; }
+        if ([ 'drt', 'vr', 'drb' ].indexOf(dir) > -1) { x++; }
+        if ([ 'dlt', 'ht', 'drt' ].indexOf(dir) > -1) { y--; }
+        if ([ 'dlb', 'hb', 'drb' ].indexOf(dir) > -1) { y++; }
+
+        if (x < 0 || y < 0) {
+            return count
+        }
+
+		if (get(caroMap, `[${y}][${x}].value`) === lastPosition) {
+            count++
+            if (count === 4) {
+                return count
             } else {
-                count = 0;
-            }
-            if (count === 5) {
-                return lastPosition;
+                return this.checkWin({ x, y, caroMap, lastPosition, count, dir })
             }
         }
 
-        count = 0;
-        for (let u = -4; u < 5; u++) {
-            if (get(caroMap, `[${y + u}][${x}]`) === lastPosition) {
-                count++;
-            } else {
-                count = 0;
-            }
-            if (count === 5) {
-                return lastPosition;
-            }
-        }
-
-        count = 0;
-        for (let u = -4; u < 5; u++) {
-            if (get(caroMap, `[${y + u}][${x + u}]`) === lastPosition) {
-                count++;
-            } else {
-                count = 0;
-            }
-            if (count === 5) {
-                return lastPosition;
-            }
-        }
-
-        count = 0;
-        for (let u = -4; u < 5; u++) {
-            if (get(caroMap, `[${y - u}][${x + u}]`) === lastPosition) {
-                count++;
-            } else {
-                count = 0;
-            }
-            if (count === 5) {
-                return lastPosition;
-            }
-        }
-        return false;
+        return count
     }
 
     render() {
-        const { caroMap, hasWinner, allowType } = this.state;
+        const { caroMap, isWinner, allowType } = this.state;
         const { gameMode } = this.props
         return (
             <div className="caro-board">
-                {!hasWinner &&<h2>It's turn: {allowType}</h2>}
-                {hasWinner && <h2>The winner is {allowType}</h2>}
+                {!isWinner &&<h2>It's turn: {allowType}</h2>}
+                {isWinner && <h2>The winner is {allowType}</h2>}
                 {/* <button onClick={() => this.simulator()}> Click </button> */}
                 {caroMap.map((row, y) => {
                     return (
@@ -231,7 +209,7 @@ export default class CaroGame extends Component {
 									<div 
 										className={`square ${isNear ? 'near-square' : ''} `}
 										key={ `${x}-${y}` } 
-										onClick={ value ? '' : () => { gameMode === 'multy' ? this.onClickSquare({x, y}) : this.onClickSquareSingle({x, y}) }}>
+										onClick={ isWinner || (value && !isWinner)? '' : () => { gameMode === 'multy' ? this.onClickSquare({x, y}) : this.onClickSquareSingle({x, y}) }}>
 											{ value }
 									</div>
                                 )
