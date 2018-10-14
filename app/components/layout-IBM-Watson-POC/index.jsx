@@ -40,21 +40,18 @@ export default class IBMWatsonPOCHome extends Component {
     }
 
     componentDidMount() {
-        // socket.emit('get hosts')
         this.socketOn()
     }
 
     socketOn() {
-        socket.on('create room', arrHosts => {
-            console.log(arrHosts)
-            this.setState({ arrHosts })
+        socket.on('john room', (hostName) => {
+            this.setState({ hostName })
         })
        
         socket.on('submit user name', userName => {
             const roomName = userName + "'s room";
             this.setState({ isSubmit: true, userName, roomName })
             socket.on('get hosts', currentHosts => {
-                console.log('get hosts', currentHosts)
                 this.setState({ arrHosts: currentHosts })
             })
         })
@@ -76,6 +73,9 @@ export default class IBMWatsonPOCHome extends Component {
     onChangeName(e) {
         this.setState({ userName: e.target.value })
     }
+    onChangeRoomName(e) {
+        this.setState({ roomName: e.target.value })
+    }
 
     onSubmitName() {
         const { userName } = this.state;
@@ -87,17 +87,15 @@ export default class IBMWatsonPOCHome extends Component {
     }
 
     createRoom() {
-        const { roomName, arrHosts } = this.state
+        const { roomName } = this.state
         if (roomName) {
-            arrHosts.push(roomName)
-            socket.emit('create room', arrHosts)
-            this.johnRoom(roomName)
+            socket.emit('create room', roomName)
+            // this.johnRoom(roomName)
         }
     }
 
     johnRoom(item) {
         socket.emit('john room', { roomName: item })
-        this.setState({ hostName: item })
     }
 
     renderListRoom() {
@@ -112,12 +110,12 @@ export default class IBMWatsonPOCHome extends Component {
                         <h3>List room</h3>
                         {arrHosts && arrHosts.map((item, i) => {
                             return (
-                                <div key={i} onClick={() => this.johnRoom(item)} > {item} </div>
+                                <div key={i} onClick={() => this.johnRoom(item)} > {item.name} </div>
                             )
                         })}
                     </div>
                     <div className="create-room">
-                        <input className="input-name" onChange={(e) => this.onChangeName(e)} value={roomName} />
+                        <input className="input-name" onChange={(e) => this.onChangeRoomName(e)} value={roomName} />
                         <input type="button" value="Create Room" onClick={() => this.createRoom()} />
                     </div>
                 </div>
@@ -140,7 +138,7 @@ export default class IBMWatsonPOCHome extends Component {
                     </div>
                 }
 
-                {isSubmit && this.renderListRoom()}
+                {isSubmit && !hostName && this.renderListRoom()}
 
                 {!gameMode && <div>
                     <h3>Select game mode</h3>
@@ -148,6 +146,7 @@ export default class IBMWatsonPOCHome extends Component {
                     <button onClick={() => this.selectGameMode('single')}>Player vs computer</button>
                 </div>
                 }
+                {hostName && <div>{`room ${hostName}`}</div>}
                 {hostName && gameMode && <CaroGame isClickX={isClickX} gameMode={gameMode} hostName={hostName} socket={socket} />}
             </div >
         )

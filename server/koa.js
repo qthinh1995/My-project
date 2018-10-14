@@ -99,10 +99,12 @@ setInterval(() => {
 io.on('connection', (socket) => {
   console.log('a user connected');
   socket.on('disconnect', () => {
-    console.log('user disconnected');
+    currentHosts.splice(socket.currentRoomIndex, 1)
+    io.sockets.emit('get hosts', currentHosts)
+    console.log('user disconnected', socket.currentRoomIndex);
   });
 
-  socket.on('submit user name', ( userName ) => {
+  socket.on('submit user name', (userName) => {
     socket.userName = userName
     socket.emit('submit user name', userName)
     socket.emit('get hosts', currentHosts)
@@ -110,19 +112,25 @@ io.on('connection', (socket) => {
   });
 
   socket.on('john room', ({ roomName }) => {
+    currentHosts[socket.currentRoomIndex]
+    socket.currentRoomIndex = currentHosts.length;
     socket.join(roomName)
-
-    console.log('vao duoc phong roi', socket.adapter.rooms)
+    socket.emit('john room', roomName)
   });
 
   socket.on('handle caro map', ({ value, roomName }) => {
     console.log(roomName)
+    console.log('current room number:', socket.adapter.rooms)
+
     io.sockets.in(roomName).emit('handle caro map', value)
   })
 
-  socket.on('create room', arrHosts => {
-    currentHosts = arrHosts
-    io.socket.emit('get hosts', currentHosts)
+  socket.on('create room', roomName => {
+    currentHosts.push({name: roomName})
+    socket.currentRoomIndex = currentHosts.length;
+    socket.join(roomName)
+    socket.broadcast.emit('get hosts', currentHosts);
+    socket.emit('john room', roomName)
   })
 
   socket.on('get hosts', () => {
