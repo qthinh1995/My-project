@@ -5,8 +5,7 @@ import socketIOClient from 'socket.io-client'
 
 // const row = 20;
 // const col = 40;
-const endpoint = 'http://localhost:999'
-const socket = socketIOClient(endpoint)
+let socket = {}
 const arrayMap = Array(20)
 for (let i = 0; i < arrayMap.length; i++) {
     arrayMap[i] = Array(40).fill(null)
@@ -42,6 +41,11 @@ export default class IBMWatsonPOCHome extends Component {
         const { flux } = this.context
         flux.getActions('helmet').update({ title: 'home page title', description: 'home page description' })
         flux.getActions('users').index()
+        socket = socketIOClient(this.getURL())
+    }
+
+    getURL() {
+        return location.href
     }
 
     componentDidMount() {

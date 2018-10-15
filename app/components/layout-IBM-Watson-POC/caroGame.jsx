@@ -40,15 +40,15 @@ export default class CaroGame extends Component {
         const { hostName, type } = this.props
         // const ftype = isClickX ? 'X' : 'O';
         if (type === allowType) {
-            let count = 0
+            let infoWinner = {}
             nebourArr.every((dir) => {
-                count = this.checkWin({ x, y, caroMap, lastPosition: type, dir });
-                if (count === 4) {
+                infoWinner = this.checkWin({ x, y, caroMap, lastPosition: type, dir });
+                if (infoWinner.count === 4) {
                     return false;
                 }
                 return true
             });
-            const isWinner = count === 4
+            const isWinner = this.checkFinalWin({ caroMap, infoWinner, type })
             socket.emit('handle caro map', { x, y, roomName: hostName, type, isWinner })                   
             // set(caroMap, `[${y}][${x}].value`, ftype);
             // squareChecked.push({ x, y, value: ftype })
@@ -60,6 +60,18 @@ export default class CaroGame extends Component {
 
         // nearbyPoints = this.positionNearly({ value, x, y, caroMap })
         // this.setState({ caroMap, isClickX: !isClickX })
+    }
+
+    checkFinalWin({ caroMap, infoWinner, type }) {
+        const { count, arrPositionWin } = infoWinner
+        if (count === 4) {
+            const constOfChangeX = Math.abs(arrPositionWin[0].x - arrPositionWin[1].x)
+            const constOfChangeY = Math.abs(arrPositionWin[0].y - arrPositionWin[1].y)
+            const firstValue = { x: arrPositionWin[0].x - constOfChangeX, y: arrPositionWin[0].y - constOfChangeY }
+            const lastValue = { x: arrPositionWin[4].x + constOfChangeX, y: arrPositionWin[0].y + constOfChangeY }
+            return get(caroMap, `[${firstValue.y}][${firstValue.x}].value`) !== type || get(caroMap, `[${lastValue.y}][${lastValue.x}].value`) !== type
+        }
+        return false
     }
 
     componentDidMount() {
@@ -169,26 +181,28 @@ export default class CaroGame extends Component {
 		return { x, y };
 	}
 
-    checkWin({ x, y, caroMap, lastPosition, count = 0, dir } = {}) {
+    checkWin({ x, y, caroMap, lastPosition, count = 0, dir, arrPositionWin = [] } = {}) {
+        arrPositionWin.push({ x, y })
         if ([ 'dlt', 'vl', 'dlb' ].indexOf(dir) > -1) { x--; }
         if ([ 'drt', 'vr', 'drb' ].indexOf(dir) > -1) { x++; }
         if ([ 'dlt', 'ht', 'drt' ].indexOf(dir) > -1) { y--; }
         if ([ 'dlb', 'hb', 'drb' ].indexOf(dir) > -1) { y++; }
 
         if (x < 0 || y < 0) {
-            return count
+            return { count, arrPositionWin }
         }
 
 		if (get(caroMap, `[${y}][${x}].value`) === lastPosition) {
             count++
             if (count === 4) {
-                return count
+                arrPositionWin.push({ x, y })
+                return { count, arrPositionWin }
             } else {
-                return this.checkWin({ x, y, caroMap, lastPosition, count, dir })
+                return this.checkWin({ x, y, caroMap, lastPosition, count, dir, arrPositionWin })
             }
         }
 
-        return count
+        return { count, arrPositionWin }
     }
 
     render() {

@@ -127,6 +127,7 @@ io.on('connection', (socket) => {
   socket.on('handle caro map', ({ x, y, roomName, type, isWinner }) => {
     const { arrayMap } = currentHosts[roomName]
     const nextType = isWinner? type: changeAllowType(type)
+    console.log('isWinner', isWinner)
     set(arrayMap, `[${y}][${x}].value`, type);
     io.sockets.in(roomName).emit('handle caro map', { caroMap: arrayMap, nextType, isWinner })
   })
