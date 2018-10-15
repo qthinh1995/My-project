@@ -100,7 +100,9 @@ setInterval(() => {
 io.on('connection', (socket) => {
   console.log('a user connected');
   socket.on('disconnect', () => {
-    console.log('user disconnected');
+    // currentHosts.splice(socket.currentRoomIndex, 1)
+    // io.sockets.emit('get hosts', currentHosts)
+    // console.log('user disconnected', socket.currentRoomIndex);
   });
 
   socket.on('submit user name', (userName) => {
@@ -110,8 +112,16 @@ io.on('connection', (socket) => {
     console.log('new User: ', userName)
   });
 
-  socket.on('john room', ({ roomName }) => {
+  socket.on('john room', ({ roomName, arrayMap, isCreate = false }) => {
+    if (isCreate) {
+      currentHosts[roomName] = { arrayMap }
+      arrHost = getArrayHost({ currentHosts })
+      console.log('created')
+    }
+    currentHosts[socket.currentRoomIndex]
+    socket.currentRoomIndex = currentHosts.length;
     socket.join(roomName)
+    socket.emit('john room', roomName)
     const length = get(socket, `adapter.rooms[${roomName}].length`)
     if (length === 1) {
       socket.emit('receive ftype', 'X')
@@ -126,17 +136,11 @@ io.on('connection', (socket) => {
 
   socket.on('handle caro map', ({ x, y, roomName, type, isWinner }) => {
     const { arrayMap } = currentHosts[roomName]
-    const nextType = isWinner? type: changeAllowType(type)
-    console.log('isWinner', isWinner)
+    const nextType = isWinner ? type : changeAllowType(type)
     set(arrayMap, `[${y}][${x}].value`, type);
     io.sockets.in(roomName).emit('handle caro map', { caroMap: arrayMap, nextType, isWinner })
   })
 
-  socket.on('create room', ({ roomName, arrayMap }) => {
-    currentHosts[roomName] = { arrayMap }
-    arrHost = getArrayHost({ currentHosts })
-    io.sockets.emit('get hosts', arrHost)
-  })
 
   socket.on('get hosts', () => {
     io.sockets.emit('get hosts', arrHost)

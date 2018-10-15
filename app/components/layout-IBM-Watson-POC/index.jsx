@@ -31,7 +31,7 @@ export default class IBMWatsonPOCHome extends Component {
         gameMode: 'multy',
         userName: '',
         isSubmit: false,
-        // arrHosts: [],
+        arrHosts: [],
         hostName: '',
         roomName: '',
         type: ''
@@ -49,14 +49,12 @@ export default class IBMWatsonPOCHome extends Component {
     }
 
     componentDidMount() {
-        // socket.emit('get hosts')
         this.socketOn()
     }
 
     socketOn() {
-        socket.on('create room', arrHosts => {
-            console.log(arrHosts)
-            this.setState({ arrHosts })
+        socket.on('john room', (hostName) => {
+            this.setState({ hostName })
         })
 
         socket.on('receive ftype', typeReceive => {
@@ -67,7 +65,6 @@ export default class IBMWatsonPOCHome extends Component {
             const roomName = userName + "'s room";
             this.setState({ isSubmit: true, userName, roomName })
             socket.on('get hosts', currentHosts => {
-                console.log('get hosts', currentHosts)
                 this.setState({ arrHosts: currentHosts })
             })
         })
@@ -89,6 +86,9 @@ export default class IBMWatsonPOCHome extends Component {
     onChangeName(e) {
         this.setState({ userName: e.target.value })
     }
+    onChangeRoomName(e) {
+        this.setState({ roomName: e.target.value })
+    }
 
     onSubmitName() {
         const { userName } = this.state;
@@ -102,14 +102,12 @@ export default class IBMWatsonPOCHome extends Component {
     createRoom() {
         const { roomName } = this.state
         if (roomName) {
-            socket.emit('create room', { roomName, arrayMap })
-            this.johnRoom(roomName)
+            socket.emit('john room', { roomName, arrayMap, isCreate: true })
         }
     }
 
     johnRoom(item) {
         socket.emit('john room', { roomName: item })
-        this.setState({ hostName: item })
     }
 
     renderListRoom() {
@@ -129,7 +127,7 @@ export default class IBMWatsonPOCHome extends Component {
                         })}
                     </div>
                     <div className="create-room">
-                        <input className="input-name" onChange={(e) => this.onChangeName(e)} value={roomName} />
+                        <input className="input-name" onChange={(e) => this.onChangeRoomName(e)} value={roomName} />
                         <input type="button" value="Create Room" onClick={() => this.createRoom()} />
                     </div>
                 </div>
@@ -138,8 +136,9 @@ export default class IBMWatsonPOCHome extends Component {
     }
 
     render() {
-        const { gameMode, isClickX, userName, isSubmit, hostName, type } = this.state;
+        const { gameMode, isClickX, userName, isSubmit, hostName, type, arrHosts } = this.state;
         const areaName = 'area-name'
+        console.log(hostName, type, arrHosts)
         return (
             <div>
                 <h1>Caro Game</h1>
@@ -152,7 +151,7 @@ export default class IBMWatsonPOCHome extends Component {
                     </div>
                 }
 
-                {isSubmit && this.renderListRoom()}
+                {isSubmit && !hostName && this.renderListRoom()}
 
                 {!gameMode && <div>
                     <h3>Select game mode</h3>
@@ -160,6 +159,7 @@ export default class IBMWatsonPOCHome extends Component {
                     <button onClick={() => this.selectGameMode('single')}>Player vs computer</button>
                 </div>
                 }
+                {hostName && <div>{`room ${hostName}`}</div>}
                 { type && hostName && gameMode &&
                     <CaroGame isClickX={isClickX} gameMode={gameMode} hostName={hostName} socket={socket} arrayMap={arrayMap} type={type} />}
             </div >
