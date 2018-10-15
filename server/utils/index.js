@@ -1,16 +1,10 @@
 const utils = {
-  johnRoom(socket) {
-    socket.on('john room', ({ roomName }) => {
-      socket.join(roomName)
-      console.log('vao duoc phong roi', socket.adepter.rooms)
-    })
+  getArrayHost({ currentHosts = {} } = {}) {
+    return Object.keys(currentHosts)
   },
 
-  handleCaroMap(socket) {
-    socket.on('handle caro map', ({ value, roomName }) => {
-      console.log(roomName)
-      socket.broadcast.to(roomName).emit('handle caro map', alue)
-    })
+  changeAllowType(type) {
+    return type === 'X' ? 'O' : 'X'
   }
 }
 

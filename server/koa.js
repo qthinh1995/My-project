@@ -19,7 +19,8 @@ import config from '../internals/config/private'
 import { apiPrefix } from '../internals/config/public'
 import http from 'http'
 // import { isEmpty } from 'lodash'
-import { johnRoom, handleCaroMap } from './utils'
+import { getArrayHost, changeAllowType } from './utils'
+import { get, set, values, filter, cloneDeep } from 'lodash'
 
 
 console.log('config--------------: ', config)
@@ -29,8 +30,8 @@ const env = process.env.NODE_ENV || 'development'
 const server = http.createServer(app.callback())
 const io = require('socket.io')(server);
 // let currentState = {};
-// const arrHosts = [];
-let currentHosts = []
+const currentHosts = {}
+let arrHost = []
 
 // add header `X-Response-Time`
 app.use(convert(responseTime()))
@@ -99,42 +100,50 @@ setInterval(() => {
 io.on('connection', (socket) => {
   console.log('a user connected');
   socket.on('disconnect', () => {
-    currentHosts.splice(socket.currentRoomIndex, 1)
-    io.sockets.emit('get hosts', currentHosts)
-    console.log('user disconnected', socket.currentRoomIndex);
+    // currentHosts.splice(socket.currentRoomIndex, 1)
+    // io.sockets.emit('get hosts', currentHosts)
+    // console.log('user disconnected', socket.currentRoomIndex);
   });
 
   socket.on('submit user name', (userName) => {
     socket.userName = userName
     socket.emit('submit user name', userName)
-    socket.emit('get hosts', currentHosts)
+    socket.emit('get hosts', arrHost)
     console.log('new User: ', userName)
   });
 
-  socket.on('john room', ({ roomName }) => {
+  socket.on('john room', ({ roomName, arrayMap, isCreate = false }) => {
+    if (isCreate) {
+      currentHosts[roomName] = { arrayMap }
+      arrHost = getArrayHost({ currentHosts })
+      console.log('created')
+    }
     currentHosts[socket.currentRoomIndex]
     socket.currentRoomIndex = currentHosts.length;
     socket.join(roomName)
     socket.emit('john room', roomName)
+    const length = get(socket, `adapter.rooms[${roomName}].length`)
+    if (length === 1) {
+      socket.emit('receive ftype', 'X')
+    } else if (length === 2) {
+      socket.emit('receive ftype', 'O')
+    } else {
+      socket.emit('receive ftype', 'view')
+    }
+
+    console.log('vao duoc phong roi', socket.adapter.rooms[roomName].length)
   });
 
-  socket.on('handle caro map', ({ value, roomName }) => {
-    console.log(roomName)
-    console.log('current room number:', socket.adapter.rooms)
-
-    io.sockets.in(roomName).emit('handle caro map', value)
+  socket.on('handle caro map', ({ x, y, roomName, type, isWinner }) => {
+    const { arrayMap } = currentHosts[roomName]
+    const nextType = isWinner ? type : changeAllowType(type)
+    set(arrayMap, `[${y}][${x}].value`, type);
+    io.sockets.in(roomName).emit('handle caro map', { caroMap: arrayMap, nextType, isWinner })
   })
 
-  socket.on('create room', roomName => {
-    currentHosts.push({name: roomName})
-    socket.currentRoomIndex = currentHosts.length;
-    socket.join(roomName)
-    socket.broadcast.emit('get hosts', currentHosts);
-    socket.emit('john room', roomName)
-  })
 
   socket.on('get hosts', () => {
-    io.sockets.emit('get hosts', currentHosts)
+    io.sockets.emit('get hosts', arrHost)
   })
 
   // socket.on('click square', (value) => {
