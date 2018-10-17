@@ -1,14 +1,14 @@
 import React, { Component, PropTypes } from 'react'
 import connect from 'connect-alt'
 // import CaroSquare from './CaroSquare'
-import { get, set, values, filter, cloneDeep } from 'lodash'
+import { get, set, values, filter, cloneDeep, isEmpty } from 'lodash'
 // import socketIOClient from 'socket.io-client';
 
 
 const nearbyPoints = []
 const futureNearbyPoints = {}
 // const squareChecked = []
-const nebourArr = [ 'dlt', 'ht', 'vl', 'dlb', 'drt', 'vr', 'drb', 'hb' ];
+const nebourArr = [ [ 'dlt', 'drb' ], [ 'ht', 'hb' ], [ 'drt', 'dlb' ], [ 'vr', 'vl' ] ];
 let i = 0
 // const endpoint = 'http://localhost:999'
 let socket = {};
@@ -36,40 +36,62 @@ export default class CaroGame extends Component {
     }
 
     onClickSquare({ x, y }) {
-        const { allowType, caroMap } = this.state;
+        const { allowType } = this.state;
         const { hostName, type } = this.props
         // const ftype = isClickX ? 'X' : 'O';
         if (type === allowType) {
             let infoWinner = {}
-            nebourArr.every((dir) => {
-                infoWinner = this.checkWin({ x, y, caroMap, lastPosition: type, dir });
+            nebourArr.every((arrDir) => {
+                infoWinner = this.checkWin({ originX: x, originY: y, x, y, arrDir });
                 if (infoWinner.count === 4) {
                     return false;
                 }
                 return true
             });
-            const isWinner = this.checkFinalWin({ caroMap, infoWinner, type })
+            const isWinner = this.checkFinalWin({ infoWinner, type })
             socket.emit('handle caro map', { x, y, roomName: hostName, type, isWinner })                   
-            // set(caroMap, `[${y}][${x}].value`, ftype);
-            // squareChecked.push({ x, y, value: ftype })
         }
-        
-        
-        // const border = this.getNebours();
-        // this.checkWin2({ border })
-
-        // nearbyPoints = this.positionNearly({ value, x, y, caroMap })
-        // this.setState({ caroMap, isClickX: !isClickX })
     }
 
-    checkFinalWin({ caroMap, infoWinner, type }) {
+    checkWin({ originX, originY, x, y, count = 0, arrDir = [], dir = arrDir[0], arrPositionWin = [] } = {}) {
+        const { caroMap, allowType } = this.state;
+        if ([ 'dlt', 'vl', 'dlb' ].indexOf(dir) > -1) { x--; }
+        if ([ 'drt', 'vr', 'drb' ].indexOf(dir) > -1) { x++; }
+        if ([ 'dlt', 'ht', 'drt' ].indexOf(dir) > -1) { y--; }
+        if ([ 'dlb', 'hb', 'drb' ].indexOf(dir) > -1) { y++; }
+
+		if (get(caroMap, `[${y}][${x}].value`) === allowType) {
+            arrPositionWin.push({ x, y })
+            count++
+            if (count === 4) {
+                arrPositionWin.push({ x: originX, y: originY })
+                return { count, arrPositionWin }
+            } else {
+                return this.checkWin({ originX, originY, x, y, count, arrDir, dir, arrPositionWin })
+            }
+        } else if (!isEmpty(arrDir)) {
+            dir = arrDir[1]
+            return this.checkWin({ originX, originY, x: originX, y: originY, count, dir, arrPositionWin })
+        }
+
+        return { count, arrPositionWin }
+    }
+
+    checkFinalWin({ infoWinner }) {
+        const { caroMap, allowType } = this.state;        
         const { count, arrPositionWin } = infoWinner
+
         if (count === 4) {
+            arrPositionWin.sort((a, b) => {
+                return a.x - b.x ? a.x - b.x : a.y - b.y
+            })
             const constOfChangeX = Math.abs(arrPositionWin[0].x - arrPositionWin[1].x)
             const constOfChangeY = Math.abs(arrPositionWin[0].y - arrPositionWin[1].y)
             const firstValue = { x: arrPositionWin[0].x - constOfChangeX, y: arrPositionWin[0].y - constOfChangeY }
-            const lastValue = { x: arrPositionWin[4].x + constOfChangeX, y: arrPositionWin[0].y + constOfChangeY }
-            return get(caroMap, `[${firstValue.y}][${firstValue.x}].value`) !== type || get(caroMap, `[${lastValue.y}][${lastValue.x}].value`) !== type
+            const lastValue = { x: arrPositionWin[4].x + constOfChangeX, y: arrPositionWin[4].y + constOfChangeY }
+            const type = allowType === 'X' ? 'O' : 'X'
+            return !(get(caroMap, `[${firstValue.y}][${firstValue.x}].value`) === type &&
+                get(caroMap, `[${lastValue.y}][${lastValue.x}].value`) === type)
         }
         return false
     }
@@ -180,30 +202,6 @@ export default class CaroGame extends Component {
         
 		return { x, y };
 	}
-
-    checkWin({ x, y, caroMap, lastPosition, count = 0, dir, arrPositionWin = [] } = {}) {
-        arrPositionWin.push({ x, y })
-        if ([ 'dlt', 'vl', 'dlb' ].indexOf(dir) > -1) { x--; }
-        if ([ 'drt', 'vr', 'drb' ].indexOf(dir) > -1) { x++; }
-        if ([ 'dlt', 'ht', 'drt' ].indexOf(dir) > -1) { y--; }
-        if ([ 'dlb', 'hb', 'drb' ].indexOf(dir) > -1) { y++; }
-
-        if (x < 0 || y < 0) {
-            return { count, arrPositionWin }
-        }
-
-		if (get(caroMap, `[${y}][${x}].value`) === lastPosition) {
-            count++
-            if (count === 4) {
-                arrPositionWin.push({ x, y })
-                return { count, arrPositionWin }
-            } else {
-                return this.checkWin({ x, y, caroMap, lastPosition, count, dir, arrPositionWin })
-            }
-        }
-
-        return { count, arrPositionWin }
-    }
 
     render() {
         const { caroMap, isWinner, allowType } = this.state;
