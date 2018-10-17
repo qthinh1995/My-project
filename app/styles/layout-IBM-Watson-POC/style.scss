@@ -37,8 +37,29 @@ div{
 }
 .caro-board{
 	margin-left: 40px;
+	display: inline-block;
+	.user-board{
+		width: 100%;
+	}
 }
 
+.caro-match{
+	position: relative;
+	.list-user{
+		width: 200px;
+		display: inline-block;
+		border: 1px solid black;
+		vertical-align: top;
+	}
+	.user-chatboard{
+		// width: 500px;
+		// height: 300px;
+		background: rgba(0,0,0,0.5);
+		position: absolute;
+		bottom: 0;
+		opacity: 0.5;
+	}
+}
 .room-panel{
 
 	.list-room{
