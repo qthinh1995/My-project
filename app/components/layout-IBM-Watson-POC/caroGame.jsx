@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react'
 import connect from 'connect-alt'
-// import CaroSquare from './CaroSquare'
+import UserChat from './userChat'
 import { get, set, values, filter, cloneDeep } from 'lodash'
 // import socketIOClient from 'socket.io-client';
 
@@ -209,13 +209,43 @@ export default class CaroGame extends Component {
         const { caroMap, isWinner, allowType } = this.state;
         const { gameMode } = this.props
         return (
-            <div className="caro-board">
-                {!isWinner &&<h2>It's turn: {allowType}</h2>}
-                {isWinner && <h2>The winner is {allowType}</h2>}
-                {/* <button onClick={() => this.simulator()}> Click </button> */}
-                {caroMap.map((row, y) => {
-                    return (
-                        <div className="row" key={y} >
+            <div className="caro-match">
+                {gameMode === 'multy' &&
+                    <div className="list-user">
+                        <h3>Users in room</h3>
+                        <div>user 1</div>
+                        <div>user 2</div>
+                    </div>
+                }
+                <div className="caro-board row">
+                    {/* {!isWinner && <h2>It's turn: {allowType}</h2>} */}
+                    {!isWinner && gameMode === 'multy' &&
+                        <div className="user-board row">
+                        <div className="col-sm-4">
+                            <h3>User 1</h3>
+                            <div className="label">
+                                X
+                            </div>
+                        </div>
+                        <div className="col-sm-4">
+                            <h3>Total time</h3>
+                            <div className="time-counter">
+                                 10:50
+                            </div>
+                        </div>
+                        <div className="col-sm-4">
+                            <h3>User 2</h3>
+                            <div className="label">
+                                O
+                            </div>
+                        </div>
+                        </div>
+                    }
+                    {isWinner && <h2>The winner is {allowType}</h2>}
+                    {/* <button onClick={() => this.simulator()}> Click </button> */}
+                    {caroMap.map((row, y) => {
+                        return (
+                            <div className="row" key={y} >
                             {row.map((square, x) => {
                                 const isNear = !!get(square, 'isNear')
                                 const value = get(square, 'value')
@@ -229,9 +259,11 @@ export default class CaroGame extends Component {
                                 )
                             })}
                         </div>
-                    )
-                })}
-            </div >
+                        )
+                    })}
+                </div>
+                <UserChat/>
+            </div>
         )
     }
 }

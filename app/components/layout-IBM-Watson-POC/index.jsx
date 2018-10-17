@@ -60,7 +60,7 @@ export default class IBMWatsonPOCHome extends Component {
         socket.on('receive ftype', typeReceive => {
             this.setState({ type: typeReceive })
         })
-       
+
         socket.on('submit user name', userName => {
             const roomName = userName + "'s room";
             this.setState({ isSubmit: true, userName, roomName })
@@ -160,7 +160,7 @@ export default class IBMWatsonPOCHome extends Component {
                 </div>
                 }
                 {hostName && <div>{`room ${hostName}`}</div>}
-                { type && hostName && gameMode &&
+                {type && hostName && gameMode &&
                     <CaroGame isClickX={isClickX} gameMode={gameMode} hostName={hostName} socket={socket} arrayMap={arrayMap} type={type} />}
             </div >
         )
