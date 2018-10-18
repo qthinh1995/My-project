@@ -2,6 +2,7 @@ import React, { Component, PropTypes } from 'react'
 import connect from 'connect-alt'
 import CaroGame from './CaroGame'
 import socketIOClient from 'socket.io-client'
+import Login from 'components/layout-IBM-Watson-POC/login'
 
 // const row = 20;
 // const col = 40;
@@ -136,12 +137,13 @@ export default class IBMWatsonPOCHome extends Component {
     }
 
     render() {
-        const { gameMode, isClickX, userName, isSubmit, hostName, type, arrHosts } = this.state;
+        const { gameMode, isClickX, userName, isSubmit, hostName, type } = this.state;
         const areaName = 'area-name'
-        console.log(hostName, type, arrHosts)
         return (
-            <div>
+            <div className="caro-game" >
+                <Login />
                 <h1>Caro Game</h1>
+                <button type="button" className="btn btn-info leave-button">Leave room</button>
                 <label><input type="checkbox" name="vehicle" onChange={(e) => this.toggleDarkTheme(e.target)} />Dark Theme</label>
                 {!isSubmit &&
                     <div className={areaName} >
