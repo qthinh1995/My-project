@@ -19,7 +19,7 @@ export default class IBMWatsonPOCHome extends Component {
     render() {
         return (
             <div className="user-chatboard">
-                <img src="http://i.imgur.com/UwK68Ce.png"/>
+                <img src="http://i.imgur.com/UwK68Ce.png" style={{height: '340px'}}/>
             </div >
         )
     }

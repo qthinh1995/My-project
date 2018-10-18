@@ -140,7 +140,7 @@ export default class IBMWatsonPOCHome extends Component {
         const areaName = 'area-name'
         console.log(hostName, type, arrHosts)
         return (
-            <div>
+            <div className="full-body">
                 <h1>Caro Game</h1>
                 <label><input type="checkbox" name="vehicle" onChange={(e) => this.toggleDarkTheme(e.target)} />Dark Theme</label>
                 {!isSubmit &&

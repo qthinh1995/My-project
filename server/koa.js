@@ -118,6 +118,7 @@ io.on('connection', (socket) => {
       arrHost = getArrayHost({ currentHosts })
       console.log('created')
     }
+    socket.roomName = roomName;
     currentHosts[socket.currentRoomIndex]
     socket.currentRoomIndex = currentHosts.length;
     socket.join(roomName)
@@ -134,16 +135,21 @@ io.on('connection', (socket) => {
     console.log('vao duoc phong roi', socket.adapter.rooms[roomName].length)
   });
 
-  socket.on('handle caro map', ({ x, y, roomName, type, isWinner }) => {
-    const { arrayMap } = currentHosts[roomName]
+  socket.on('handle caro map', ({ x, y, type, isWinner }) => {
+    const { arrayMap } = currentHosts[socket.roomName]
     const nextType = isWinner ? type : changeAllowType(type)
     set(arrayMap, `[${y}][${x}].value`, type);
-    io.sockets.in(roomName).emit('handle caro map', { caroMap: arrayMap, nextType, isWinner })
+    io.sockets.in(socket.roomName).emit('get room current state', { caroMap: arrayMap, nextType, isWinner })
   })
 
 
   socket.on('get hosts', () => {
     io.sockets.emit('get hosts', arrHost)
+  })
+
+  socket.on('get room current state', () => {
+    const { arrayMap, isWinner, nextType } = currentHosts[socket.roomName]
+    io.sockets.in(socket.roomName).emit('get room current state', { caroMap: arrayMap, nextType, isWinner })
   })
 
   // socket.on('click square', (value) => {
@@ -153,11 +159,7 @@ io.on('connection', (socket) => {
   //   io.sockets.emit('click square', value)
   // });
 
-  // if (!isEmpty(currentState)) {
-  //   socket.on('get current state', () => {
-  //     io.sockets.emit('get current state', currentState)
-  //   })
-  // }
+ 
 });
 
 server.listen(999, () => {

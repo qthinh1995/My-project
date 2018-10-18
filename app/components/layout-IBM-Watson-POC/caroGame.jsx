@@ -37,7 +37,7 @@ export default class CaroGame extends Component {
 
     onClickSquare({ x, y }) {
         const { allowType } = this.state;
-        const { hostName, type } = this.props
+        const { type } = this.props
         // const ftype = isClickX ? 'X' : 'O';
         if (type === allowType) {
             let infoWinner = {}
@@ -49,7 +49,7 @@ export default class CaroGame extends Component {
                 return true
             });
             const isWinner = this.checkFinalWin({ infoWinner, type })
-            socket.emit('handle caro map', { x, y, roomName: hostName, type, isWinner })                   
+            socket.emit('handle caro map', { x, y, type, isWinner })                   
         }
     }
 
@@ -96,19 +96,18 @@ export default class CaroGame extends Component {
         return false
     }
 
-    componentDidMount() {
-        // const { caroMap, isClickX } = this.state;
-        // socket.emit('get current state')
+    componentWillMount() {
         socket = this.props.socket;
         this.receive()                
     }
 
+    getRoomStateFromSv() {
+        socket.emit('get current state')
+    }
+
     receive() {
-        socket.on('handle caro map', ({ caroMap = {}, nextType = '', isWinner } = {}) => {
+        socket.on('get current state', ({ caroMap = {}, nextType = '', isWinner } = {}) => {
             this.setState({ caroMap, allowType: nextType, isWinner })
-        })
-        socket.on('get current state', ({ caroMap, isClickX }) => {
-            this.setState({ caroMap, isClickX })
         })
     }
 
