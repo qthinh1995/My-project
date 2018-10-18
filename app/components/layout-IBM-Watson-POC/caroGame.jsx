@@ -102,11 +102,11 @@ export default class CaroGame extends Component {
     }
 
     getRoomStateFromSv() {
-        socket.emit('get current state')
+        socket.emit('get room current state')
     }
 
     receive() {
-        socket.on('get current state', ({ caroMap = {}, nextType = '', isWinner } = {}) => {
+        socket.on('get room current state', ({ caroMap = {}, nextType = '', isWinner } = {}) => {
             this.setState({ caroMap, allowType: nextType, isWinner })
         })
     }

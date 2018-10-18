@@ -1,6 +1,15 @@
 div{
 	font-weight: normal;
 }
+.caro-game {
+	position: relative;
+
+	.leave-button {
+		position: absolute;
+	}
+}
+
+
 .dark-theme{
 	background: black;
 	color: lightseagreen;
