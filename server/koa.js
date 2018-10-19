@@ -112,15 +112,15 @@ io.on('connection', (socket) => {
     console.log('new User: ', userName)
   });
 
-  socket.on('john room', ({ roomName, arrayMap, isCreate = false }) => {
+  socket.on('john room', ({ roomName, caroMap, isCreate = false }) => {
     if (isCreate) {
-      currentHosts[roomName] = { arrayMap }
+      currentHosts[roomName] = { caroMap, nextType: 'X', isWinner: '', roomStatus: 'Waiting', listUser: [ { userName: socket.userName, rule: 'playerX', isHost: true } ] };
       arrHost = getArrayHost({ currentHosts })
       console.log('created')
+    } else {
+      currentHosts[roomName].listUser.push({ userName: socket.userName})
     }
     socket.roomName = roomName;
-    currentHosts[socket.currentRoomIndex]
-    socket.currentRoomIndex = currentHosts.length;
     socket.join(roomName)
     socket.emit('john room', roomName)
     const length = get(socket, `adapter.rooms[${roomName}].length`)
@@ -136,10 +136,10 @@ io.on('connection', (socket) => {
   });
 
   socket.on('handle caro map', ({ x, y, type, isWinner }) => {
-    const { arrayMap } = currentHosts[socket.roomName]
+    const { caroMap } = currentHosts[socket.roomName]
     const nextType = isWinner ? type : changeAllowType(type)
-    set(arrayMap, `[${y}][${x}].value`, type);
-    io.sockets.in(socket.roomName).emit('get room current state', { caroMap: arrayMap, nextType, isWinner })
+    set(caroMap, `[${y}][${x}].value`, type);
+    io.sockets.in(socket.roomName).emit('get room current state', { caroMap, nextType, isWinner })
   })
 
 
@@ -148,8 +148,7 @@ io.on('connection', (socket) => {
   })
 
   socket.on('get room current state', () => {
-    const { arrayMap, isWinner, nextType } = currentHosts[socket.roomName]
-    io.sockets.in(socket.roomName).emit('get room current state', { caroMap: arrayMap, nextType, isWinner })
+    io.sockets.in(socket.roomName).emit('get room current state', currentHosts[socket.roomName])
   })
 
   // socket.on('click square', (value) => {

@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react'
 import connect from 'connect-alt'
 import UserChat from './userChat'
-import { get, set, values, filter, cloneDeep, isEmpty } from 'lodash'
+import { get, set, values, filter, cloneDeep, isEmpty, merge } from 'lodash'
 // import socketIOClient from 'socket.io-client';
 
 
@@ -23,13 +23,13 @@ export default class CaroGame extends Component {
         hostName: PropTypes.string,
         socket: PropTypes.object,
         gameMode: PropTypes.string,
-        arrayMap: PropTypes.array,
+        // arrayMap: PropTypes.array,
         type: PropTypes.string
     }
 
     state = {
         isWinner: false,
-        caroMap: this.props.arrayMap,
+        // caroMap: this.props.arrayMap,
         gameMode: this.props.gameMode,
         endpoint: '',
         allowType: 'X'
@@ -98,7 +98,8 @@ export default class CaroGame extends Component {
 
     componentWillMount() {
         socket = this.props.socket;
-        this.receive()                
+        this.receive();
+        this.getRoomStateFromSv();        
     }
 
     getRoomStateFromSv() {
@@ -106,8 +107,9 @@ export default class CaroGame extends Component {
     }
 
     receive() {
-        socket.on('get room current state', ({ caroMap = {}, nextType = '', isWinner } = {}) => {
-            this.setState({ caroMap, allowType: nextType, isWinner })
+        socket.on('get room current state', (roomState) => {
+            merge(this.state, roomState)
+            this.setState(roomState)
         })
     }
 
@@ -203,15 +205,18 @@ export default class CaroGame extends Component {
 	}
 
     render() {
-        const { caroMap, isWinner, allowType } = this.state;
+        const { caroMap, isWinner, allowType, listUser } = this.state;
         const { gameMode } = this.props
         return (
             <div className="caro-match">
                 {gameMode === 'multy' &&
                     <div className="list-user">
                         <h3>Users in room</h3>
-                        <div>user 1</div>
-                        <div>user 2</div>
+                        { listUser && listUser.map((user, index) => {
+                            return (
+                                <div key={index}>{user.userName}</div>
+                            )
+                        })}
                     </div>
                 }
                 <div className="caro-board row">
@@ -240,7 +245,7 @@ export default class CaroGame extends Component {
                     }
                     {isWinner && <h2>The winner is {allowType}</h2>}
                     {/* <button onClick={() => this.simulator()}> Click </button> */}
-                    {caroMap.map((row, y) => {
+                    {caroMap && caroMap.map((row, y) => {
                         return (
                             <div className="row" key={y} >
                             {row.map((square, x) => {
