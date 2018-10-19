@@ -1,17 +1,17 @@
-import React, { Component } from 'react'
+import React, { Component, PropTypes } from 'react'
 
 export default class Login extends Component {
     static propTypes = {
-      
+      onChangeRenderLogin: PropTypes.func
     }
     static contextTypes = {
        
     }
 
-
     state = {
       userName: '',
-      passWord: ''
+      passWord: '',
+      loginClassName: 'login-form'
     }
 
     onChangeText({ e, key }) {
@@ -22,11 +22,19 @@ export default class Login extends Component {
       }
     }
 
+    onSubmit() {
+      const { onChangeRenderLogin } = this.props
+      const { userName, loginClassName} = this.state
+
+      this.setState({ loginClassName: loginClassName.concat(' login-disappear')})
+      onChangeRenderLogin({ userName })
+    }
+
     render() {
-      const { userName, passWord } = this.state
+      const { userName, passWord, loginClassName } = this.state
  
       return (
-        <div className="login-form" >
+        <div className={loginClassName} >
           <div className="area-login" >
             <div className="area-text" >
               <div className="zone" >
@@ -39,7 +47,7 @@ export default class Login extends Component {
               </div>
             </div>
             <div className="area-submit" >
-              <button type="button" className="btn btn-success">Submit</button>
+              <button type="button" className="btn btn-success" onClick={() => this.onSubmit()} >Submit</button>
             </div>
           </div>
         </div>

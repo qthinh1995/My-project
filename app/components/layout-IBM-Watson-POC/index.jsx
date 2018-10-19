@@ -31,11 +31,11 @@ export default class IBMWatsonPOCHome extends Component {
         hasWinner: false,
         gameMode: 'multy',
         userName: '',
-        isSubmit: false,
         arrHosts: [],
         hostName: '',
         roomName: '',
-        type: ''
+        type: '',
+        isLogin: false
     }
 
     componentWillMount() {
@@ -64,7 +64,7 @@ export default class IBMWatsonPOCHome extends Component {
 
         socket.on('submit user name', userName => {
             const roomName = userName + "'s room";
-            this.setState({ isSubmit: true, userName, roomName })
+            this.setState({ isLogin: true, userName, roomName })
             socket.on('get hosts', currentHosts => {
                 this.setState({ arrHosts: currentHosts })
             })
@@ -111,6 +111,16 @@ export default class IBMWatsonPOCHome extends Component {
         socket.emit('john room', { roomName: item })
     }
 
+    onChangeRenderLogin({ userName }) {
+        setTimeout(() => {
+            if (userName) {
+                socket.emit('submit user name', userName)
+            } else {
+                alert('User name is required');
+            }
+        }, 2000)
+    }
+
     renderListRoom() {
         const { userName, roomName, arrHosts } = this.state;
         return (
@@ -137,24 +147,14 @@ export default class IBMWatsonPOCHome extends Component {
     }
 
     render() {
-        const { gameMode, isClickX, userName, isSubmit, hostName, type } = this.state;
-        const areaName = 'area-name'
+        const { gameMode, isClickX, hostName, type, isLogin } = this.state;
         return (
             <div className="caro-game" >
-                <Login />
+                { !isLogin && <Login onChangeRenderLogin={(value) => this.onChangeRenderLogin(value)} /> }
                 <h1>Caro Game</h1>
                 <button type="button" className="btn btn-info leave-button">Leave room</button>
                 <label><input type="checkbox" name="vehicle" onChange={(e) => this.toggleDarkTheme(e.target)} />Dark Theme</label>
-                {!isSubmit &&
-                    <div className={areaName} >
-                        Your user name:
-                        <input className="input-name" onChange={(e) => this.onChangeName(e)} value={userName} />
-                        <input type="button" value="OK" onClick={() => this.onSubmitName()} />
-                    </div>
-                }
-
-                {isSubmit && !hostName && this.renderListRoom()}
-
+                {isLogin && !hostName && this.renderListRoom()}
                 {!gameMode && <div>
                     <h3>Select game mode</h3>
                     <button onClick={() => this.selectGameMode('multy')}>Multiple players</button>
