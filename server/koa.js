@@ -112,14 +112,15 @@ io.on('connection', (socket) => {
     console.log('new User: ', userName)
   });
 
-  socket.on('john room', ({ roomName, arrayMap, isCreate = false }) => {
+  socket.on('john room', ({ roomName, caroMap, isCreate = false }) => {
     if (isCreate) {
-      currentHosts[roomName] = { arrayMap }
+      currentHosts[roomName] = { caroMap, nextType: 'X', isWinner: '', roomStatus: 'Waiting', listUser: [ { userName: socket.userName, rule: 'playerX', isHost: true } ] };
       arrHost = getArrayHost({ currentHosts })
       console.log('created')
+    } else {
+      currentHosts[roomName].listUser.push({ userName: socket.userName})
     }
-    currentHosts[socket.currentRoomIndex]
-    socket.currentRoomIndex = currentHosts.length;
+    socket.roomName = roomName;
     socket.join(roomName)
     socket.emit('john room', roomName)
     const length = get(socket, `adapter.rooms[${roomName}].length`)
@@ -134,16 +135,20 @@ io.on('connection', (socket) => {
     console.log('vao duoc phong roi', socket.adapter.rooms[roomName].length)
   });
 
-  socket.on('handle caro map', ({ x, y, roomName, type, isWinner }) => {
-    const { arrayMap } = currentHosts[roomName]
+  socket.on('handle caro map', ({ x, y, type, isWinner }) => {
+    const { caroMap } = currentHosts[socket.roomName]
     const nextType = isWinner ? type : changeAllowType(type)
-    set(arrayMap, `[${y}][${x}].value`, type);
-    io.sockets.in(roomName).emit('handle caro map', { caroMap: arrayMap, nextType, isWinner })
+    set(caroMap, `[${y}][${x}].value`, type);
+    io.sockets.in(socket.roomName).emit('get room current state', { caroMap, nextType, isWinner })
   })
 
 
   socket.on('get hosts', () => {
     io.sockets.emit('get hosts', arrHost)
+  })
+
+  socket.on('get room current state', () => {
+    io.sockets.in(socket.roomName).emit('get room current state', currentHosts[socket.roomName])
   })
 
   // socket.on('click square', (value) => {
@@ -153,11 +158,7 @@ io.on('connection', (socket) => {
   //   io.sockets.emit('click square', value)
   // });
 
-  // if (!isEmpty(currentState)) {
-  //   socket.on('get current state', () => {
-  //     io.sockets.emit('get current state', currentState)
-  //   })
-  // }
+ 
 });
 
 server.listen(999, () => {

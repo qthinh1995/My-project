@@ -7,9 +7,9 @@ import Login from 'components/layout-IBM-Watson-POC/login'
 // const row = 20;
 // const col = 40;
 let socket = {}
-const arrayMap = Array(20)
-for (let i = 0; i < arrayMap.length; i++) {
-    arrayMap[i] = Array(40).fill(null)
+const caroMap = Array(20)
+for (let i = 0; i < caroMap.length; i++) {
+    caroMap[i] = Array(40).fill(null)
 }
 
 @connect(({ requests: { inProgress }, session: { session } }) => ({ inProgress, session }))
@@ -94,7 +94,7 @@ export default class IBMWatsonPOCHome extends Component {
     createRoom() {
         const { roomName } = this.state
         if (roomName) {
-            socket.emit('john room', { roomName, arrayMap, isCreate: true })
+            socket.emit('john room', { roomName, caroMap, isCreate: true })
         }
     }
 
@@ -154,7 +154,7 @@ export default class IBMWatsonPOCHome extends Component {
                 }
                 {hostName && <div>{`room ${hostName}`}</div>}
                 {type && hostName && gameMode &&
-                    <CaroGame isClickX={isClickX} gameMode={gameMode} hostName={hostName} socket={socket} arrayMap={arrayMap} type={type} />}
+                    <CaroGame isClickX={isClickX} gameMode={gameMode} hostName={hostName} socket={socket} type={type} />}
             </div >
         )
     }
