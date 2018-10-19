@@ -141,7 +141,7 @@ export default class IBMWatsonPOCHome extends Component {
         const areaName = 'area-name'
         return (
             <div className="caro-game" >
-                {/* <Login /> */}
+                <Login />
                 <h1>Caro Game</h1>
                 <button type="button" className="btn btn-info leave-button">Leave room</button>
                 <label><input type="checkbox" name="vehicle" onChange={(e) => this.toggleDarkTheme(e.target)} />Dark Theme</label>
