@@ -91,15 +91,6 @@ export default class IBMWatsonPOCHome extends Component {
         this.setState({ roomName: e.target.value })
     }
 
-    onSubmitName() {
-        const { userName } = this.state;
-        if (userName) {
-            socket.emit('submit user name', userName)
-        } else {
-            alert('User name is required');
-        }
-    }
-
     createRoom() {
         const { roomName } = this.state
         if (roomName) {
