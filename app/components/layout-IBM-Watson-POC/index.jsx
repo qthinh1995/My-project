@@ -2,7 +2,7 @@ import React, { Component, PropTypes } from 'react'
 import connect from 'connect-alt'
 import CaroGame from './CaroGame'
 import socketIOClient from 'socket.io-client'
-// import Login from 'components/layout-IBM-Watson-POC/login'
+import Login from 'components/layout-IBM-Watson-POC/login'
 
 // const row = 20;
 // const col = 40;
