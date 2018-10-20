@@ -35,7 +35,8 @@ export default class IBMWatsonPOCHome extends Component {
         hostName: '',
         roomName: '',
         type: '',
-        isLogin: false
+        isLogin: false,
+        isCreate: false
     }
 
     componentWillMount() {
@@ -96,6 +97,7 @@ export default class IBMWatsonPOCHome extends Component {
         if (roomName) {
             socket.emit('john room', { roomName, caroMap, isCreate: true })
         }
+        this.setState({ isCreate: true })
     }
 
     johnRoom(item) {
@@ -113,7 +115,7 @@ export default class IBMWatsonPOCHome extends Component {
     }
 
     renderListRoom() {
-        const { userName, roomName, arrHosts } = this.state;
+        const { userName, arrHosts } = this.state;
         return (
             <div>
                 <h2 className={'area-name'} >
@@ -128,22 +130,29 @@ export default class IBMWatsonPOCHome extends Component {
                             )
                         })}
                     </div>
-                    <div className="create-room">
+                    {/* <div className="create-room">
                         <input className="input-name" onChange={(e) => this.onChangeRoomName(e)} value={roomName} />
                         <input type="button" value="Create Room" onClick={() => this.createRoom()} />
-                    </div>
+                    </div> */}
                 </div>
             </div>
         )
     }
 
     render() {
-        const { gameMode, isClickX, hostName, type, isLogin } = this.state;
+        const { gameMode, isClickX, hostName, type, isLogin, isCreate } = this.state;
         return (
             <div className="caro-game" >
                 { !isLogin && <Login onChangeRenderLogin={(value) => this.onChangeRenderLogin(value)} /> }
                 <h1>Caro Game</h1>
-                <button type="button" className="btn btn-info leave-button">Leave room</button>
+                { isCreate &&
+                    <button type="button" className="btn btn-info leave-button">Leave room</button>
+                }
+                { !isCreate &&
+                    <button
+                        type="button" className="btn btn-info create-button" onClick={() => this.createRoom()}>Create room
+                    </button>
+                }                
                 <label><input type="checkbox" name="vehicle" onChange={(e) => this.toggleDarkTheme(e.target)} />Dark Theme</label>
                 {isLogin && !hostName && this.renderListRoom()}
                 {!gameMode && <div>

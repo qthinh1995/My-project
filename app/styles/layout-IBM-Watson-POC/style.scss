@@ -4,8 +4,9 @@ div{
 .caro-game {
 	position: relative;
 
-	.leave-button {
+	.leave-button, .create-button {
 		position: absolute;
+		right: 10px;
 	}
 }
 
