@@ -3,6 +3,7 @@ import connect from 'connect-alt'
 import CaroGame from './CaroGame'
 import socketIOClient from 'socket.io-client'
 import Login from 'components/layout-IBM-Watson-POC/login'
+import { isEmpty } from 'lodash'
 
 // const row = 20;
 // const col = 40;
@@ -32,11 +33,12 @@ export default class IBMWatsonPOCHome extends Component {
         gameMode: 'multy',
         userName: '',
         arrHosts: [],
-        hostName: '',
+        roomState: {},
         roomName: '',
         type: '',
         isLogin: false,
-        isCreate: false
+        isCreate: false,
+        userID: ''
     }
 
     componentWillMount() {
@@ -44,6 +46,10 @@ export default class IBMWatsonPOCHome extends Component {
         flux.getActions('helmet').update({ title: 'home page title', description: 'home page description' })
         flux.getActions('users').index()
         socket = socketIOClient(this.getURL())
+        socket.on('get user id', (userID) => {
+        console.log('userID', userID)
+            this.setState({ userID })
+        })
     }
 
     getURL() {
@@ -55,8 +61,8 @@ export default class IBMWatsonPOCHome extends Component {
     }
 
     socketOn() {
-        socket.on('john room', (hostName) => {
-            this.setState({ hostName })
+        socket.on('john room', (roomState) => {
+            this.setState({ roomState })
         })
 
         socket.on('receive ftype', typeReceive => {
@@ -140,7 +146,7 @@ export default class IBMWatsonPOCHome extends Component {
     }
 
     render() {
-        const { gameMode, isClickX, hostName, type, isLogin, isCreate } = this.state;
+        const { gameMode, roomState, isLogin, isCreate, userID } = this.state;
         return (
             <div className="caro-game" >
                 { !isLogin && <Login onChangeRenderLogin={(value) => this.onChangeRenderLogin(value)} /> }
@@ -154,16 +160,16 @@ export default class IBMWatsonPOCHome extends Component {
                     </button>
                 }                
                 <label><input type="checkbox" name="vehicle" onChange={(e) => this.toggleDarkTheme(e.target)} />Dark Theme</label>
-                {isLogin && !hostName && this.renderListRoom()}
+                {isLogin && isEmpty(roomState) && this.renderListRoom()}
                 {!gameMode && <div>
                     <h3>Select game mode</h3>
                     <button onClick={() => this.selectGameMode('multy')}>Multiple players</button>
                     <button onClick={() => this.selectGameMode('single')}>Player vs computer</button>
                 </div>
                 }
-                {hostName && <div>{`room ${hostName}`}</div>}
-                {type && hostName && gameMode &&
-                    <CaroGame isClickX={isClickX} gameMode={gameMode} hostName={hostName} socket={socket} type={type} />}
+                { !isEmpty(roomState) &&
+                    <CaroGame roomState={roomState} socket={socket} userID={userID} />
+                }
             </div >
         )
     }

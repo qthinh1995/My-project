@@ -98,6 +98,7 @@ setInterval(() => {
 // })
 
 io.on('connection', (socket) => {
+  socket.emit('get user id', cloneDeep(socket.id));
   console.log('a user connected');
   socket.on('disconnect', () => {
     // currentHosts.splice(socket.currentRoomIndex, 1)
@@ -113,32 +114,37 @@ io.on('connection', (socket) => {
   });
 
   socket.on('john room', ({ roomName, caroMap, isCreate = false }) => {
+    console.log('create ',roomName)
     if (isCreate) {
-      currentHosts[roomName] = { caroMap, nextType: 'X', isWinner: '', roomStatus: 'Waiting', listUser: [ { userName: socket.userName, rule: 'playerX', isHost: true } ] };
+      currentHosts[roomName] = { 
+        caroMap, nextType: 'X', isWinner: '', roomStatus: 'Waiting', 
+        listUser: [ { id: socket.id, userName: socket.userName, player: 'X', isHost: true } ] 
+      };
       arrHost = getArrayHost({ currentHosts })
-      console.log('created')
     } else {
-      currentHosts[roomName].listUser.push({ userName: socket.userName})
+      currentHosts[roomName].listUser.push({ id: socket.id, userName: socket.userName })
     }
     socket.roomName = roomName;
     socket.join(roomName)
-    socket.emit('john room', roomName)
-    const length = get(socket, `adapter.rooms[${roomName}].length`)
-    if (length === 1) {
-      socket.emit('receive ftype', 'X')
-    } else if (length === 2) {
-      socket.emit('receive ftype', 'O')
-    } else {
-      socket.emit('receive ftype', 'view')
-    }
-
-    console.log('vao duoc phong roi', socket.adapter.rooms[roomName].length)
+    socket.emit('john room', currentHosts[socket.roomName])
+    socket.broadcast.to(socket.roomName).emit('get room current state', currentHosts[socket.roomName])
+    // const length = get(socket, `adapter.rooms[${roomName}].length`)
+    // if (length === 1) {
+    //   socket.emit('receive ftype', 'X')
+    // } else if (length === 2) {
+    //   socket.emit('receive ftype', 'O')
+    // } else {
+    //   socket.emit('receive ftype', 'view')
+    // }
   });
 
-  socket.on('handle caro map', ({ x, y, type, isWinner }) => {
+  socket.on('handle caro map', ({ x, y, player, isWinner }) => {
+    console.log('emit ', socket.roomName)
+    console.log(io.sockets.adapter.rooms)
     const { caroMap } = currentHosts[socket.roomName]
-    const nextType = isWinner ? type : changeAllowType(type)
-    set(caroMap, `[${y}][${x}].value`, type);
+    const nextType = isWinner ? player : changeAllowType(player)
+    set(caroMap, `[${y}][${x}].value`, player);
+    console.log('handle caro', socket.roomName)
     io.sockets.in(socket.roomName).emit('get room current state', { caroMap, nextType, isWinner })
   })
 
@@ -148,7 +154,8 @@ io.on('connection', (socket) => {
   })
 
   socket.on('get room current state', () => {
-    io.sockets.in(socket.roomName).emit('get room current state', currentHosts[socket.roomName])
+    console.log('receive get room')
+    socket.emit('get room current state', currentHosts[socket.roomName])
   })
 
   // socket.on('click square', (value) => {

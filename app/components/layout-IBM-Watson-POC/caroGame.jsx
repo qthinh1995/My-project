@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react'
 import connect from 'connect-alt'
 import UserChat from './userChat'
-import { get, set, values, filter, cloneDeep, isEmpty, merge } from 'lodash'
+import { get, set, values, filter, cloneDeep, isEmpty, merge, find } from 'lodash'
 // import socketIOClient from 'socket.io-client';
 
 
@@ -16,30 +16,19 @@ let socket = {};
 @connect(({ requests: { inProgress }, session: { session } }) => ({ inProgress, session }))
 export default class CaroGame extends Component {
     static propTypes = {
-        caroMap: PropTypes.array,
-        onClickSquare: PropTypes.func,
-        isClickX: PropTypes.bool,
-        hasWinner: PropTypes.string,
-        hostName: PropTypes.string,
         socket: PropTypes.object,
-        gameMode: PropTypes.string,
-        // arrayMap: PropTypes.array,
-        type: PropTypes.string
+        roomState: PropTypes.object,
+        userID: PropTypes.string
     }
 
     state = {
-        isWinner: false,
-        // caroMap: this.props.arrayMap,
-        gameMode: this.props.gameMode,
-        endpoint: '',
-        allowType: 'X'
+     
     }
 
     onClickSquare({ x, y }) {
-        const { allowType } = this.state;
-        const { type } = this.props
+        const { nextType, thisUser: {player} } = this.state;
         // const ftype = isClickX ? 'X' : 'O';
-        if (type === allowType) {
+        if (player === nextType) {
             let infoWinner = {}
             nebourArr.every((arrDir) => {
                 infoWinner = this.checkWin({ originX: x, originY: y, x, y, arrDir });
@@ -48,19 +37,19 @@ export default class CaroGame extends Component {
                 }
                 return true
             });
-            const isWinner = this.checkFinalWin({ infoWinner, type })
-            socket.emit('handle caro map', { x, y, type, isWinner })                   
+            const isWinner = this.checkFinalWin({ infoWinner, player })
+            socket.emit('handle caro map', { x, y, player, isWinner })                   
         }
     }
 
     checkWin({ originX, originY, x, y, count = 0, arrDir = [], dir = arrDir[0], arrPositionWin = [] } = {}) {
-        const { caroMap, allowType } = this.state;
+        const { caroMap, nextType } = this.state;
         if ([ 'dlt', 'vl', 'dlb' ].indexOf(dir) > -1) { x--; }
         if ([ 'drt', 'vr', 'drb' ].indexOf(dir) > -1) { x++; }
         if ([ 'dlt', 'ht', 'drt' ].indexOf(dir) > -1) { y--; }
         if ([ 'dlb', 'hb', 'drb' ].indexOf(dir) > -1) { y++; }
 
-		if (get(caroMap, `[${y}][${x}].value`) === allowType) {
+		if (get(caroMap, `[${y}][${x}].value`) === nextType) {
             arrPositionWin.push({ x, y })
             count++
             if (count === 4) {
@@ -78,7 +67,7 @@ export default class CaroGame extends Component {
     }
 
     checkFinalWin({ infoWinner }) {
-        const { caroMap, allowType } = this.state;        
+        const { caroMap, nextType } = this.state;        
         const { count, arrPositionWin } = infoWinner
 
         if (count === 4) {
@@ -89,7 +78,7 @@ export default class CaroGame extends Component {
             const constOfChangeY = Math.abs(arrPositionWin[0].y - arrPositionWin[1].y)
             const firstValue = { x: arrPositionWin[0].x - constOfChangeX, y: arrPositionWin[0].y - constOfChangeY }
             const lastValue = { x: arrPositionWin[4].x + constOfChangeX, y: arrPositionWin[4].y + constOfChangeY }
-            const type = allowType === 'X' ? 'O' : 'X'
+            const type = nextType === 'X' ? 'O' : 'X'
             return !(get(caroMap, `[${firstValue.y}][${firstValue.x}].value`) === type &&
                 get(caroMap, `[${lastValue.y}][${lastValue.x}].value`) === type)
         }
@@ -98,8 +87,14 @@ export default class CaroGame extends Component {
 
     componentWillMount() {
         socket = this.props.socket;
+        this.state = this.props.roomState;
+        this.state.userID = this.props.userID;
+
+        const thisUser = find(this.props.roomState.listUser, (o) => {
+            return o.id === this.state.userID;
+        })
+        this.state.thisUser = thisUser;
         this.receive();
-        this.getRoomStateFromSv();        
     }
 
     getRoomStateFromSv() {
@@ -108,8 +103,14 @@ export default class CaroGame extends Component {
 
     receive() {
         socket.on('get room current state', (roomState) => {
-            merge(this.state, roomState)
-            this.setState(roomState)
+            const currentState = cloneDeep(this.state)
+            merge(currentState, roomState)
+
+            const thisUser = find(currentState.listUser, (o) => {
+                return o.id === this.state.userID;
+            })
+            currentState.thisUser = thisUser;
+            this.setState(currentState)
         })
     }
 
@@ -205,11 +206,9 @@ export default class CaroGame extends Component {
 	}
 
     render() {
-        const { caroMap, isWinner, allowType, listUser } = this.state;
-        const { gameMode } = this.props
+        const { caroMap, isWinner, nextType, listUser } = this.state;
         return (
             <div className="caro-match">
-                {gameMode === 'multy' &&
                     <div className="list-user">
                         <h3>Users in room</h3>
                         { listUser && listUser.map((user, index) => {
@@ -220,8 +219,8 @@ export default class CaroGame extends Component {
                     </div>
                 }
                 <div className="caro-board row">
-                    {/* {!isWinner && <h2>It's turn: {allowType}</h2>} */}
-                    {!isWinner && gameMode === 'multy' &&
+                    {/* {!isWinner && <h2>It's turn: {nextType}</h2>} */}
+                    {!isWinner &&
                         <div className="user-board row">
                         <div className="col-sm-4">
                             <h3>User 1</h3>
@@ -243,7 +242,7 @@ export default class CaroGame extends Component {
                         </div>
                         </div>
                     }
-                    {isWinner && <h2>The winner is {allowType}</h2>}
+                    {isWinner && <h2>The winner is {nextType}</h2>}
                     {/* <button onClick={() => this.simulator()}> Click </button> */}
                     {caroMap && caroMap.map((row, y) => {
                         return (
@@ -255,7 +254,7 @@ export default class CaroGame extends Component {
 									<div 
 										className={`square ${isNear ? 'near-square' : ''} `}
 										key={ `${x}-${y}` } 
-										onClick={ isWinner || (value && !isWinner)? '' : () => { gameMode === 'multy' ? this.onClickSquare({x, y}) : this.onClickSquareSingle({x, y}) }}>
+										onClick={ isWinner || (value && !isWinner)? '' : () => {  this.onClickSquare({x, y}) }}>
 											{ value }
 									</div>
                                 )
