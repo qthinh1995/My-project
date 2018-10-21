@@ -213,7 +213,23 @@ export default class CaroGame extends Component {
                         <h3>Users in room</h3>
                         { listUser && listUser.map((user, index) => {
                             return (
-                                <div key={index}>{user.userName}</div>
+                                <div className="user-block" key={index}>
+                                    <span className="user-name">{user.userName}</span>
+                                    {user.player && 
+                                        <span className="user-rule">
+                                            {user.player}
+                                        </span>
+                                    }
+                                    {!user.player && 
+                                        <span className="user-guest">
+                                            Guest
+                                        </span>
+                                    }
+                                    
+                                    {user.isHost &&
+                                        <i className="fa fa-key"></i>
+                                    }
+                                </div>
                             )
                         })}
                     </div>
