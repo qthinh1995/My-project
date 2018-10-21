@@ -45,11 +45,6 @@ export default class IBMWatsonPOCHome extends Component {
         const { flux } = this.context
         flux.getActions('helmet').update({ title: 'home page title', description: 'home page description' })
         flux.getActions('users').index()
-        socket = socketIOClient(this.getURL())
-        socket.on('get user id', (userID) => {
-        console.log('userID', userID)
-            this.setState({ userID })
-        })
     }
 
     getURL() {
@@ -57,10 +52,16 @@ export default class IBMWatsonPOCHome extends Component {
     }
 
     componentDidMount() {
+        socket = socketIOClient(this.getURL())
         this.socketOn()
     }
 
     socketOn() {
+        socket.on('get user id', (userID) => {
+            console.log('userID', userID)
+            this.setState({ userID })
+        })
+
         socket.on('john room', (roomState) => {
             this.setState({ roomState })
         })

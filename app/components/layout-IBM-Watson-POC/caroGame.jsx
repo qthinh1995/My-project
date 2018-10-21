@@ -26,9 +26,9 @@ export default class CaroGame extends Component {
     }
 
     onClickSquare({ x, y }) {
-        const { nextType, thisUser: {player} } = this.state;
+        const { roomStatus, nextType, thisUser: {player} } = this.state;
         // const ftype = isClickX ? 'X' : 'O';
-        if (player === nextType) {
+        if (roomStatus === 'Playing' && player === nextType) {
             let infoWinner = {}
             nebourArr.every((arrDir) => {
                 infoWinner = this.checkWin({ originX: x, originY: y, x, y, arrDir });
@@ -251,12 +251,12 @@ export default class CaroGame extends Component {
                                 const isNear = !!get(square, 'isNear')
                                 const value = get(square, 'value')
                                 return (
-									<div 
-										className={`square ${isNear ? 'near-square' : ''} `}
-										key={ `${x}-${y}` } 
-										onClick={ isWinner || (value && !isWinner)? '' : () => {  this.onClickSquare({x, y}) }}>
-											{ value }
-									</div>
+                                    <div 
+                                        className={`square ${isNear ? 'near-square' : ''} `}
+                                        key={ `${x}-${y}` } 
+                                        onClick={ isWinner || (value && !isWinner)? '' : () => {  this.onClickSquare({x, y}) }}>
+                                            { value }
+                                    </div>
                                 )
                             })}
                         </div>
