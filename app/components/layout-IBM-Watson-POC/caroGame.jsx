@@ -209,31 +209,30 @@ export default class CaroGame extends Component {
         const { caroMap, isWinner, nextType, listUser } = this.state;
         return (
             <div className="caro-match">
-                    <div className="list-user">
-                        <h3>Users in room</h3>
-                        { listUser && listUser.map((user, index) => {
-                            return (
-                                <div className="user-block" key={index}>
-                                    <span className="user-name">{user.userName}</span>
-                                    {user.player && 
-                                        <span className="user-rule">
-                                            {user.player}
-                                        </span>
-                                    }
-                                    {!user.player && 
-                                        <span className="user-guest">
-                                            Guest
-                                        </span>
-                                    }
-                                    
-                                    {user.isHost &&
-                                        <i className="fa fa-key"></i>
-                                    }
-                                </div>
-                            )
-                        })}
-                    </div>
-                }
+                <div className="list-user">
+                    <h3 className="list-user-tittle">Users in room</h3>
+                    { listUser && listUser.map((user, index) => {
+                        return (
+                            <div className={`user-block ${user.id === this.state.thisUser.id ? 'this-user' : ''}`} key={index}>
+                                <span className="user-name">{user.userName}</span>
+                                {user.player && 
+                                    <span className="user-rule">
+                                        {user.player}
+                                    </span>
+                                }
+                                {!user.player && 
+                                    <span className="user-guest">
+                                        Guest
+                                    </span>
+                                }
+                                
+                                {user.isHost &&
+                                    <i className="fa fa-key"></i>
+                                }
+                            </div>
+                        )
+                    })}
+                </div>
                 <div className="caro-board row">
                     {/* {!isWinner && <h2>It's turn: {nextType}</h2>} */}
                     {!isWinner &&
@@ -279,7 +278,7 @@ export default class CaroGame extends Component {
                         )
                     })}
                 </div>
-                <UserChat/>
+                <UserChat socket={socket}/>
             </div>
         )
     }

@@ -66,10 +66,6 @@ export default class IBMWatsonPOCHome extends Component {
             this.setState({ roomState })
         })
 
-        socket.on('receive ftype', typeReceive => {
-            this.setState({ type: typeReceive })
-        })
-
         socket.on('submit user name', userName => {
             const roomName = userName + "'s room";
             this.setState({ isLogin: true, userName, roomName })

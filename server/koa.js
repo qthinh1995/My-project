@@ -88,22 +88,12 @@ setInterval(() => {
   logtofile(new Date())
 }, 1000 * 60 * 60)
 
-// arrHosts.forEach(item => {
-//   const nsp = io.of(item)
-//   nsp.on('connection', (socket) => {
-//     socket.on('john room', () => {
-//       nsp.sockets.emit('john room')
-//     })
-//   })
-// })
 
 io.on('connection', (socket) => {
   socket.emit('get user id', cloneDeep(socket.id));
   console.log('a user connected');
   socket.on('disconnect', () => {
-    // currentHosts.splice(socket.currentRoomIndex, 1)
-    // io.sockets.emit('get hosts', currentHosts)
-    // console.log('user disconnected', socket.currentRoomIndex);
+
   });
 
   socket.on('submit user name', (userName) => {
@@ -121,6 +111,7 @@ io.on('connection', (socket) => {
         listUser: [ { id: socket.id, userName: socket.userName, player: 'X', isHost: true } ] 
       };
       arrHost = getArrayHost({ currentHosts })
+      io.sockets.emit('get hosts', arrHost)
     } else {
       currentHosts[roomName].listUser.push({ id: socket.id, userName: socket.userName })
     }
@@ -128,14 +119,6 @@ io.on('connection', (socket) => {
     socket.join(roomName)
     socket.emit('john room', currentHosts[socket.roomName])
     socket.broadcast.to(socket.roomName).emit('get room current state', currentHosts[socket.roomName])
-    // const length = get(socket, `adapter.rooms[${roomName}].length`)
-    // if (length === 1) {
-    //   socket.emit('receive ftype', 'X')
-    // } else if (length === 2) {
-    //   socket.emit('receive ftype', 'O')
-    // } else {
-    //   socket.emit('receive ftype', 'view')
-    // }
   });
 
   socket.on('handle caro map', ({ x, y, player, isWinner }) => {
@@ -154,17 +137,13 @@ io.on('connection', (socket) => {
   })
 
   socket.on('get room current state', () => {
-    console.log('receive get room')
     socket.emit('get room current state', currentHosts[socket.roomName])
   })
 
-  // socket.on('click square', (value) => {
-  //   value.isClickX = !value.isClickX;
-  //   currentState = value;
-
-  //   io.sockets.emit('click square', value)
-  // });
-
+  socket.on('send message to room', (message) => {
+    console.log('receive message', message)
+    io.sockets.in(socket.roomName).emit('send message to room', { userName: socket.userName, message })
+  })
  
 });
 

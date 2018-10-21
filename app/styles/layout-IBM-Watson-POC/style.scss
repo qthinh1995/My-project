@@ -69,6 +69,11 @@ div{
 		border-radius: 5px;
 		box-shadow: 0px 0px 2px 1px lightsteelblue;
 
+		.list-user-tittle{
+			margin-left: 15px;
+			color: #003d7d;
+		}
+
 		.user-block{
 		    height: 55px;
 			padding: 7px;
@@ -80,6 +85,13 @@ div{
 			border-radius: 5px;
 			box-shadow: 0px 0px 2px 1px #49abe8;
 			color: #0048a5;
+
+			&.this-user{
+				color: #ff4900;
+				background: #ffefca;
+				border: 1px solid #e89049;
+				box-shadow: 0px 0px 2px 1px #e89049;
+			}
 
 			.user-name{
 				font-size: 22px;
@@ -117,10 +129,21 @@ div{
 	.user-chatboard{
 		// width: 500px;
 		// height: 300px;
-		background: rgba(0,0,0,0.5);
+		background: rgba(255, 255, 255, 0.5);
 		position: absolute;
 		bottom: 0;
-		opacity: 0.5;
+		border: 1px solid;
+		
+		.message-area{
+			height: 100%;
+			overflow: auto;
+			padding-bottom: 30px;
+		}
+		
+		.type-area{
+			position: absolute;
+			bottom: 0;
+		}
 	}
 }
 .room-panel{
