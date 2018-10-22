@@ -2,7 +2,7 @@ import React, { Component, PropTypes } from 'react'
 import connect from 'connect-alt'
 import CaroGame from './CaroGame'
 import socketIOClient from 'socket.io-client'
-import Login from 'components/layout-IBM-Watson-POC/login'
+// import Login from 'components/layout-IBM-Watson-POC/login'
 
 // const row = 20;
 // const col = 40;
@@ -33,7 +33,7 @@ export default class IBMWatsonPOCHome extends Component {
         userName: '',
         arrHosts: [],
         hostName: '',
-        roomName: '',
+        roomName: 'tuan',
         type: '',
         isLogin: false,
         isCreate: false
@@ -140,10 +140,10 @@ export default class IBMWatsonPOCHome extends Component {
     }
 
     render() {
-        const { gameMode, isClickX, hostName, type, isLogin, isCreate } = this.state;
+        const { gameMode, isClickX, hostName, type, isCreate } = this.state;
         return (
             <div className="caro-game" >
-                { !isLogin && <Login onChangeRenderLogin={(value) => this.onChangeRenderLogin(value)} /> }
+                {/* { !isLogin && <Login onChangeRenderLogin={(value) => this.onChangeRenderLogin(value)} /> } */}
                 <h1>Caro Game</h1>
                 { isCreate &&
                     <button type="button" className="btn btn-info leave-button">Leave room</button>
@@ -154,7 +154,7 @@ export default class IBMWatsonPOCHome extends Component {
                     </button>
                 }                
                 <label><input type="checkbox" name="vehicle" onChange={(e) => this.toggleDarkTheme(e.target)} />Dark Theme</label>
-                {isLogin && !hostName && this.renderListRoom()}
+                {true && !hostName && this.renderListRoom()}
                 {!gameMode && <div>
                     <h3>Select game mode</h3>
                     <button onClick={() => this.selectGameMode('multy')}>Multiple players</button>

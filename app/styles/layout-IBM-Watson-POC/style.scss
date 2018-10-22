@@ -8,6 +8,59 @@ div{
 		position: absolute;
 		right: 10px;
 	}
+
+	.caro-match{
+		position: relative;
+		display: flex;
+		flex-direction: row;
+	
+		.list-user {
+			flex: 1;
+
+			.list-area {
+				border: 1px solid black;
+				margin-right: 10px
+			}
+		}
+	
+		.caro-board{
+			display: inline-block;
+
+			.row-caro{
+				width: max-content;
+				display: flex;
+			}
+		}
+	
+		.user-board{
+			flex: 1;
+			display: flex;
+			flex-direction: column;
+
+			.user-area {
+				flex: 2;
+				display: flex;
+
+				&.time-area {
+					flex: 1
+				}
+
+				.center {
+					margin: auto 0;
+					margin-left: 10px;
+				}
+			}
+		}
+	
+		.user-chatboard{
+			// width: 500px;
+			// height: 300px;
+			background: rgba(0,0,0,0.5);
+			position: absolute;
+			bottom: 0;
+			opacity: 0.5;
+		}
+	}
 }
 
 
@@ -25,9 +78,7 @@ div{
 		background: black
 	}
 }
-.row{
-	width: max-content;
-}
+
 .square{
 	border: 1px solid #CCC;
 	height: 30px;
@@ -45,31 +96,7 @@ div{
 		background: blue
 	}
 }
-.caro-board{
-	margin-left: 40px;
-	display: inline-block;
-	.user-board{
-		width: 100%;
-	}
-}
 
-.caro-match{
-	position: relative;
-	.list-user{
-		width: 200px;
-		display: inline-block;
-		border: 1px solid black;
-		vertical-align: top;
-	}
-	.user-chatboard{
-		// width: 500px;
-		// height: 300px;
-		background: rgba(0,0,0,0.5);
-		position: absolute;
-		bottom: 0;
-		opacity: 0.5;
-	}
-}
 .room-panel{
 
 	.list-room{

@@ -211,43 +211,23 @@ export default class CaroGame extends Component {
             <div className="caro-match">
                 {gameMode === 'multy' &&
                     <div className="list-user">
-                        <h3>Users in room</h3>
-                        { listUser && listUser.map((user, index) => {
-                            return (
-                                <div key={index}>{user.userName}</div>
-                            )
-                        })}
+                        <div className="list-area" >
+                            <div>Users in room</div>
+                            { listUser && listUser.map((user, index) => {
+                                return (
+                                    <div key={index}>{user.userName}</div>
+                                )
+                            })}
+                        </div>
                     </div>
                 }
-                <div className="caro-board row">
+                <div className="caro-board">
                     {/* {!isWinner && <h2>It's turn: {allowType}</h2>} */}
-                    {!isWinner && gameMode === 'multy' &&
-                        <div className="user-board row">
-                        <div className="col-sm-4">
-                            <h3>User 1</h3>
-                            <div className="label">
-                                X
-                            </div>
-                        </div>
-                        <div className="col-sm-4">
-                            <h3>Total time</h3>
-                            <div className="time-counter">
-                                 10:50
-                            </div>
-                        </div>
-                        <div className="col-sm-4">
-                            <h3>User 2</h3>
-                            <div className="label">
-                                O
-                            </div>
-                        </div>
-                        </div>
-                    }
                     {isWinner && <h2>The winner is {allowType}</h2>}
                     {/* <button onClick={() => this.simulator()}> Click </button> */}
                     {caroMap && caroMap.map((row, y) => {
                         return (
-                            <div className="row" key={y} >
+                            <div className="row-caro" key={y} >
                             {row.map((square, x) => {
                                 const isNear = !!get(square, 'isNear')
                                 const value = get(square, 'value')
@@ -264,6 +244,34 @@ export default class CaroGame extends Component {
                         )
                     })}
                 </div>
+                {!isWinner && gameMode === 'multy' &&
+                    <div className="user-board">
+                        <div className="user-area">
+                            <div className="center" >
+                                <div>User 1</div>
+                                <div className="label">
+                                    X
+                                </div>
+                            </div>
+                        </div>
+                        <div className="user-area time-area">
+                            <div className="center" >
+                                <div>Total time</div>
+                                <div className="time-counter">
+                                        10:50
+                                </div>
+                            </div>
+                        </div>
+                        <div className="user-area">
+                            <div className="center" > 
+                                <div>User 2</div>
+                                <div className="label">
+                                    O
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
                 <UserChat/>
             </div>
         )
