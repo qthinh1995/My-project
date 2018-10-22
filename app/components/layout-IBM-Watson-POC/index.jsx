@@ -2,7 +2,8 @@ import React, { Component, PropTypes } from 'react'
 import connect from 'connect-alt'
 import CaroGame from './CaroGame'
 import socketIOClient from 'socket.io-client'
-// import Login from 'components/layout-IBM-Watson-POC/login'
+import Login from 'components/layout-IBM-Watson-POC/login'
+import { isEmpty } from 'lodash'
 
 // const row = 20;
 // const col = 40;
@@ -32,18 +33,18 @@ export default class IBMWatsonPOCHome extends Component {
         gameMode: 'multy',
         userName: '',
         arrHosts: [],
-        hostName: '',
-        roomName: 'tuan',
+        roomState: {},
+        roomName: '',
         type: '',
         isLogin: false,
-        isCreate: false
+        isCreate: false,
+        userID: ''
     }
 
     componentWillMount() {
         const { flux } = this.context
-        flux.getActions('helmet').update({ title: 'home page title', description: 'home page description' })
+        flux.getActions('helmet')
         flux.getActions('users').index()
-        socket = socketIOClient(this.getURL())
     }
 
     getURL() {
@@ -51,16 +52,18 @@ export default class IBMWatsonPOCHome extends Component {
     }
 
     componentDidMount() {
+        socket = socketIOClient(this.getURL())
         this.socketOn()
     }
 
     socketOn() {
-        socket.on('john room', (hostName) => {
-            this.setState({ hostName })
+        socket.on('get user id', (userID) => {
+            console.log('userID', userID)
+            this.setState({ userID })
         })
 
-        socket.on('receive ftype', typeReceive => {
-            this.setState({ type: typeReceive })
+        socket.on('john room', (roomState) => {
+            this.setState({ roomState })
         })
 
         socket.on('submit user name', userName => {
@@ -126,7 +129,7 @@ export default class IBMWatsonPOCHome extends Component {
                         <h3>List room</h3>
                         {arrHosts && arrHosts.map((item, i) => {
                             return (
-                                <div key={i} onClick={() => this.johnRoom(item)} > {item} </div>
+                                <div key={i} onClick={() => this.johnRoom(item.idRoom)} > {item.roomName} </div>
                             )
                         })}
                     </div>
@@ -140,11 +143,10 @@ export default class IBMWatsonPOCHome extends Component {
     }
 
     render() {
-        const { gameMode, isClickX, hostName, type, isCreate } = this.state;
+        const { gameMode, roomState, isLogin, isCreate, userID } = this.state;
         return (
             <div className="caro-game" >
-                {/* { !isLogin && <Login onChangeRenderLogin={(value) => this.onChangeRenderLogin(value)} /> } */}
-                <h1>Caro Game</h1>
+                { !isLogin && <Login onChangeRenderLogin={(value) => this.onChangeRenderLogin(value)} /> }
                 { isCreate &&
                     <button type="button" className="btn btn-info leave-button">Leave room</button>
                 }
@@ -154,16 +156,16 @@ export default class IBMWatsonPOCHome extends Component {
                     </button>
                 }                
                 <label><input type="checkbox" name="vehicle" onChange={(e) => this.toggleDarkTheme(e.target)} />Dark Theme</label>
-                {true && !hostName && this.renderListRoom()}
+                {isLogin && isEmpty(roomState) && this.renderListRoom()}
                 {!gameMode && <div>
                     <h3>Select game mode</h3>
                     <button onClick={() => this.selectGameMode('multy')}>Multiple players</button>
                     <button onClick={() => this.selectGameMode('single')}>Player vs computer</button>
                 </div>
                 }
-                {hostName && <div>{`room ${hostName}`}</div>}
-                {type && hostName && gameMode &&
-                    <CaroGame isClickX={isClickX} gameMode={gameMode} hostName={hostName} socket={socket} type={type} />}
+                { !isEmpty(roomState) &&
+                    <CaroGame roomState={roomState} socket={socket} userID={userID} />
+                }
             </div >
         )
     }

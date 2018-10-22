@@ -31,7 +31,7 @@ const server = http.createServer(app.callback())
 const io = require('socket.io')(server);
 // let currentState = {};
 const currentHosts = {}
-let arrHost = []
+const infoHost = []
 
 // add header `X-Response-Time`
 app.use(convert(responseTime()))
@@ -88,77 +88,65 @@ setInterval(() => {
   logtofile(new Date())
 }, 1000 * 60 * 60)
 
-// arrHosts.forEach(item => {
-//   const nsp = io.of(item)
-//   nsp.on('connection', (socket) => {
-//     socket.on('john room', () => {
-//       nsp.sockets.emit('john room')
-//     })
-//   })
-// })
 
 io.on('connection', (socket) => {
+  socket.emit('get user id', cloneDeep(socket.id));
   console.log('a user connected');
   socket.on('disconnect', () => {
-    // currentHosts.splice(socket.currentRoomIndex, 1)
-    // io.sockets.emit('get hosts', currentHosts)
-    // console.log('user disconnected', socket.currentRoomIndex);
+
   });
 
   socket.on('submit user name', (userName) => {
     socket.userName = userName
     socket.emit('submit user name', userName)
-    socket.emit('get hosts', arrHost)
+    socket.emit('get hosts', infoHost)
     console.log('new User: ', userName)
   });
 
   socket.on('john room', ({ roomName, caroMap, isCreate = false }) => {
+    console.log('create ', roomName)
+    socket.roomName = roomName
     if (isCreate) {
-      currentHosts[roomName] = { caroMap, nextType: 'X', isWinner: '', roomStatus: 'Waiting', listUser: [ { userName: socket.userName, rule: 'playerX', isHost: true } ] };
-      arrHost = getArrayHost({ currentHosts })
-      console.log('created')
+      console.log(socket.id)
+      socket.roomName = socket.id
+      currentHosts[socket.id] = { 
+        caroMap, nextType: 'X', isWinner: '', roomStatus: 'Waiting', 
+        listUser: [ { id: socket.id, userName: socket.userName, player: 'X', isHost: true } ] 
+      };
+      infoHost.push({ idRoom: socket.id, roomName })
+      io.sockets.emit('get hosts', infoHost)
     } else {
-      currentHosts[roomName].listUser.push({ userName: socket.userName})
-    }
-    socket.roomName = roomName;
-    socket.join(roomName)
-    socket.emit('john room', roomName)
-    const length = get(socket, `adapter.rooms[${roomName}].length`)
-    if (length === 1) {
-      socket.emit('receive ftype', 'X')
-    } else if (length === 2) {
-      socket.emit('receive ftype', 'O')
-    } else {
-      socket.emit('receive ftype', 'view')
+      currentHosts[roomName].listUser.push({ id: socket.id, userName: socket.userName })
     }
 
-    console.log('vao duoc phong roi', socket.adapter.rooms[roomName].length)
+    socket.join(roomName)
+    socket.emit('john room', currentHosts[socket.id])
+    socket.broadcast.to(socket.roomName).emit('get room current state', currentHosts[socket.id])
   });
 
-  socket.on('handle caro map', ({ x, y, type, isWinner }) => {
+  socket.on('handle caro map', ({ x, y, player, isWinner }) => {
+    console.log('emit ', socket.roomName)
+    console.log(io.sockets.adapter.rooms)
     const { caroMap } = currentHosts[socket.roomName]
-    const nextType = isWinner ? type : changeAllowType(type)
-    set(caroMap, `[${y}][${x}].value`, type);
+    const nextType = isWinner ? player : changeAllowType(player)
+    set(caroMap, `[${y}][${x}].value`, player);
+    console.log('handle caro', socket.roomName)
     io.sockets.in(socket.roomName).emit('get room current state', { caroMap, nextType, isWinner })
   })
 
 
   socket.on('get hosts', () => {
-    io.sockets.emit('get hosts', arrHost)
+    io.sockets.emit('get hosts', infoHost)
   })
 
   socket.on('get room current state', () => {
-    io.sockets.in(socket.roomName).emit('get room current state', currentHosts[socket.roomName])
+    socket.emit('get room current state', currentHosts[socket.roomName])
   })
 
-  // socket.on('click square', (value) => {
-  //   value.isClickX = !value.isClickX;
-  //   currentState = value;
-
-  //   io.sockets.emit('click square', value)
-  // });
-
- 
+  socket.on('send message to room', (message) => {
+    console.log('receive message', message)
+    io.sockets.in(socket.roomName).emit('send message to room', { userName: socket.userName, message })
+  })
 });
 
 server.listen(999, () => {

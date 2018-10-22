@@ -14,7 +14,7 @@ class HelmetStore {
 
     this.state = {
       title: '',
-      titleBase: 'Example project - ',
+      titleBase: 'Caro game',
       description: 'Example project : description',
       statusCode: 200,
       config: configprivate,
