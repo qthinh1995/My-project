@@ -97,10 +97,6 @@ export default class CaroGame extends Component {
         this.receive();
     }
 
-    getRoomStateFromSv() {
-        socket.emit('get room current state')
-    }
-
     receive() {
         socket.on('get room current state', (roomState) => {
             const currentState = cloneDeep(this.state)
@@ -109,6 +105,7 @@ export default class CaroGame extends Component {
             const thisUser = find(currentState.listUser, (o) => {
                 return o.id === this.state.userID;
             })
+
             currentState.thisUser = thisUser;
             this.setState(currentState)
         })
@@ -203,17 +200,23 @@ export default class CaroGame extends Component {
         }
         
 		return { x, y };
-	}
+    }
+    
+    selectType(type) {
+        socket.emit('change type', { type })
+    }
 
     render() {
-        const { caroMap, isWinner, nextType, listUser } = this.state;
+        const { caroMap, playerWinner, listUser, thisUser, availableType: { isTypeX, isTypeY } } = this.state;
+        console.log(thisUser.player, this.state.availableType)
+
         return (
             <div className="caro-match">
                 <div className="list-user">
                     <h3 className="list-user-tittle">Users in room</h3>
                     {listUser && listUser.map((user, index) => {
                         return (
-                            <div className={`user-block ${user.id === this.state.thisUser.id ? 'this-user' : ''}`} key={index}>
+                            <div className={`user-block ${user.id === thisUser.id ? 'this-user' : ''}`} key={index}>
                                 <span className="user-name">{user.userName}</span>
                                 {user.player &&
                                     <span className="user-rule">
@@ -235,7 +238,7 @@ export default class CaroGame extends Component {
                 </div>
                 <div className="caro-board">
                     {/* {!isWinner && <h2>It's turn: {nextType}</h2>} */}
-                    {isWinner && <h2>The winner is {nextType}</h2>}
+                    {playerWinner && <h2>The winner is {playerWinner}</h2>}
                     {/* <button onClick={() => this.simulator()}> Click </button> */}
                     {caroMap && caroMap.map((row, y) => {
                         return (
@@ -245,9 +248,9 @@ export default class CaroGame extends Component {
                                     const value = get(square, 'value')
                                     return (
                                         <div
-                                            className={`square ${isNear ? 'near-square' : ''} `}
+                                             className={`square ${isNear ? 'near-square' : ''} `}
                                             key={`${x}-${y}`}
-                                            onClick={isWinner || (value && !isWinner) ? '' : () => { this.onClickSquare({ x, y }) }}>
+                                            onClick={playerWinner || (value && !playerWinner) ? '' : () => { this.onClickSquare({ x, y }) }}>
                                             {value}
                                         </div>
                                     )
@@ -256,34 +259,32 @@ export default class CaroGame extends Component {
                         )
                     })}
                 </div>
-                {!isWinner &&
-                    <div className="user-board">
-                        <div className="user-area">
-                            <div className="center" >
-                                <div>User 1</div>
-                                <div className="label">
-                                    X
-                                </div>
-                            </div>
-                        </div>
-                        <div className="user-area time-area">
-                            <div className="center" >
-                                <div>Total time</div>
-                                <div className="time-counter">
-                                    10:50
-                                </div>
-                            </div>
-                        </div>
-                        <div className="user-area">
-                            <div className="center" >
-                                <div>User 2</div>
-                                <div className="label">
-                                    O
-                                </div>
+                <div className="user-board">
+                    <div className={`user-area ${isTypeX > -1 ? 'choose-typeX' : ''}`} onClick={isTypeX > -1 ? '' : () => this.selectType('X')} >
+                        <div className="center" >
+                            <div>User 1</div>
+                            <div className="label">
+                                X
                             </div>
                         </div>
                     </div>
-                }
+                    <div className="user-area time-area">
+                        <div className="center" >
+                            <div>Total time</div>
+                            <div className="time-counter">
+                                10:50
+                            </div>
+                        </div>
+                    </div>
+                    <div className={`user-area ${isTypeY > -1 ? 'choose-typeY' : ''}`} onClick={isTypeY > -1 ? '' : () => this.selectType('O')} >
+                        <div className="center" >
+                            <div>User 2</div>
+                            <div className="label">
+                                O
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <UserChat socket={socket} />
             </div> 
         )

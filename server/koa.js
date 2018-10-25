@@ -19,8 +19,9 @@ import config from '../internals/config/private'
 import { apiPrefix } from '../internals/config/public'
 import http from 'http'
 // import { isEmpty } from 'lodash'
-import { getArrayHost, changeAllowType } from './utils'
-import { get, set, values, filter, cloneDeep } from 'lodash'
+import { getArrayHost, changeAllowType, getIndexOfArray } from './utils'
+import { get, set, values, filter, cloneDeep, isEmpty } from 'lodash'
+import crypto from 'crypto'
 
 
 console.log('config--------------: ', config)
@@ -92,9 +93,52 @@ setInterval(() => {
 io.on('connection', (socket) => {
   socket.emit('get user id', cloneDeep(socket.id));
   console.log('a user connected');
+  function leaveRoom() {
+    if (!isEmpty(currentHosts[socket.roomName])) {
+    const { listUser = [], availableType = {} } = currentHosts[socket.roomName]
+    let { roomStatus } = currentHosts[socket.roomName]
+      const index = getIndexOfArray({ listUser, id: socket.id })
+      if (index > -1) {
+        const { player } = listUser[index]
+        if (index === 0 && listUser.length > 1) {
+          listUser[1].isHost = true
+        }
+  
+        if (player === 'X') {
+          availableType.isTypeX = -1
+          roomStatus = 'Waiting'
+        } else if (player === 'O') {
+          availableType.isTypeY = -1
+          roomStatus = 'Waiting'
+        }
+  
+        listUser.splice(index, 1)
+      }
+      currentHosts[socket.roomName].listUser = listUser
+      currentHosts[socket.roomName].availableType = availableType
+      currentHosts[socket.roomName].roomStatus = roomStatus
+      socket.broadcast.to(socket.roomName).emit('get room current state', { availableType, listUser, roomStatus })
+      socket.leave(socket.roomName)
+      if (listUser.length === 0) {
+        delete currentHosts[socket.roomName]
+        infoHost.every((item, i) => {
+          if (item.idRoom === socket.roomName) {
+            infoHost.splice(i, 1)
+            return false
+          }
+          return true
+        })
+        io.sockets.emit('get hosts', infoHost)
+      }
+    }
+  }
   socket.on('disconnect', () => {
-
+    leaveRoom()
   });
+
+  socket.on('leave room', () => {
+    leaveRoom()
+  })
 
   socket.on('submit user name', (userName) => {
     socket.userName = userName
@@ -108,39 +152,88 @@ io.on('connection', (socket) => {
     socket.roomName = roomName
     if (isCreate) {
       console.log(socket.id)
-      socket.roomName = socket.id
-      currentHosts[socket.id] = { 
-        caroMap, nextType: 'X', isWinner: '', roomStatus: 'Waiting', 
+      const date = new Date()
+      socket.roomName = crypto.createHash('md5').update(date.getTime().toString()).digest('hex')
+      currentHosts[socket.roomName] = { 
+        availableType: { isTypeX: 0, isTypeY: -1 }, caroMap, nextType: 'X', playerWinner: '', roomStatus: 'Waiting', 
         listUser: [ { id: socket.id, userName: socket.userName, player: 'X', isHost: true } ] 
       };
-      infoHost.push({ idRoom: socket.id, roomName })
+      infoHost.push({ idRoom: socket.roomName, roomName })
       io.sockets.emit('get hosts', infoHost)
     } else {
-      currentHosts[roomName].listUser.push({ id: socket.id, userName: socket.userName })
+      currentHosts[socket.roomName].listUser.push({ id: socket.id, userName: socket.userName })
     }
 
-    socket.join(roomName)
-    socket.emit('john room', currentHosts[socket.id])
-    socket.broadcast.to(socket.roomName).emit('get room current state', currentHosts[socket.id])
+    socket.join(socket.roomName)
+    socket.emit('john room', currentHosts[socket.roomName])
+    socket.broadcast.to(socket.roomName).emit('get room current state', currentHosts[socket.roomName])
   });
 
   socket.on('handle caro map', ({ x, y, player, isWinner }) => {
     console.log('emit ', socket.roomName)
     console.log(io.sockets.adapter.rooms)
     const { caroMap } = currentHosts[socket.roomName]
-    const nextType = isWinner ? player : changeAllowType(player)
+    let { playerWinner } = currentHosts[socket.roomName]
+    const nextType = changeAllowType(player)
     set(caroMap, `[${y}][${x}].value`, player);
+    currentHosts[socket.roomName].nextType = nextType
+    currentHosts[socket.roomName].caroMap = caroMap
+    playerWinner = isWinner ? socket.userName : playerWinner
+    console.log(isWinner, playerWinner)
+    currentHosts[socket.roomName].playerWinner = playerWinner
     console.log('handle caro', socket.roomName)
-    io.sockets.in(socket.roomName).emit('get room current state', { caroMap, nextType, isWinner })
+    io.sockets.in(socket.roomName).emit('get room current state', { caroMap, nextType, playerWinner })
   })
 
+  socket.on('change type', ({ type }) => {
+    const { listUser, availableType } = currentHosts[socket.roomName]
+    let roomStatus = 'Waiting'
+    const index = getIndexOfArray({ listUser, id: socket.id })
+    const item = listUser[index]
+    if (item.player === 'X') {
+      availableType.isTypeX = -1
+    } else if (item.player === 'O') {
+      availableType.isTypeY = -1
+    }
+
+    if (type === 'X') {
+      availableType.isTypeX = index
+    } else if (type === 'O') {
+      availableType.isTypeY = index
+    }
+
+    listUser[index].player = type
+    // listUser.every((item, index) => {
+    //   if (item.id === socket.id) {
+        // if (item.player === 'X') {
+        //   availableType.isTypeX = -1
+        // } else if (item.player === 'O') {
+        //   availableType.isTypeY = -1
+        // }
+
+        // if (type === 'X') {
+        //   availableType.isTypeX = index
+        // } else if (type === 'O') {
+        //   availableType.isTypeY = index
+        // }
+    //     item.player = type
+    //     return false
+    //   }
+    //   return true
+    // })
+    if (availableType.isTypeX > -1 && availableType.isTypeY > -1) {
+      roomStatus = 'Playing'
+    } else {
+      roomStatus = 'Waiting'
+    }
+    currentHosts[socket.roomName].listUser = listUser
+    currentHosts[socket.roomName].availableType = availableType
+    currentHosts[socket.roomName].roomStatus = roomStatus
+    io.sockets.in(socket.roomName).emit('get room current state', { availableType, listUser, roomStatus })
+  })
 
   socket.on('get hosts', () => {
     io.sockets.emit('get hosts', infoHost)
-  })
-
-  socket.on('get room current state', () => {
-    socket.emit('get room current state', currentHosts[socket.roomName])
   })
 
   socket.on('send message to room', (message) => {

@@ -104,9 +104,19 @@ div{
 			.user-area {
 				flex: 2;
 				display: flex;
+				cursor: pointer;
+
+				&.choose-typeX {
+					background: #49abe8
+				}
+
+				&.choose-typeY {
+					background: #e89049
+				}
 
 				&.time-area {
-					flex: 1
+					flex: 1;
+					cursor: default;
 				}
 
 				.center {

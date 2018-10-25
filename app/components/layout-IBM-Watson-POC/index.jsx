@@ -10,7 +10,7 @@ import { isEmpty } from 'lodash'
 let socket = {}
 const caroMap = Array(20)
 for (let i = 0; i < caroMap.length; i++) {
-    caroMap[i] = Array(40).fill(null)
+    caroMap[i] = Array(32).fill(null)
 }
 
 @connect(({ requests: { inProgress }, session: { session } }) => ({ inProgress, session }))
@@ -32,12 +32,12 @@ export default class IBMWatsonPOCHome extends Component {
         hasWinner: false,
         gameMode: 'multy',
         userName: '',
-        arrHosts: [],
+        currentHosts: [],
         roomState: {},
         roomName: '',
         type: '',
         isLogin: false,
-        isCreate: false,
+        isInRoom: false,
         userID: ''
     }
 
@@ -63,6 +63,7 @@ export default class IBMWatsonPOCHome extends Component {
         })
 
         socket.on('john room', (roomState) => {
+            console.log('ggg')
             this.setState({ roomState })
         })
 
@@ -70,7 +71,7 @@ export default class IBMWatsonPOCHome extends Component {
             const roomName = userName + "'s room";
             this.setState({ isLogin: true, userName, roomName })
             socket.on('get hosts', currentHosts => {
-                this.setState({ arrHosts: currentHosts })
+                this.setState({ currentHosts })
             })
         })
     }
@@ -100,11 +101,12 @@ export default class IBMWatsonPOCHome extends Component {
         if (roomName) {
             socket.emit('john room', { roomName, caroMap, isCreate: true })
         }
-        this.setState({ isCreate: true })
+        this.setState({ isInRoom: true })
     }
 
     johnRoom(item) {
         socket.emit('john room', { roomName: item })
+        this.setState({ isInRoom: true })
     }
 
     onChangeRenderLogin({ userName }) {
@@ -117,8 +119,13 @@ export default class IBMWatsonPOCHome extends Component {
         }, 2000)
     }
 
+    onLeaveRoom() {
+        socket.emit('leave room')
+        this.setState({ roomState: {}, isInRoom: false })
+    }
+
     renderListRoom() {
-        const { userName, arrHosts } = this.state;
+        const { userName, currentHosts } = this.state;
         return (
             <div>
                 <h2 className={'area-name'} >
@@ -127,7 +134,7 @@ export default class IBMWatsonPOCHome extends Component {
                 <div className="room-panel">
                     <div className="list-room">
                         <h3>List room</h3>
-                        {arrHosts && arrHosts.map((item, i) => {
+                        {currentHosts && currentHosts.map((item, i) => {
                             return (
                                 <div key={i} onClick={() => this.johnRoom(item.idRoom)} > {item.roomName} </div>
                             )
@@ -143,14 +150,14 @@ export default class IBMWatsonPOCHome extends Component {
     }
 
     render() {
-        const { gameMode, roomState, isLogin, isCreate, userID } = this.state;
+        const { gameMode, roomState, isLogin, isInRoom, userID } = this.state;
         return (
             <div className="caro-game" >
                 { !isLogin && <Login onChangeRenderLogin={(value) => this.onChangeRenderLogin(value)} /> }
-                { isCreate &&
-                    <button type="button" className="btn btn-info leave-button">Leave room</button>
+                { isInRoom &&
+                    <button type="button" className="btn btn-info leave-button" onClick={() => this.onLeaveRoom()} >Leave room</button>
                 }
-                { !isCreate &&
+                { !isInRoom &&
                     <button
                         type="button" className="btn btn-info create-button" onClick={() => this.createRoom()}>Create room
                     </button>
