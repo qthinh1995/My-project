@@ -1,3 +1,9 @@
+
+@define-mixin glow-color($colorr, $width: 1px) {
+	border: $width solid $colorr;
+	border-radius: 5px;
+	box-shadow: 0px 0px 2px 1px $colorr;
+}
 div{
 	font-weight: normal;
 }
@@ -30,7 +36,7 @@ div{
 			border: 1px solid lightskyblue;
 			border-radius: 5px;
 			box-shadow: 0px 0px 2px 1px lightsteelblue;
-	
+			
 			.list-user-tittle{
 				margin-left: 15px;
 				color: #003d7d;
@@ -100,11 +106,22 @@ div{
 			flex: 1;
 			display: flex;
 			flex-direction: column;
+			position: relative;
 
 			.user-area {
 				flex: 2;
 				display: flex;
 				cursor: pointer;
+				height: 55px;
+				padding: 7px;
+				box-sizing: border-box;
+				position: relative;
+				background: #d1eaff;
+				margin: 5px;
+				border: 1px solid #49abe8;
+				border-radius: 5px;
+				box-shadow: 0px 0px 2px 1px #49abe8;
+				color: #0048a5;
 
 				&.choose-typeX {
 					background: #49abe8
@@ -114,15 +131,19 @@ div{
 					background: #e89049
 				}
 
-				&.time-area {
-					flex: 1;
-					cursor: default;
-				}
-
 				.center {
 					margin: auto 0;
 					margin-left: 10px;
 				}
+			}
+
+			.time-area {
+				top: 50%;
+				position: absolute;
+				transform: translate(-50%, -50%);
+				left: 50%;
+				z-index: 1;
+				cursor: default;
 			}
 		}
 	

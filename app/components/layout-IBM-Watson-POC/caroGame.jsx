@@ -266,6 +266,7 @@ export default class CaroGame extends Component {
                             <div className="label">
                                 X
                             </div>
+                            <div className="notch"/>
                         </div>
                     </div>
                     <div className="user-area time-area">
@@ -282,6 +283,7 @@ export default class CaroGame extends Component {
                             <div className="label">
                                 O
                             </div>
+                            <div className="notch"/>
                         </div>
                     </div>
                 </div>
