@@ -18,7 +18,23 @@ export default function (flux) { /* eslint react/display-name: 0 */
       {/* CMS TEAM */}
       { generateRoute({
         paths: [ '/' ],
-        component: require('./components/layout-IBM-Watson-POC/index')
+        component: require('./components/layout-default/header')
+      }) }
+      { generateRoute({
+        paths: [ '/guides' ],
+        component: require('./components/guides')
+      }) }
+      { generateRoute({
+        paths: [ '/users' ],
+        component: require('./components/layout-research/home')
+      }) }
+      { generateRoute({
+        paths: [ '/newpage' ],
+        component: require('./pages/not-found')
+      }) }
+      { generateRoute({
+        paths: [ '/login' ],
+        component: require('./components/layout-IBM-Watson-POC')
       }) }
       <Route path='*' component={ require('./pages/not-found') } />
     </Route>

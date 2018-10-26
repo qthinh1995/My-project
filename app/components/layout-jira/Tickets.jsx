@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react'
+import React, { Component } from 'react'
+import PropTypes from 'prop-types';
 import connect from 'connect-alt'
 import superagent from 'superagent'
 import { set, get, cloneDeep, remove } from 'lodash'

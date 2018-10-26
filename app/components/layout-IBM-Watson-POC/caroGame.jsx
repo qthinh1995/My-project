@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react'
+import React, { Component } from 'react'
+import PropTypes from 'prop-types';
 import connect from 'connect-alt'
 import UserChat from './userChat'
 import { get, set, values, filter, cloneDeep, isEmpty, merge, find } from 'lodash'
