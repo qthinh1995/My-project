@@ -1,7 +1,8 @@
 import capitalize from 'lodash/capitalize'
 import defer from 'lodash/defer'
 
-import React, { Component, PropTypes } from 'react'
+import React, { Component } from 'react'
+import PropTypes from 'prop-types';
 import connect from 'connect-alt'
 
 @connect(({ usersStatic: { collection } }) => ({ collection }))

@@ -1,6 +1,7 @@
 import debug from 'debug'
 
-import React, { Component, PropTypes } from 'react'
+import React, { Component } from 'react'
+import PropTypes from 'prop-types';
 import { intlShape, defineMessages } from 'react-intl'
 
 class I18nProvider extends Component {

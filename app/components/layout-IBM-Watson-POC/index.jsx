@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react'
+import React, { Component } from 'react'
+import PropTypes from 'prop-types';
 import connect from 'connect-alt'
 import CaroGame from './CaroGame'
 import socketIOClient from 'socket.io-client'
@@ -31,7 +32,7 @@ export default class IBMWatsonPOCHome extends Component {
         isClickX: true,
         hasWinner: false,
         gameMode: 'multy',
-        userName: '',
+        userName: 'didi',
         arrHosts: [],
         roomState: {},
         roomName: '',
