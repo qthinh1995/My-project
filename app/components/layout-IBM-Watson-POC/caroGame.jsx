@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react'
 import connect from 'connect-alt'
 import UserChat from './userChat'
-import { get, set, values, filter, cloneDeep, isEmpty, merge, find } from 'lodash'
+import { get, set, values, filter, cloneDeep, isEmpty, find } from 'lodash'
 // import socketIOClient from 'socket.io-client';
 
 
@@ -89,24 +89,30 @@ export default class CaroGame extends Component {
         socket = this.props.socket;
         this.state = this.props.roomState;
         this.state.userID = this.props.userID;
-
-        const thisUser = find(this.props.roomState.listUser, (o) => {
-            return o.id === this.state.userID;
-        })
-        this.state.thisUser = thisUser;
+        this.getMoreInfo(this.state, this.props.roomState)
         this.receive();
+    }
+
+    getMoreInfo(currentState, roomState) {
+        if (roomState.listUser) {
+            const thisUser = find(currentState.listUser, (o) => {
+                return o.id === this.state.userID;
+            })
+            currentState.thisUser = thisUser;
+        }
+    }
+
+    merge(mergeObj, newValue) {
+        Object.keys(newValue).forEach((propertyName) => {
+            mergeObj[propertyName] = newValue[propertyName];
+        }) 
     }
 
     receive() {
         socket.on('get room current state', (roomState) => {
-            const currentState = cloneDeep(this.state)
-            merge(currentState, roomState)
-
-            const thisUser = find(currentState.listUser, (o) => {
-                return o.id === this.state.userID;
-            })
-
-            currentState.thisUser = thisUser;
+            const currentState = cloneDeep(this.state);
+            this.merge(currentState, roomState);
+            this.getMoreInfo(currentState, roomState)
             this.setState(currentState)
         })
     }
@@ -206,6 +212,25 @@ export default class CaroGame extends Component {
         socket.emit('change type', { type })
     }
 
+    renderButtonStart() {
+        const { thisUser, availableType: { isTypeX, isTypeY } } = this.state;
+        if (thisUser.player) {
+            if (!thisUser.isHost) {
+                return (
+                    <input type="button" className="btn btn-info btn-ready" value="Ready" onClick={() => socket.emit('ready')}/>
+                )
+            }
+
+            const oponentIndex = thisUser.player === 'O' ? isTypeX : isTypeY;
+            const {listUser} = this.state;
+            const isActive = oponentIndex === -1 ? false : listUser[oponentIndex].ready;
+            return (
+                <input type="button" className="btn btn-info btn-ready" value="Start" disabled={!isActive} onClick={() => socket.emit('start')}/>
+            )
+        }
+        return '';
+    }
+
     render() {
         const { caroMap, playerWinner, listUser, thisUser, availableType: { isTypeX, isTypeY } } = this.state;
         console.log(thisUser.player, this.state.availableType)
@@ -287,6 +312,9 @@ export default class CaroGame extends Component {
                         </div>
                     </div>
                 </div>
+                {
+                    this.renderButtonStart()
+                }
                 <UserChat socket={socket} />
             </div> 
         )

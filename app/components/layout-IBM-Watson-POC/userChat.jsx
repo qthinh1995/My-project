@@ -26,6 +26,12 @@ export default class IBMWatsonPOCHome extends Component {
         socket.on('send message to room', ({ userName, message }) => {
             self.refs.messageArea.innerHTML += `<div>${userName}: ${message}</div>`
         })
+        self.refs.messageInput.addEventListener('keyup', (event) => {
+            event.preventDefault();
+            if (event.keyCode === 13) {
+                self.refs.sendBtn.click();
+            }
+        });
     }
 
     sendMessage() {
@@ -41,7 +47,7 @@ export default class IBMWatsonPOCHome extends Component {
                 <div className="message-area" ref="messageArea"></div>
                 <div className="type-area">
                     <input ref="messageInput" />
-                    <input type="button" value="Send" onClick={() => { this.sendMessage() }} />
+                    <input ref="sendBtn"type="button" value="Send" onClick={() => { this.sendMessage() }} />
                 </div>
             </div >
         )

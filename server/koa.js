@@ -156,7 +156,7 @@ io.on('connection', (socket) => {
       socket.roomName = crypto.createHash('md5').update(date.getTime().toString()).digest('hex')
       currentHosts[socket.roomName] = { 
         availableType: { isTypeX: 0, isTypeY: -1 }, caroMap, nextType: 'X', playerWinner: '', roomStatus: 'Waiting', 
-        listUser: [ { id: socket.id, userName: socket.userName, player: 'X', isHost: true } ] 
+        listUser: [ { id: socket.id, userName: socket.userName, player: 'X', isHost: true, ready: true } ] 
       };
       infoHost.push({ idRoom: socket.roomName, roomName })
       io.sockets.emit('get hosts', infoHost)
@@ -168,6 +168,17 @@ io.on('connection', (socket) => {
     socket.emit('john room', currentHosts[socket.roomName])
     socket.broadcast.to(socket.roomName).emit('get room current state', currentHosts[socket.roomName])
   });
+
+  socket.on('ready', () => {
+    console.log('onready')
+    const { listUser } = currentHosts[socket.roomName]
+    const index = getIndexOfArray({ listUser, id: socket.id })
+    listUser[index].ready = true;
+    io.sockets.in(socket.roomName).emit('get room current state', {listUser})
+  })
+  socket.on('start', () => {
+    io.sockets.in(socket.roomName).emit('get room current state', {roomStatus: 'Playing'})
+  })
 
   socket.on('handle caro map', ({ x, y, player, isWinner }) => {
     console.log('emit ', socket.roomName)
