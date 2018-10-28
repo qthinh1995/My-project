@@ -16,82 +16,95 @@ div{
 		top: 10px;
 	}
 
+	.custom-list {
+		flex: 1;
+		width: 280px;
+		display: inline-block;
+		border: 1px solid black;
+		vertical-align: top;
+
+		padding: 5px;
+		box-sizing: border-box;
+		position: relative;
+		margin: 5px;
+		border: 1px solid lightskyblue;
+		border-radius: 5px;
+		box-shadow: 0px 0px 2px 1px lightsteelblue;
+
+		&.selectable {
+			.list-block{
+				cursor: pointer;
+
+				&:active {
+					background: #98d0ff;
+    				border: 3px solid #49abe8;
+				}
+			}
+		}
+		
+		.custom-list-tittle{
+			margin-left: 15px;
+			color: #003d7d;
+		}
+
+		.list-block{
+			height: 55px;
+			padding: 7px;
+			box-sizing: border-box;
+			position: relative;
+			background: #d1eaff;
+			margin: 5px;
+			border: 1px solid #49abe8;
+			border-radius: 5px;
+			box-shadow: 0px 0px 2px 1px #49abe8;
+			color: #0048a5;
+
+			&.this-user{
+				color: #ff4900;
+				background: #ffefca;
+				border: 1px solid #e89049;
+				box-shadow: 0px 0px 2px 1px #e89049;
+			}
+
+			.name{
+				font-size: 22px;
+				font-weight: 600;
+			}
+
+			.user-rule{
+				float: right;
+				color: red;
+				font-size: 23px;
+				font-weight: 700;
+				font-family: cursive;
+				text-shadow: 0px 0px 5px red;
+			}
+
+			.user-guest{
+				float: right;
+				color: #0056b3;
+				font-size: 17px;
+				line-height: 38px;
+				font-family: cursive;
+				text-shadow: 0px 0px 4px #1283ff;
+			}
+
+			.fa-key{
+				position: absolute;
+				color: #ffe200;
+				text-shadow: 0px 0px 3px #000000;
+				font-size: 20px;
+			}
+		}
+	}
+
 	.caro-match{
 		position: relative;
 		display: flex;
 		flex-direction: row;
 		margin-top: 40px;
 	
-		.list-user {
-			flex: 1;
-			width: 250px;
-			display: inline-block;
-			border: 1px solid black;
-			vertical-align: top;
-	
-			padding: 5px;
-			box-sizing: border-box;
-			position: relative;
-			margin: 5px;
-			border: 1px solid lightskyblue;
-			border-radius: 5px;
-			box-shadow: 0px 0px 2px 1px lightsteelblue;
-			
-			.list-user-tittle{
-				margin-left: 15px;
-				color: #003d7d;
-			}
-	
-			.user-block{
-					height: 55px;
-				padding: 7px;
-				box-sizing: border-box;
-				position: relative;
-				background: #d1eaff;
-				margin: 5px;
-				border: 1px solid #49abe8;
-				border-radius: 5px;
-				box-shadow: 0px 0px 2px 1px #49abe8;
-				color: #0048a5;
-	
-				&.this-user{
-					color: #ff4900;
-					background: #ffefca;
-					border: 1px solid #e89049;
-					box-shadow: 0px 0px 2px 1px #e89049;
-				}
-	
-				.user-name{
-					font-size: 22px;
-					font-weight: 600;
-				}
-	
-				.user-rule{
-					float: right;
-					color: red;
-					font-size: 23px;
-					font-weight: 700;
-					font-family: cursive;
-					text-shadow: 0px 0px 5px red;
-				}
-	
-				.user-guest{
-					float: right;
-					color: #0056b3;
-					font-size: 17px;
-					line-height: 38px;
-					font-family: cursive;
-					text-shadow: 0px 0px 4px #1283ff;
-				}
-	
-				.fa-key{
-					position: absolute;
-					color: #ffe200;
-					text-shadow: 0px 0px 3px #000000;
-					font-size: 20px;
-				}
-			}
-		}
+		
 	
 		.caro-board{
 			display: inline-block;
@@ -143,7 +156,6 @@ div{
 				display: flex;
 				cursor: pointer;
 				height: 55px;
-				padding: 7px;
 				box-sizing: border-box;
 				position: relative;
 				background: #d1eaff;
@@ -163,7 +175,6 @@ div{
 
 				.center {
 					margin: auto 0;
-					margin-left: 10px;
 				}
 			}
 
@@ -173,33 +184,35 @@ div{
 				transform: translate(-50%, -50%);
 				left: 50%;
 				z-index: 1;
+				width: 85px;
 				cursor: default;
 			}
 		}
-	
-		.user-chatboard{
-			// width: 500px;
-			// height: 300px;
-			background: rgba(255, 255, 255, 0.5);
+	}
+
+	.btn-ready{
+		width: 100%;
+		height: 100%;
+	}
+
+	.user-chatboard{
+		// width: 500px;
+		// height: 300px;
+		background: rgba(255, 255, 255, 0.5);
+		position: absolute;
+		bottom: 0;
+		border: 1px solid;
+		
+		.message-area{
+			height: 100%;
+			overflow: auto;
+			padding-bottom: 30px;
+		}
+		
+		.type-area{
 			position: absolute;
 			bottom: 0;
-			border: 1px solid;
-			
-			.message-area{
-				height: 100%;
-				overflow: auto;
-				padding-bottom: 30px;
-			}
-			
-			.type-area{
-				position: absolute;
-				bottom: 0;
-			}
 		}
-	}
-	.btn-ready{
-		height: 50px;
-		margin: -6px;
 	}
 }
 

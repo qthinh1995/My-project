@@ -228,7 +228,14 @@ export default class CaroGame extends Component {
                 <input type="button" className="btn btn-info btn-ready" value="Start" disabled={!isActive} onClick={() => socket.emit('start')}/>
             )
         }
-        return '';
+        return (
+            <div className="center" >
+                <div>Total time</div>
+                <div className="time-counter">
+                    10:50
+                </div>
+            </div>
+        );
     }
 
     renderGameMessage() {
@@ -245,17 +252,17 @@ export default class CaroGame extends Component {
     }
 
     render() {
-        const { caroMap, playerWinner, listUser, thisUser, availableType: { isTypeX, isTypeY }, roomStatus } = this.state;
+        const { caroMap, playerWinner, listUser, thisUser, availableType: { isTypeX, isTypeY } } = this.state;
         console.log(thisUser.player, this.state.availableType)
 
         return (
             <div className="caro-match">
-                <div className="list-user">
-                    <h3 className="list-user-tittle">Users in room</h3>
+                <div className="custom-list">
+                    <h3 className="custom-list-tittle">Users in room</h3>
                     {listUser && listUser.map((user, index) => {
                         return (
-                            <div className={`user-block ${user.id === thisUser.id ? 'this-user' : ''}`} key={index}>
-                                <span className="user-name">{user.userName}</span>
+                            <div className={`list-block ${user.id === thisUser.id ? 'this-user' : ''}`} key={index}>
+                                <span className="name">{user.userName}</span>
                                 {user.player &&
                                     <span className="user-rule">
                                         {user.player}
@@ -310,17 +317,7 @@ export default class CaroGame extends Component {
                             </div>
                         </div>
                         <div className="user-area time-area">
-                            {thisUser.player && roomStatus === 'Waiting' &&
-                                this.renderButtonStart()
-                            }
-                            {!thisUser.player || roomStatus === 'Playing' &&
-                                <div className="center" >
-                                    <div>Total time</div>
-                                    <div className="time-counter">
-                                        10:50
-                                    </div>
-                                </div>
-                            }
+                            {this.renderButtonStart()}
                         </div>
                         <div className={`user-area ${isTypeY > -1 ? 'choose-typeY' : ''}`} onClick={isTypeY > -1 ? '' : () => this.selectType('O')} >
                             <div className="center" >

@@ -97,9 +97,8 @@ io.on('connection', (socket) => {
   function leaveRoom() {
     if (!isEmpty(currentHosts[socket.roomName])) {
       const { listUser = [], availableType = {} } = currentHosts[socket.roomName]
-
       if (listUser.length === 1) {
-        console.log('last user in room => delete room')
+        console.log('delete room')
         delete currentHosts[socket.roomName]
         infoHost.every((item, i) => {
           if (item.idRoom === socket.roomName) {
@@ -141,6 +140,7 @@ io.on('connection', (socket) => {
         socket.leave(socket.roomName)
       }
     }
+    delete socket.roomName;
   }
   
   socket.on('disconnect', () => {
@@ -197,9 +197,8 @@ io.on('connection', (socket) => {
   })
 
   socket.on('change type', ({ type }) => {
-    console.log('change type', currentHosts[socket.roomName].listUser)
+    console.log('change type', currentHosts[socket.roomName])
     const { listUser, availableType } = currentHosts[socket.roomName]
-    let roomStatus = 'Waiting'
     const index = getIndexOfArray({ listUser, id: socket.id })
     const item = listUser[index]
     if (item.player === 'X') {
@@ -235,8 +234,7 @@ io.on('connection', (socket) => {
     // })
     currentHosts[socket.roomName].listUser = listUser
     currentHosts[socket.roomName].availableType = availableType
-    currentHosts[socket.roomName].roomStatus = roomStatus
-    io.sockets.in(socket.roomName).emit('get room current state', { availableType, listUser, roomStatus })
+    io.sockets.in(socket.roomName).emit('get room current state', { availableType, listUser })
   })
 
   socket.on('get hosts', () => {

@@ -63,7 +63,6 @@ export default class IBMWatsonPOCHome extends Component {
         })
 
         socket.on('john room', (roomState) => {
-            console.log('ggg')
             this.setState({ roomState })
         })
 
@@ -132,11 +131,11 @@ export default class IBMWatsonPOCHome extends Component {
                     {`Hello ${userName}`}
                 </h2>
                 <div className="room-panel">
-                    <div className="list-room">
-                        <h3>List room</h3>
+                    <div className="custom-list selectable">
+                        <h3 className="custom-list-tittle">List room</h3>
                         {currentHosts && currentHosts.map((item, i) => {
                             return (
-                                <div key={i} onClick={() => this.johnRoom(item.idRoom)} > {item.roomName} </div>
+                                <div className="list-block" key={i} onClick={() => this.johnRoom(item.idRoom)} > <span className="name">{item.roomName}</span>  </div>
                             )
                         })}
                     </div>
