@@ -95,11 +95,40 @@ div{
 	
 		.caro-board{
 			display: inline-block;
+			position: relative;
+
+			.wrapper{
+				position: absolute;
+				height: 100%;
+				width: 100%;
+				background: #ddffdda6;
+			}
+
+			.game-message{
+				position: absolute;
+				left: 50%;
+				top: 50%;
+				transform: translate(-50%, -50%);
+
+				text-shadow: 0px 0px 10px lime;
+				font-size: 70px;
+				font-weight: 400;
+				color: #009800;
+			}
 
 			.row-caro{
 				width: max-content;
 				display: flex;
 			}
+		}
+
+		.right-board {
+			flex-grow: 1;
+			display: flex;
+			border: 1px solid #49abe8;
+			border-radius: 5px;
+			box-shadow: 0px 0px 2px 1px #49abe8;
+			margin: 5px;
 		}
 	
 		.user-board{
@@ -107,6 +136,7 @@ div{
 			display: flex;
 			flex-direction: column;
 			position: relative;
+			margin: -5px;
 
 			.user-area {
 				flex: 2;
@@ -169,6 +199,7 @@ div{
 	}
 	.btn-ready{
 		height: 50px;
+		margin: -6px;
 	}
 }
 

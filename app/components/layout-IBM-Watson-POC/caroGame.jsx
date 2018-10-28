@@ -231,8 +231,21 @@ export default class CaroGame extends Component {
         return '';
     }
 
+    renderGameMessage() {
+        const { roomStatus } = this.state;
+
+        if (roomStatus === 'Waiting') {
+            return (
+                <div className="wrapper"> 
+                    <div className="game-message">Waiting</div>
+                </div>
+            )
+        }
+        return '';
+    }
+
     render() {
-        const { caroMap, playerWinner, listUser, thisUser, availableType: { isTypeX, isTypeY } } = this.state;
+        const { caroMap, playerWinner, listUser, thisUser, availableType: { isTypeX, isTypeY }, roomStatus } = this.state;
         console.log(thisUser.player, this.state.availableType)
 
         return (
@@ -261,60 +274,65 @@ export default class CaroGame extends Component {
                         )
                     })}
                 </div>
-                <div className="caro-board">
-                    {/* {!isWinner && <h2>It's turn: {nextType}</h2>} */}
-                    {playerWinner && <h2>The winner is {playerWinner}</h2>}
-                    {/* <button onClick={() => this.simulator()}> Click </button> */}
-                    {caroMap && caroMap.map((row, y) => {
-                        return (
-                            <div className="row-caro" key={y} >
-                                {row.map((square, x) => {
-                                    const isNear = !!get(square, 'isNear')
-                                    const value = get(square, 'value')
-                                    return (
-                                        <div
-                                             className={`square ${isNear ? 'near-square' : ''} `}
-                                            key={`${x}-${y}`}
-                                            onClick={playerWinner || (value && !playerWinner) ? '' : () => { this.onClickSquare({ x, y }) }}>
-                                            {value}
-                                        </div>
-                                    )
-                                })}
+                <div className="right-board">
+                    <div className="caro-board">
+                        { this.renderGameMessage() }
+                        {/* {!isWinner && <h2>It's turn: {nextType}</h2>} */}
+                        {playerWinner && <h2>The winner is {playerWinner}</h2>}
+                        {/* <button onClick={() => this.simulator()}> Click </button> */}
+                        {caroMap && caroMap.map((row, y) => {
+                            return (
+                                <div className="row-caro" key={y} >
+                                    {row.map((square, x) => {
+                                        const isNear = !!get(square, 'isNear')
+                                        const value = get(square, 'value')
+                                        return (
+                                            <div
+                                                className={`square ${isNear ? 'near-square' : ''} `}
+                                                key={`${x}-${y}`}
+                                                onClick={playerWinner || (value && !playerWinner) ? '' : () => { this.onClickSquare({ x, y }) }}>
+                                                {value}
+                                            </div>
+                                        )
+                                    })}
+                                </div>
+                            )
+                        })}
+                    </div>
+                    <div className="user-board">
+                        <div className={`user-area ${isTypeX > -1 ? 'choose-typeX' : ''}`} onClick={isTypeX > -1 ? '' : () => this.selectType('X')} >
+                            <div className="center" >
+                                <div>User 1</div>
+                                <div className="label">
+                                    X
+                                </div>
+                                <div className="notch"/>
                             </div>
-                        )
-                    })}
+                        </div>
+                        <div className="user-area time-area">
+                            {thisUser.player && roomStatus === 'Waiting' &&
+                                this.renderButtonStart()
+                            }
+                            {!thisUser.player || roomStatus === 'Playing' &&
+                                <div className="center" >
+                                    <div>Total time</div>
+                                    <div className="time-counter">
+                                        10:50
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        <div className={`user-area ${isTypeY > -1 ? 'choose-typeY' : ''}`} onClick={isTypeY > -1 ? '' : () => this.selectType('O')} >
+                            <div className="center" >
+                                <div>User 2</div>
+                                <div className="label">
+                                    O
+                                </div>
+                                <div className="notch"/>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div className="user-board">
-                    <div className={`user-area ${isTypeX > -1 ? 'choose-typeX' : ''}`} onClick={isTypeX > -1 ? '' : () => this.selectType('X')} >
-                        <div className="center" >
-                            <div>User 1</div>
-                            <div className="label">
-                                X
-                            </div>
-                            <div className="notch"/>
-                        </div>
-                    </div>
-                    <div className="user-area time-area">
-                        <div className="center" >
-                            <div>Total time</div>
-                            <div className="time-counter">
-                                10:50
-                            </div>
-                        </div>
-                    </div>
-                    <div className={`user-area ${isTypeY > -1 ? 'choose-typeY' : ''}`} onClick={isTypeY > -1 ? '' : () => this.selectType('O')} >
-                        <div className="center" >
-                            <div>User 2</div>
-                            <div className="label">
-                                O
-                            </div>
-                            <div className="notch"/>
-                        </div>
-                    </div>
-                </div>
-                {
-                    this.renderButtonStart()
-                }
                 <UserChat socket={socket} />
             </div> 
         )

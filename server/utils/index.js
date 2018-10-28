@@ -34,6 +34,27 @@ const utils = {
       return true
     })
     return index
+  },
+
+  defaultRooom({ row = 20, col = 32, onStart = false, socket } = {}) {
+    const caroMap = Array(row)
+    for (let i = 0; i < caroMap.length; i++) {
+      caroMap[i] = Array(col).fill(null)
+    }
+    if (onStart && socket) {
+      return {
+        availableType: { isTypeX: 0, isTypeY: -1 }, caroMap, nextType: 'X', playerWinner: '', roomStatus: 'Waiting',
+        listUser: [ { id: socket.id, userName: socket.userName, player: 'X', isHost: true, ready: true } ]
+      };
+    }
+
+    return { caroMap, nextType: 'X', playerWinner: '', roomStatus: 'Waiting' };
+  },
+
+  merge(mergeObj, newValue) {
+    Object.keys(newValue).forEach((propertyName) => {
+        mergeObj[propertyName] = newValue[propertyName];
+    }) 
   }
 }
 
