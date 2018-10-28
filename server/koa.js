@@ -159,6 +159,7 @@ io.on('connection', (socket) => {
 
   socket.on('john room', ({ roomName, isCreate = false }) => {
     socket.roomName = roomName
+    console.log('is create room', isCreate)
     if (isCreate) {
       const date = new Date()
       socket.roomName = crypto.createHash('md5').update(date.getTime().toString()).digest('hex')
@@ -181,6 +182,7 @@ io.on('connection', (socket) => {
     io.sockets.in(socket.roomName).emit('get room current state', {listUser})
   })
   socket.on('start', () => {
+    currentHosts[socket.roomName].roomStatus = 'Playing';
     io.sockets.in(socket.roomName).emit('get room current state', {roomStatus: 'Playing'})
   })
 

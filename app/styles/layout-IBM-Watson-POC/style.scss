@@ -110,6 +110,44 @@ div{
 			display: inline-block;
 			position: relative;
 
+			&&.X-player{
+				.empty-square{
+					&&:hover{
+						&&::after{
+							content: 'X';
+							color: #ff00007f;
+							text-shadow: 0px 0px 3px #ff00007f;
+						}
+					}
+					
+					&&:active{
+						box-shadow: 0px 0px 2px 1px #ff00007f;
+						height: 30px;
+						width: 30px;
+						box-sizing: border-box;
+					}
+				}
+			}
+
+			&&.O-player{
+				.empty-square{
+					&&:hover{
+						&&::after{
+							content: 'O';
+							color: #0070ff7f;
+							text-shadow: 0px 0px 3px #0070ff7f;
+						}
+					}
+
+					&&:active{
+						box-shadow: 0px 0px 2px 1px #0070ff7f;
+						height: 30px;
+						width: 30px;
+						box-sizing: border-box;
+					}
+				}
+			}
+
 			.wrapper{
 				position: absolute;
 				height: 100%;
@@ -245,6 +283,17 @@ div{
 	-ms-user-select: none; /* IE10+/Edge */
 	user-select: none; /* Standard */
 
+	&&.square-red{
+		color: red;
+		text-shadow: 0px 0px 3px red;
+	}
+
+	&&.square-blue{
+		color: #0070ff;
+		text-shadow: 0px 0px 3px #0070ff;
+	}
+	
+	
 	&.near-square {
 		background: blue
 	}

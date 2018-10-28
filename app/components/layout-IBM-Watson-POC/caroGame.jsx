@@ -110,6 +110,7 @@ export default class CaroGame extends Component {
 
     receive() {
         socket.on('get room current state', (roomState) => {
+            console.log('get new state', roomState);
             const currentState = cloneDeep(this.state);
             this.merge(currentState, roomState);
             this.getMoreInfo(currentState, roomState)
@@ -254,6 +255,8 @@ export default class CaroGame extends Component {
     render() {
         const { caroMap, playerWinner, listUser, thisUser, availableType: { isTypeX, isTypeY } } = this.state;
         console.log(thisUser.player, this.state.availableType)
+        let userClassNAme = thisUser.player === 'O' ? 'O-player' : '';
+        userClassNAme =   thisUser.player  === 'X' ? 'X-player' : userClassNAme;
 
         return (
             <div className="caro-match">
@@ -282,7 +285,7 @@ export default class CaroGame extends Component {
                     })}
                 </div>
                 <div className="right-board">
-                    <div className="caro-board">
+                    <div className={`caro-board ${userClassNAme}`}>
                         { this.renderGameMessage() }
                         {/* {!isWinner && <h2>It's turn: {nextType}</h2>} */}
                         {playerWinner && <h2>The winner is {playerWinner}</h2>}
@@ -291,11 +294,12 @@ export default class CaroGame extends Component {
                             return (
                                 <div className="row-caro" key={y} >
                                     {row.map((square, x) => {
-                                        const isNear = !!get(square, 'isNear')
                                         const value = get(square, 'value')
+                                        let color = value === 'O' ? 'square-blue' : 'empty-square';
+                                        color =  value === 'X' ? 'square-red' : color;
                                         return (
                                             <div
-                                                className={`square ${isNear ? 'near-square' : ''} `}
+                                                className={`square ${color} `}
                                                 key={`${x}-${y}`}
                                                 onClick={playerWinner || (value && !playerWinner) ? '' : () => { this.onClickSquare({ x, y }) }}>
                                                 {value}
