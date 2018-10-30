@@ -10,7 +10,7 @@ div{
 .caro-game {
 	position: relative;
 
-	.leave-button, .create-button {
+	.leave-button, .create-button, .reset-button {
 		position: absolute;
 		right: 10px;
 		top: 10px;
@@ -59,6 +59,37 @@ div{
 			box-shadow: 0px 0px 2px 1px #49abe8;
 			color: #0048a5;
 
+			.area-control {
+				.menu-control {
+					display: none;
+				}
+
+				&:hover {
+					.menu-control {
+						display: block;
+						position: absolute;
+						top: 35px;
+						left: 5px;
+						box-shadow: 0px 0px 5px 1px #888888;
+						padding: 5px;
+						border-radius: 5px;
+						background: white;
+						
+						.option {
+							width: 105px;
+							text-align: center;
+							line-height: 1;
+							padding: 5px;
+
+							&:hover {
+								background: #d2d2d2;
+								cursor: pointer;
+							}
+						}
+					}
+				}
+			}
+
 			&.this-user{
 				color: #ff4900;
 				background: #ffefca;
@@ -69,6 +100,7 @@ div{
 			.name{
 				font-size: 22px;
 				font-weight: 600;
+				margin-left: 15px;
 			}
 
 			.user-rule{
@@ -94,6 +126,14 @@ div{
 				color: #ffe200;
 				text-shadow: 0px 0px 3px #000000;
 				font-size: 20px;
+			}
+
+			.there-dot {
+				position: absolute;
+				top: 16px;
+				left: 10px;
+				padding: 0px 3px 3px 0px;
+				cursor: pointer;
 			}
 		}
 	}

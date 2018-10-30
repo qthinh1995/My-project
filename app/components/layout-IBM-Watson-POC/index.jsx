@@ -38,7 +38,8 @@ export default class IBMWatsonPOCHome extends Component {
         type: '',
         isLogin: false,
         isInRoom: false,
-        userID: ''
+        userID: '',
+        isReset: false
     }
 
     componentWillMount() {
@@ -123,6 +124,15 @@ export default class IBMWatsonPOCHome extends Component {
         this.setState({ roomState: {}, isInRoom: false })
     }
 
+    onHandleRoom(value) {
+        this.setState({ isReset: value})
+    }
+
+    resetRoom() {
+        this.onHandleRoom(false)
+        socket.emit('reset room')
+    }
+
     renderListRoom() {
         const { userName, currentHosts } = this.state;
         return (
@@ -149,18 +159,23 @@ export default class IBMWatsonPOCHome extends Component {
     }
 
     render() {
-        const { gameMode, roomState, isLogin, isInRoom, userID } = this.state;
+        const { gameMode, roomState, isLogin, isInRoom, userID, isReset } = this.state;
         return (
             <div className="caro-game" >
                 { !isLogin && <Login onChangeRenderLogin={(value) => this.onChangeRenderLogin(value)} /> }
-                { isInRoom &&
+                { isInRoom && !isReset &&
                     <button type="button" className="btn btn-info leave-button" onClick={() => this.onLeaveRoom()} >Leave room</button>
                 }
                 { !isInRoom &&
                     <button
                         type="button" className="btn btn-info create-button" onClick={() => this.createRoom()}>Create room
                     </button>
-                }                
+                } 
+                { isInRoom && isReset &&
+                    <button
+                        type="button" className="btn btn-info reset-button" onClick={() => this.resetRoom()}>Reset room
+                    </button>
+                }               
                 <label><input type="checkbox" name="vehicle" onChange={(e) => this.toggleDarkTheme(e.target)} />Dark Theme</label>
                 {isLogin && isEmpty(roomState) && this.renderListRoom()}
                 {!gameMode && <div>
@@ -170,7 +185,7 @@ export default class IBMWatsonPOCHome extends Component {
                 </div>
                 }
                 { !isEmpty(roomState) &&
-                    <CaroGame roomState={roomState} socket={socket} userID={userID} />
+                    <CaroGame roomState={roomState} socket={socket} userID={userID} onHandleRoom={(value) => this.onHandleRoom(value)} />
                 }
             </div >
         )

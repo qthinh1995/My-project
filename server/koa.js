@@ -199,7 +199,6 @@ io.on('connection', (socket) => {
   })
 
   socket.on('change type', ({ type }) => {
-    console.log('change type', currentHosts[socket.roomName])
     const { listUser, availableType } = currentHosts[socket.roomName]
     const index = getIndexOfArray({ listUser, id: socket.id })
     const item = listUser[index]
@@ -216,24 +215,6 @@ io.on('connection', (socket) => {
     }
 
     listUser[index].player = type
-    // listUser.every((item, index) => {
-    //   if (item.id === socket.id) {
-        // if (item.player === 'X') {
-        //   availableType.isTypeX = -1
-        // } else if (item.player === 'O') {
-        //   availableType.isTypeY = -1
-        // }
-
-        // if (type === 'X') {
-        //   availableType.isTypeX = index
-        // } else if (type === 'O') {
-        //   availableType.isTypeY = index
-        // }
-    //     item.player = type
-    //     return false
-    //   }
-    //   return true
-    // })
     currentHosts[socket.roomName].listUser = listUser
     currentHosts[socket.roomName].availableType = availableType
     io.sockets.in(socket.roomName).emit('get room current state', { availableType, listUser })
@@ -246,10 +227,15 @@ io.on('connection', (socket) => {
   socket.on('send message to room', (message) => {
     io.sockets.in(socket.roomName).emit('send message to room', { userName: socket.userName, message })
   })
+
+  socket.on('reset room', () => {
+    const room = defaultRooom();
+    merge(currentHosts[socket.roomName], room)
+    io.sockets.in(socket.roomName).emit('get room current state', currentHosts[socket.roomName])
+  })
 });
 
 server.listen(999, () => {
-  console.log('Hello')
 });
 
 // mount react-router

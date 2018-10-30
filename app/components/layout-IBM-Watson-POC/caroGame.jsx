@@ -18,7 +18,8 @@ export default class CaroGame extends Component {
     static propTypes = {
         socket: PropTypes.object,
         roomState: PropTypes.object,
-        userID: PropTypes.string
+        userID: PropTypes.string,
+        onHandleRoom: PropTypes.func
     }
 
     state = {
@@ -111,6 +112,13 @@ export default class CaroGame extends Component {
     receive() {
         socket.on('get room current state', (roomState) => {
             console.log('get new state', roomState);
+            const { playerWinner } = roomState
+            const { thisUser: { isHost } } = this.state
+
+            if (playerWinner && isHost) {
+                const { onHandleRoom } = this.props
+                onHandleRoom(true)
+            }
             const currentState = cloneDeep(this.state);
             this.merge(currentState, roomState);
             this.getMoreInfo(currentState, roomState)
@@ -279,6 +287,19 @@ export default class CaroGame extends Component {
 
                                 {user.isHost &&
                                     <i className="fa fa-key"></i>
+                                }
+                                {!user.isHost && thisUser.isHost &&
+                                <div className="area-control" >
+                                    <i className="fa fa-ellipsis-v there-dot" ></i>
+                                    <div className="menu-control" >
+                                        <div className="option" onClick >
+                                            remove user
+                                        </div>
+                                        <div className="option" onClick >
+                                            remove user
+                                        </div>
+                                    </div>
+                                </div>
                                 }
                             </div>
                         )
