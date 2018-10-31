@@ -74,6 +74,10 @@ export default class IBMWatsonPOCHome extends Component {
                 this.setState({ currentHosts })
             })
         })
+
+        socket.on('leave room', () => {
+            this.setState({ roomState: {}, isInRoom: false })
+        })
     }
 
     toggleDarkTheme(e) {
@@ -121,7 +125,6 @@ export default class IBMWatsonPOCHome extends Component {
 
     onLeaveRoom() {
         socket.emit('leave room')
-        this.setState({ roomState: {}, isInRoom: false })
     }
 
     onHandleRoom(value) {

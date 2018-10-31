@@ -89,66 +89,66 @@ setInterval(() => {
   logtofile(new Date())
 }, 1000 * 60 * 60)
 
+function leaveRoom(socket) {
+  if (!isEmpty(currentHosts[socket.roomName])) {
+    const { listUser = [], availableType = {} } = currentHosts[socket.roomName]
+    if (listUser.length === 1) {
+      console.log('delete room')
+      delete currentHosts[socket.roomName]
+      infoHost.every((item, i) => {
+        if (item.idRoom === socket.roomName) {
+          infoHost.splice(i, 1)
+          return false
+        }
+        return true
+      })
+      io.sockets.emit('get hosts', infoHost)
+    } else {
+      console.log('keep room')
+      const index = getIndexOfArray({ listUser, id: socket.id })
+      let isUserPlaying = false;
+      if (index > -1) {
+        const { player } = listUser[index]
+        if (index === 0 && listUser.length > 1) {
+          listUser[1].isHost = true
+        }
+
+        if (player === 'X') {
+          availableType.isTypeX = -1
+          isUserPlaying = true;
+        } else if (player === 'O') {
+          availableType.isTypeY = -1
+          isUserPlaying = true;
+        }
+
+        listUser.splice(index, 1)
+      }
+
+      currentHosts[socket.roomName].listUser = listUser
+      currentHosts[socket.roomName].availableType = availableType
+
+      if (isUserPlaying) {
+        const room = defaultRooom();
+        merge(currentHosts[socket.roomName], room)
+      }
+      socket.broadcast.to(socket.roomName).emit('get room current state', currentHosts[socket.roomName])
+      socket.emit('leave room')
+      socket.leave(socket.roomName)
+    }
+  }
+  delete socket.roomName;
+}
 
 io.on('connection', (socket) => {
   socket.emit('get user id', cloneDeep(socket.id));
   console.log('a user connected');
-
-  function leaveRoom() {
-    if (!isEmpty(currentHosts[socket.roomName])) {
-      const { listUser = [], availableType = {} } = currentHosts[socket.roomName]
-      if (listUser.length === 1) {
-        console.log('delete room')
-        delete currentHosts[socket.roomName]
-        infoHost.every((item, i) => {
-          if (item.idRoom === socket.roomName) {
-            infoHost.splice(i, 1)
-            return false
-          }
-          return true
-        })
-        io.sockets.emit('get hosts', infoHost)
-      } else {
-        console.log('keep room')
-        const index = getIndexOfArray({ listUser, id: socket.id })
-        let isUserPlaying = false;
-        if (index > -1) {
-          const { player } = listUser[index]
-          if (index === 0 && listUser.length > 1) {
-            listUser[1].isHost = true
-          }
-
-          if (player === 'X') {
-            availableType.isTypeX = -1
-            isUserPlaying = true;
-          } else if (player === 'O') {
-            availableType.isTypeY = -1
-            isUserPlaying = true;
-          }
-
-          listUser.splice(index, 1)
-        }
-
-        currentHosts[socket.roomName].listUser = listUser
-        currentHosts[socket.roomName].availableType = availableType
-
-        if (isUserPlaying) {
-          const room = defaultRooom();
-          merge(currentHosts[socket.roomName], room)
-        }
-        socket.broadcast.to(socket.roomName).emit('get room current state', currentHosts[socket.roomName])
-        socket.leave(socket.roomName)
-      }
-    }
-    delete socket.roomName;
-  }
   
   socket.on('disconnect', () => {
-    leaveRoom()
+    leaveRoom(socket)
   });
 
   socket.on('leave room', () => {
-    leaveRoom()
+    leaveRoom(socket)
   })
 
   socket.on('submit user name', (userName) => {
@@ -232,6 +232,18 @@ io.on('connection', (socket) => {
     const room = defaultRooom();
     merge(currentHosts[socket.roomName], room)
     io.sockets.in(socket.roomName).emit('get room current state', currentHosts[socket.roomName])
+  })
+
+  socket.on('remove user', (id) => {
+    const { listUser } = currentHosts[socket.roomName]
+    const index = getIndexOfArray({ listUser, id })
+    delete socket.adapter.rooms[socket.roomName].sockets[id]
+    if (index > -1) {
+      listUser.splice(index, 1)
+    }
+
+    io.sockets.in(socket.roomName).emit('get room current state', { listUser })
+    io.sockets.in(id).emit('leave room')
   })
 });
 

@@ -221,6 +221,11 @@ export default class CaroGame extends Component {
         socket.emit('change type', { type })
     }
 
+    removeUser({ id } = {}) {
+        console.log(id)
+        socket.emit('remove user', id)
+    }
+
     renderButtonStart() {
         const { thisUser, availableType: { isTypeX, isTypeY } } = this.state;
         if (thisUser.player) {
@@ -262,7 +267,6 @@ export default class CaroGame extends Component {
 
     render() {
         const { caroMap, playerWinner, listUser, thisUser, availableType: { isTypeX, isTypeY } } = this.state;
-        console.log(thisUser.player, this.state.availableType)
         let userClassNAme = thisUser.player === 'O' ? 'O-player' : '';
         userClassNAme =   thisUser.player  === 'X' ? 'X-player' : userClassNAme;
 
@@ -292,11 +296,13 @@ export default class CaroGame extends Component {
                                 <div className="area-control" >
                                     <i className="fa fa-ellipsis-v there-dot" ></i>
                                     <div className="menu-control" >
-                                        <div className="option" onClick >
-                                            remove user
-                                        </div>
-                                        <div className="option" onClick >
-                                            remove user
+                                        { !user.player &&
+                                            <div className="option" onClick={() => this.removeUser({ id: user.id })} >
+                                                remove guest
+                                            </div>
+                                        }
+                                        <div className="option" >
+                                            ib riêng nhẹ
                                         </div>
                                     </div>
                                 </div>
