@@ -10,6 +10,19 @@ div{
 .caro-game {
 	position: relative;
 
+	.chat-area {
+		position: absolute;
+		bottom: 0;
+		
+		.disappear {
+			display: none;
+
+			&.visiable {
+				display: block;
+			}
+		}
+	}
+
 	.leave-button, .create-button, .reset-button {
 		position: absolute;
 		right: 10px;
@@ -277,19 +290,14 @@ div{
 		// width: 500px;
 		// height: 300px;
 		background: rgba(255, 255, 255, 0.5);
-		position: absolute;
-		bottom: 0;
+		// position: absolute;
+		// bottom: 0;
 		border: 1px solid;
 		
 		.message-area{
-			height: 100%;
+			height: calc(100% - 30px);
 			overflow: auto;
 			padding-bottom: 30px;
-		}
-		
-		.type-area{
-			position: absolute;
-			bottom: 0;
 		}
 	}
 }

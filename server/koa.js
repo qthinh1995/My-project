@@ -224,8 +224,17 @@ io.on('connection', (socket) => {
     io.sockets.emit('get hosts', infoHost)
   })
 
-  socket.on('send message to room', (message) => {
-    io.sockets.in(socket.roomName).emit('send message to room', { userName: socket.userName, message })
+  socket.on('send message to room', (data) => {
+    const { mode, value, reference } = data
+    if (mode === 'global') {
+      io.sockets.emit('send message to room', { userName: socket.userName, message: value, reference })
+    } else if (mode === 'in game') {
+      io.sockets.in(socket.roomName).emit('send message to room', { userName: socket.userName, message: value, reference })
+    } 
+    // else if (mode === 'private') {
+    //   const { idUser } = data
+    //   io.sockets.in(idUser).emit('leave room')
+    // }
   })
 
   socket.on('reset room', () => {
