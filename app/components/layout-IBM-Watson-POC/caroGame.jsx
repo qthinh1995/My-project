@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react'
 import connect from 'connect-alt'
-import UserChat from './userChat'
+import Chat from './Chat'
 import { get, set, values, filter, cloneDeep, isEmpty, find } from 'lodash'
 // import socketIOClient from 'socket.io-client';
 
@@ -226,7 +226,7 @@ export default class CaroGame extends Component {
         socket.emit('remove user', id)
     }
 
-    renderButtonStart() {
+   renderButtonStart() {
         const { thisUser, availableType: { isTypeX, isTypeY } } = this.state;
         if (thisUser.player) {
             if (!thisUser.isHost) {
@@ -361,7 +361,7 @@ export default class CaroGame extends Component {
                         </div>
                     </div>
                 </div>
-                <UserChat socket={socket} />
+                <Chat socket={socket} />
             </div> 
         )
     }
