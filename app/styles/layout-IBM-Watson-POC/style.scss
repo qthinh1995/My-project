@@ -1,9 +1,14 @@
 
-@define-mixin glow-color($colorr, $width: 1px) {
-	border: $width solid $colorr;
-	border-radius: 5px;
-	box-shadow: 0px 0px 2px 1px $colorr;
-}
+$blue-color: #0095f1;
+$blue-bg:#d3eeff;
+
+$orange-color: #e89049;
+
+$red-bg: #FFDDDD;
+
+$disabled-color: #a7a7a7;
+$disabled-bg: #F5F5F5;
+
 div{
 	font-weight: normal;
 }
@@ -37,7 +42,7 @@ div{
 
 				&:active {
 					background: #98d0ff;
-    				border: 3px solid #49abe8;
+    				border: 3px solid $blue-color;
 				}
 			}
 		}
@@ -54,9 +59,9 @@ div{
 			position: relative;
 			background: #d1eaff;
 			margin: 5px;
-			border: 1px solid #49abe8;
+			border: 1px solid $blue-color;
 			border-radius: 5px;
-			box-shadow: 0px 0px 2px 1px #49abe8;
+			box-shadow: 0px 0px 2px 1px $blue-color;
 			color: #0048a5;
 
 			.area-control {
@@ -93,8 +98,8 @@ div{
 			&.this-user{
 				color: #ff4900;
 				background: #ffefca;
-				border: 1px solid #e89049;
-				box-shadow: 0px 0px 2px 1px #e89049;
+				border: 1px solid $orange-color;
+				box-shadow: 0px 0px 2px 1px $orange-color;
 			}
 
 			.name{
@@ -226,9 +231,9 @@ div{
 		.right-board {
 			flex-grow: 0.5;
 			display: flex;
-			border: 1px solid #49abe8;
+			border: 1px solid $blue-color;
 			border-radius: 5px;
-			box-shadow: 0px 0px 2px 1px #49abe8;
+			box-shadow: 0px 0px 2px 1px $blue-color;
 			margin: 5px;
 		}
 	
@@ -237,33 +242,64 @@ div{
 			display: flex;
 			flex-direction: column;
 			position: relative;
-			margin: -5px;
+			margin: 5px;
 
 			.user-area {
 				flex: 2;
 				display: flex;
 				cursor: pointer;
-				height: 55px;
 				box-sizing: border-box;
 				position: relative;
-				background: #d1eaff;
+				background: $disabled-bg;
 				margin: 5px;
-				border: 1px solid #49abe8;
 				border-radius: 5px;
-				box-shadow: 0px 0px 2px 1px #49abe8;
 				color: #0048a5;
+				box-shadow: 0px 0px 10px 1px $disabled-color;
+
+				.label {
+					color: $disabled-color;
+					font-size: 50px;
+					text-shadow: 0px 0px 5px $disabled-color;
+				}
 
 				&.choose-typeX {
-					background: #49abe8
+					// background: white;
+					background: $red-bg;
+					box-shadow: 0px 0px 10px 1px red;
+					border: 1px solid red;
+
+					.label {
+						color: red;
+						text-shadow: 0px 0px 10px red;
+						background: $red-bg;
+					}
+
+					&.ready{
+						background: $red-bg;
+					}
 				}
 
 				&.choose-typeY {
-					background: #e89049
+					// background: white;
+					background: $blue-bg;
+					box-shadow: 0px 0px 10px 1px $blue-color;
+					border: 1px solid $blue-color;
+
+					.label {
+						color:  $blue-color;
+						text-shadow: 0px 0px 10px  $blue-color;
+					}
+
+					&.ready{
+						background: $blue-bg;
+					}
 				}
 
 				.center {
-					margin: auto 0;
+					margin: auto;
 				}
+
+			
 			}
 
 			.time-area {
@@ -271,6 +307,7 @@ div{
 				position: absolute;
 				transform: translate(-50%, -50%);
 				left: 50%;
+				height: 55px;
 				z-index: 1;
 				width: 85px;
 				cursor: default;

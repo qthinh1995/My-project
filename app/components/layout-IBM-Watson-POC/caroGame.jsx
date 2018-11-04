@@ -340,7 +340,7 @@ export default class CaroGame extends Component {
                     <div className="user-board">
                         <div className={`user-area ${isTypeX > -1 ? 'choose-typeX' : ''}`} onClick={isTypeX > -1 ? '' : () => this.selectType('X')} >
                             <div className="center" >
-                                <div>User 1</div>
+                                <div>{isTypeX > -1 ? listUser[isTypeX].userName : ''}</div>
                                 <div className="label">
                                     X
                                 </div>
@@ -352,7 +352,7 @@ export default class CaroGame extends Component {
                         </div>
                         <div className={`user-area ${isTypeY > -1 ? 'choose-typeY' : ''}`} onClick={isTypeY > -1 ? '' : () => this.selectType('O')} >
                             <div className="center" >
-                                <div>User 2</div>
+                                <div>{isTypeY > - 1 ? listUser[isTypeY].userName : ''}</div>
                                 <div className="label">
                                     O
                                 </div>
