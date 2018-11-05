@@ -5,7 +5,8 @@ import { isEmpty } from 'lodash'
 
 // @connect(({ requests: { inProgress }, session: { session } }) => ({ inProgress, session }))
 let socket = {};
-let mousePosition={};
+let mousePosition = {};
+let chatBoardState = {};
 let self = {}
 
 export default class IBMWatsonPOCHome extends Component {
@@ -62,8 +63,15 @@ export default class IBMWatsonPOCHome extends Component {
         }
     }
 
-    startDragChatBoard() {
-        console.log('mouse down')
+    startDragChatBoard(e) {
+        mousePosition = { x: e.screenX, y: e.screenY };
+        const chatBoard = e.target.parentElement;
+
+        const bottom = parseInt(chatBoard.style.bottom, 10);
+        const left = parseInt(chatBoard.style.left, 10);
+
+        chatBoardState = { left, bottom }
+        
         window.addEventListener('mousemove', this.onDragChatBoard)
     }
 
@@ -71,26 +79,44 @@ export default class IBMWatsonPOCHome extends Component {
         if (!isEmpty(mousePosition)) {
             const newPosition = { x: e.screenX, y: e.screenY };
             const chatBoard = document.querySelector('#chatBoard');
-            let bottom = parseInt(chatBoard.style.bottom, 10);
-            let left = parseInt(chatBoard.style.left, 10);
+            let {left, bottom} = chatBoardState;
 
             bottom = bottom - newPosition.y + mousePosition.y;
             left = left + newPosition.x - mousePosition.x;
 
+            //keep chat board in view;
+            bottom = bottom < 0 ? 0 : bottom;
+            left = left < 0 ? 0 : left;
+
             chatBoard.style.bottom = bottom + 'px';
             chatBoard.style.left = left + 'px';
         }
-        mousePosition = { x: e.screenX, y: e.screenY };
     }
 
     onStopDragChatBoard() {
         console.log('mouse up')
+        const chatBoard = document.querySelector('#chatBoard');
+
+        chatBoard.style.transitionDuration = '1s';
+        chatBoard.style.bottom = 0;
+        chatBoard.style.left = 0;
+
+        setTimeout(() => {
+            chatBoard.style.transitionDuration = '0s';
+        }, 1000)
         mousePosition = {};
         window.removeEventListener('mousemove', this.onDragChatBoard)
     }
 
-    startResizeChatBoard() {
+    startResizeChatBoard(e) {
         console.log('mouse down')
+        mousePosition = { x: e.screenX, y: e.screenY };
+        const chatBoard = e.target.parentElement;
+
+        const height = parseInt(chatBoard.style.height, 10);
+        const width = parseInt(chatBoard.style.width, 10);
+
+        chatBoardState = { height, width }
         window.addEventListener('mousemove', this.onResizeChatBoard)
     }
 
@@ -98,8 +124,7 @@ export default class IBMWatsonPOCHome extends Component {
         if (!isEmpty(mousePosition)) {
             const newPosition = { x: e.screenX, y: e.screenY };
             const chatBoard = document.querySelector('#chatBoard');
-            let height = parseInt(chatBoard.style.height, 10);
-            let width = parseInt(chatBoard.style.width, 10);
+            let {height, width} = chatBoardState;
 
             height = height - newPosition.y + mousePosition.y;
             width = width + newPosition.x - mousePosition.x;
@@ -107,7 +132,6 @@ export default class IBMWatsonPOCHome extends Component {
             chatBoard.style.height = height + 'px';
             chatBoard.style.width = width + 'px';
         }
-        mousePosition = { x: e.screenX, y: e.screenY };
     }
 
     onStopResizeChatBoard() {
