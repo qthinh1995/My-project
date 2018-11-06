@@ -64,6 +64,10 @@ export default class Chat extends Component {
         this.setState({ info })
     }
 
+    onInRoom({ value = false } = {}) {
+        this.setState({ isInRoom: value })
+    }
+
     render() {
         const { info: { mode }, info, isInRoom } = this.state
         const globalRoom = mode === 'global'
@@ -73,18 +77,24 @@ export default class Chat extends Component {
         return (
           <div className="chat-area" >
             <div className={`disappear ${globalRoom ? 'visiable' : ''} `} >
-                <UserChat socket={socket} info={info} reference='messageArea1' />
-            </div>
+                <UserChat socket={socket} info={info} reference='messageArea1' />          
+            </div>  
             <div className={`disappear ${gameRoom ? 'visiable' : ''} `} >
                 <UserChat socket={socket} info={info} reference='messageArea2' />
+            </div>
+            <div>
+                <div className={`section-room ${globalRoom ? 'is-selected' : ''} `} onClick={() => this.onChooseRoom('global')} >
+                    global room
+                </div>
+                { isInRoom && 
+                    <div className={`section-room ${gameRoom ? 'is-selected' : ''} `} onClick={() => this.onChooseRoom('in game')} >
+                        in game
+                    </div>
+                }
             </div>
             {/* <div className={`disappear ${privateRoom ? 'visiable' : ''} `} >
                 <UserChat socket={socket} info={info} />
             </div> */}
-            <input className="button-room" type="button" value="global room" onClick={() => this.onChooseRoom('global')} />
-            { isInRoom &&
-                <input className="button-room" type="button" value="in game room" onClick={() => this.onChooseRoom('in game')} />
-            }
             {/* <input className="button-room" type="button" value="private room" onClick={() => this.onChooseRoom('private')} /> */}
           </div>
         )

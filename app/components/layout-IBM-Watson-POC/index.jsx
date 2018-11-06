@@ -64,7 +64,8 @@ export default class IBMWatsonPOCHome extends Component {
         })
 
         socket.on('john room', (roomState) => {
-            this.setState({ roomState })
+            this.setState({ roomState, isInRoom: true })
+            this.refs.chat.onInRoom({ value: true })
         })
 
         socket.on('submit user name', userName => {
@@ -79,6 +80,7 @@ export default class IBMWatsonPOCHome extends Component {
 
         socket.on('leave room', () => {
             this.setState({ roomState: {}, isInRoom: false })
+            this.refs.chat.onInRoom({ value: false })
         })
     }
 
@@ -107,12 +109,10 @@ export default class IBMWatsonPOCHome extends Component {
         if (roomName) {
             socket.emit('john room', { roomName, caroMap, isCreate: true })
         }
-        this.setState({ isInRoom: true })
     }
 
     johnRoom(item) {
         socket.emit('john room', { roomName: item })
-        this.setState({ isInRoom: true })
     }
 
     onChangeRenderLogin({ userName }) {
@@ -187,7 +187,7 @@ export default class IBMWatsonPOCHome extends Component {
                 { !isEmpty(roomState) &&
                     <CaroGame roomState={roomState} socket={socket} userID={userID} onHandleRoom={(value) => this.onHandleRoom(value)} />
                 }
-                { isLogin && <Chat socket={socket} isInRoom={isInRoom} /> }
+                { isLogin && <Chat socket={socket} ref="chat" /> }
             </div >
         )
     }

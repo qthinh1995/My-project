@@ -7,7 +7,7 @@ import { isEmpty } from 'lodash'
 let socket = {};
 let mousePosition = {};
 let chatBoardState = {};
-let self = {}
+// let self = {}
 
 export default class IBMWatsonPOCHome extends Component {
     static propTypes = {
@@ -29,9 +29,9 @@ export default class IBMWatsonPOCHome extends Component {
     }
 
     componentDidMount() {
-        self = this;
+        const self = this;
         socket.on('send message to room', ({ userName, message, reference }) => {
-            if (this.props.reference === reference) {
+            if (self.props.reference === reference) {
                 self.refs[reference].innerHTML += `<div>${userName}: ${message}</div>`
             }
         })
@@ -143,7 +143,7 @@ export default class IBMWatsonPOCHome extends Component {
         const { reference } = this.props
 
         return (
-            <div id="chatBoard" className="user-chatboard" style={{ height: '340px', width: '550px', position: 'fixed', bottom: '0', left: '0' }}>
+            <div id="chatBoard" className="user-chatboard" style={{ height: '340px', width: '550px' }}>
                 <div className="drag-icon" onMouseUp={() => { this.onStopDragChatBoard() }} onMouseDown={(e) => this.startDragChatBoard(e)}></div>
                 <div className="resize-icon" onMouseUp={() => { this.onStopResizeChatBoard() }} onMouseDown={(e) => this.startResizeChatBoard(e)}></div>
                 <div className="message-area" ref={reference} ></div>
