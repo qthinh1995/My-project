@@ -1,4 +1,5 @@
 import React, { Component, PropTypes } from 'react'
+import Validate from '../validate'
 
 export default class Login extends Component {
     static propTypes = {
@@ -11,27 +12,50 @@ export default class Login extends Component {
     state = {
       userName: '',
       passWord: '',
-      loginClassName: 'login-form'
+      loginClassName: 'login-form',
+      isSubmitReady: false
+    }
+
+    componentDidMount() {
+      const loginForm = document.querySelector('.login-form')
+      loginForm.addEventListener('keydown', (e) => {
+        if (e.keyCode === 13) {
+          this.onSubmit()
+        }
+      })
     }
 
     onChangeText({ e, key }) {
+      const { target: { value = '' } = {} } = e
       if (key === 'name') {
-        this.setState({ userName: e.target.value })
+        this.refs.validation.checkValidate({ value, maxLength: 19 })
+        this.setState({ userName: value })
       } else if (key === 'pass') {
-        this.setState({ passWord: e.target.value })
+        this.setState({ passWord: value })
       }
     }
 
     onSubmit() {
-      const { onChangeRenderLogin } = this.props
-      const { userName, loginClassName} = this.state
+      const { userName, loginClassName, isSubmitReady} = this.state
 
-      this.setState({ loginClassName: loginClassName.concat(' login-disappear')})
-      onChangeRenderLogin({ userName })
+      if (isSubmitReady) {
+        const hiddenAll = document.querySelector('.hidden-all')
+        const { onChangeRenderLogin } = this.props
+
+        hiddenAll.remove()
+        this.setState({ loginClassName: loginClassName.concat(' login-disappear')})
+        onChangeRenderLogin({ userName })
+      } else if (!userName) {
+        alert('User name is required');
+      }
+    }
+
+    handleSubmitButton({ value } = {}) {
+      this.setState({ isSubmitReady: value })
     }
 
     render() {
-      const { userName, passWord, loginClassName } = this.state
+      const { userName, passWord, loginClassName, isSubmitReady } = this.state
  
       return (
         <div className={loginClassName} >
@@ -40,6 +64,7 @@ export default class Login extends Component {
               <div className="zone" >
                 <label >User Name</label>
                 <input onChange={(e) => this.onChangeText({ e, key: 'name' })} value={userName} />
+                <Validate ref="validation" handleSubmitButton={({ value }) => this.handleSubmitButton({ value })} />
               </div>
               <div className="zone" >
                 <label >Password</label>
@@ -47,7 +72,7 @@ export default class Login extends Component {
               </div>
             </div>
             <div className="area-submit" >
-              <button type="button" className="btn btn-success" onClick={() => this.onSubmit()} >Submit</button>
+              <button type="button" className={`btn btn-success ${isSubmitReady ? '' : 'disable-submit'} `} onClick={() => this.onSubmit()} >Submit</button>
             </div>
           </div>
         </div>

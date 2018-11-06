@@ -19,11 +19,20 @@ export default class Chat extends Component {
 
     state = {
         room: 'global room',
+        isInRoom: false,
         info: {
             mode: 'global',
             reference: 'messageArea1'
         }
     }
+
+    // componentWillReceiveProps(nextProps) { 
+    //     const { isInRoom } = this.props
+    //     const { newIsInRoom} = nextProps
+    //     if (isInRoom !== newIsInRoom) {
+    //         this.setState({ isInRoom: newIsInRoom})
+    //     }
+    // }
 
     componentWillMount() {
         socket = this.props.socket;
@@ -56,7 +65,7 @@ export default class Chat extends Component {
     }
 
     render() {
-        const { info: { mode }, info } = this.state
+        const { info: { mode }, info, isInRoom } = this.state
         const globalRoom = mode === 'global'
         const gameRoom = mode === 'in game'
         // const privateRoom = mode === 'private'
@@ -73,7 +82,9 @@ export default class Chat extends Component {
                 <UserChat socket={socket} info={info} />
             </div> */}
             <input className="button-room" type="button" value="global room" onClick={() => this.onChooseRoom('global')} />
-            <input className="button-room" type="button" value="in game room" onClick={() => this.onChooseRoom('in game')} />
+            { isInRoom &&
+                <input className="button-room" type="button" value="in game room" onClick={() => this.onChooseRoom('in game')} />
+            }
             {/* <input className="button-room" type="button" value="private room" onClick={() => this.onChooseRoom('private')} /> */}
           </div>
         )
