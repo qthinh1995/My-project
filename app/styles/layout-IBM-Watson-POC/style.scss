@@ -17,8 +17,21 @@ div{
 	user-select: none;
 
 	.chat-area {
-		position: absolute;
-		bottom: 0;
+		position: fixed;
+		left: 2px;
+		bottom: 2px;
+
+		.section-room {
+			width: 100px;
+			border: 1px solid #0095f1;
+			background: #dedede;
+			border-top: none;
+			float: left;
+
+			&.is-selected {
+				background: white
+			}
+		}
 		
 		.disappear {
 			display: none;
@@ -31,6 +44,7 @@ div{
 
 	.leave-button, .create-button, .reset-button {
 		position: absolute;
+		width: 120px;
 		right: 10px;
 		top: 10px;
 	}

@@ -13,6 +13,7 @@ type Props = {
 
 function ServerHTML(props: Props) {
   const { body, assets, locale, title, description, assetsManual, robotTag, url } = props
+  const styleHidddenAll = { position: 'fixed', width: '100%', height: '100%', background: 'white', zIndex: '9'}  
 
   return (
     <html lang={ locale }>
@@ -42,9 +43,10 @@ function ServerHTML(props: Props) {
         <script src="https://apis.google.com/js/platform.js" async defer></script>
       </head>
       <body>
+        <div className="hidden-all" style={styleHidddenAll} />        
         <div id='content' dangerouslySetInnerHTML={ { __html: body } } />
         { assets.script.map((src, idx) =>
-          <script key={ idx } src={ src } />) }
+          <script key={ idx } src={ src }/>) }
         { assetsManual.script.map((src, idx) =>
           <script key={ idx } src={ src } />) }
         {/* <script async defer id='github-bjs' src='https://buttons.github.io/buttons.js' /> */}

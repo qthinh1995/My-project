@@ -22,6 +22,7 @@ import http from 'http'
 import { getArrayHost, changeAllowType, getIndexOfArray, defaultRooom, merge } from './utils'
 import { get, set, values, filter, cloneDeep, isEmpty } from 'lodash'
 import crypto from 'crypto'
+// import db from './api/testsequelize/models'
 
 
 console.log('config--------------: ', config)
@@ -89,66 +90,63 @@ setInterval(() => {
   logtofile(new Date())
 }, 1000 * 60 * 60)
 
-function leaveRoom(socket) {
-  if (!isEmpty(currentHosts[socket.roomName])) {
-    const { listUser = [], availableType = {} } = currentHosts[socket.roomName]
-    if (listUser.length === 1) {
-      console.log('delete room')
-      delete currentHosts[socket.roomName]
-      infoHost.every((item, i) => {
-        if (item.idRoom === socket.roomName) {
-          infoHost.splice(i, 1)
-          return false
+io.on('connection', (socket) => {
+  socket.emit('get user id', cloneDeep(socket.id));
+  
+  function leaveRoom() {
+    if (!isEmpty(currentHosts[socket.roomName])) {
+      const { listUser = [], availableType = {} } = currentHosts[socket.roomName]
+      if (listUser.length === 1) {
+        delete currentHosts[socket.roomName]
+        infoHost.every((item, i) => {
+          if (item.idRoom === socket.roomName) {
+            infoHost.splice(i, 1)
+            return false
+          }
+          return true
+        })
+        io.sockets.emit('get hosts', infoHost)
+      } else {
+        const index = getIndexOfArray({ listUser, id: socket.id })
+        let isUserPlaying = false;
+        if (index > -1) {
+          const { player } = listUser[index]
+          if (index === 0 && listUser.length > 1) {
+            listUser[1].isHost = true
+          }
+  
+          if (player === 'X') {
+            availableType.isTypeX = -1
+            isUserPlaying = true;
+          } else if (player === 'O') {
+            availableType.isTypeY = -1
+            isUserPlaying = true;
+          }
+  
+          listUser.splice(index, 1)
         }
-        return true
-      })
-      io.sockets.emit('get hosts', infoHost)
-    } else {
-      console.log('keep room')
-      const index = getIndexOfArray({ listUser, id: socket.id })
-      let isUserPlaying = false;
-      if (index > -1) {
-        const { player } = listUser[index]
-        if (index === 0 && listUser.length > 1) {
-          listUser[1].isHost = true
+  
+        currentHosts[socket.roomName].listUser = listUser
+        currentHosts[socket.roomName].availableType = availableType
+  
+        if (isUserPlaying) {
+          const room = defaultRooom();
+          merge(currentHosts[socket.roomName], room)
         }
-
-        if (player === 'X') {
-          availableType.isTypeX = -1
-          isUserPlaying = true;
-        } else if (player === 'O') {
-          availableType.isTypeY = -1
-          isUserPlaying = true;
-        }
-
-        listUser.splice(index, 1)
-      }
-
-      currentHosts[socket.roomName].listUser = listUser
-      currentHosts[socket.roomName].availableType = availableType
-
-      if (isUserPlaying) {
-        const room = defaultRooom();
-        merge(currentHosts[socket.roomName], room)
       }
       socket.broadcast.to(socket.roomName).emit('get room current state', currentHosts[socket.roomName])
       socket.emit('leave room')
       socket.leave(socket.roomName)
     }
+    delete socket.roomName;
   }
-  delete socket.roomName;
-}
 
-io.on('connection', (socket) => {
-  socket.emit('get user id', cloneDeep(socket.id));
-  console.log('a user connected');
-  
   socket.on('disconnect', () => {
-    leaveRoom(socket)
+    leaveRoom()
   });
 
   socket.on('leave room', () => {
-    leaveRoom(socket)
+    leaveRoom()
   })
 
   socket.on('submit user name', (userName) => {
@@ -159,7 +157,6 @@ io.on('connection', (socket) => {
 
   socket.on('john room', ({ roomName, isCreate = false }) => {
     socket.roomName = roomName
-    console.log('is create room', isCreate)
     if (isCreate) {
       const date = new Date()
       socket.roomName = crypto.createHash('md5').update(date.getTime().toString()).digest('hex')
@@ -258,6 +255,14 @@ io.on('connection', (socket) => {
 
 server.listen(999, () => {
 });
+
+// apiRouter.post('/users', (req, res) => {
+//   db.user.create({
+//     userName: 'tuan123dk',
+//     passWord: 'nttuan1995'
+//   })
+//   .then(users => res.json(users))
+// })
 
 // mount react-router
 app.use(router)

@@ -1,6 +1,5 @@
 import React, { Component, PropTypes } from 'react'
 import connect from 'connect-alt'
-import Chat from './Chat'
 import { get, set, values, filter, cloneDeep, isEmpty, find } from 'lodash'
 // import socketIOClient from 'socket.io-client';
 
@@ -361,7 +360,6 @@ export default class CaroGame extends Component {
                         </div>
                     </div>
                 </div>
-                <Chat socket={socket} />
             </div> 
         )
     }

@@ -4,9 +4,9 @@ import CaroGame from './CaroGame'
 import socketIOClient from 'socket.io-client'
 import Login from 'components/layout-IBM-Watson-POC/login'
 import { isEmpty } from 'lodash'
+import Chat from './Chat'
 
-// const row = 20;
-// const col = 40;
+
 let socket = {}
 const caroMap = Array(20)
 for (let i = 0; i < caroMap.length; i++) {
@@ -64,12 +64,15 @@ export default class IBMWatsonPOCHome extends Component {
         })
 
         socket.on('john room', (roomState) => {
-            this.setState({ roomState })
+            this.setState({ roomState, isInRoom: true })
+            this.refs.chat.onInRoom({ value: true })
         })
 
         socket.on('submit user name', userName => {
             const roomName = userName + "'s room";
-            this.setState({ isLogin: true, userName, roomName })
+            setTimeout(() => {
+                this.setState({ isLogin: true, userName, roomName })
+            }, 1000)
             socket.on('get hosts', currentHosts => {
                 this.setState({ currentHosts })
             })
@@ -77,6 +80,7 @@ export default class IBMWatsonPOCHome extends Component {
 
         socket.on('leave room', () => {
             this.setState({ roomState: {}, isInRoom: false })
+            this.refs.chat.onInRoom({ value: false })
         })
     }
 
@@ -105,22 +109,14 @@ export default class IBMWatsonPOCHome extends Component {
         if (roomName) {
             socket.emit('john room', { roomName, caroMap, isCreate: true })
         }
-        this.setState({ isInRoom: true })
     }
 
     johnRoom(item) {
         socket.emit('john room', { roomName: item })
-        this.setState({ isInRoom: true })
     }
 
     onChangeRenderLogin({ userName }) {
-        setTimeout(() => {
-            if (userName) {
-                socket.emit('submit user name', userName)
-            } else {
-                alert('User name is required');
-            }
-        }, 2000)
+        socket.emit('submit user name', userName)
     }
 
     onLeaveRoom() {
@@ -163,6 +159,7 @@ export default class IBMWatsonPOCHome extends Component {
 
     render() {
         const { gameMode, roomState, isLogin, isInRoom, userID, isReset } = this.state;
+
         return (
             <div className="caro-game" >
                 { !isLogin && <Login onChangeRenderLogin={(value) => this.onChangeRenderLogin(value)} /> }
@@ -190,6 +187,7 @@ export default class IBMWatsonPOCHome extends Component {
                 { !isEmpty(roomState) &&
                     <CaroGame roomState={roomState} socket={socket} userID={userID} onHandleRoom={(value) => this.onHandleRoom(value)} />
                 }
+                { isLogin && <Chat socket={socket} ref="chat" /> }
             </div >
         )
     }
