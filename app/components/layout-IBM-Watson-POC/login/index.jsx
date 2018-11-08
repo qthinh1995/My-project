@@ -44,6 +44,9 @@ export default class Login extends Component {
 
         hiddenAll.remove()
         this.setState({ loginClassName: loginClassName.concat(' login-disappear')})
+        setTimeout(() => {
+        this.setState({ loginClassName: loginClassName.concat(' invisible')})          
+        }, 900)
         onChangeRenderLogin({ userName })
       } else if (!userName) {
         alert('User name is required');
