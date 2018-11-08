@@ -69,8 +69,10 @@ export default class IBMWatsonPOCHome extends Component {
 
         const bottom = parseInt(chatBoard.style.bottom, 10);
         const left = parseInt(chatBoard.style.left, 10);
+        const height = parseInt(chatBoard.style.height, 10);
+        const width = parseInt(chatBoard.style.width, 10);
 
-        chatBoardState = { left, bottom }
+        chatBoardState = { left, bottom, height, width }
         
         window.addEventListener('mousemove', this.onDragChatBoard)
     }
@@ -98,11 +100,12 @@ export default class IBMWatsonPOCHome extends Component {
         const chatBoard = document.querySelector('#chatBoard');
 
         chatBoard.style.transitionDuration = '1s';
+
         chatBoard.style.bottom = 0;
         chatBoard.style.left = 0;
 
         setTimeout(() => {
-            chatBoard.style.transitionDuration = '0s';
+            chatBoard.style.removeProperty('transition-duration');
         }, 1000)
         mousePosition = {};
         window.removeEventListener('mousemove', this.onDragChatBoard)
@@ -113,10 +116,12 @@ export default class IBMWatsonPOCHome extends Component {
         mousePosition = { x: e.screenX, y: e.screenY };
         const chatBoard = e.target.parentElement;
 
+        const bottom = parseInt(chatBoard.style.bottom, 10);
+        const left = parseInt(chatBoard.style.left, 10);
         const height = parseInt(chatBoard.style.height, 10);
         const width = parseInt(chatBoard.style.width, 10);
 
-        chatBoardState = { height, width }
+        chatBoardState = { left, bottom, height, width }
         window.addEventListener('mousemove', this.onResizeChatBoard)
     }
 
