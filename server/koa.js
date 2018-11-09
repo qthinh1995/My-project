@@ -183,7 +183,7 @@ io.on('connection', (socket) => {
     io.sockets.in(socket.roomName).emit('get room current state', {roomStatus: 'Playing'})
   })
 
-  socket.on('handle caro map', ({ x, y, player, isWinner }) => {
+  socket.on('handle caro map', ({ x, y, player, isWinner, style }) => {
     const { caroMap } = currentHosts[socket.roomName]
     let { playerWinner } = currentHosts[socket.roomName]
     const nextType = changeAllowType(player)
@@ -192,7 +192,7 @@ io.on('connection', (socket) => {
     currentHosts[socket.roomName].caroMap = caroMap
     playerWinner = isWinner ? socket.userName : playerWinner
     currentHosts[socket.roomName].playerWinner = playerWinner
-    io.sockets.in(socket.roomName).emit('get room current state', { caroMap, nextType, playerWinner })
+    io.sockets.in(socket.roomName).emit('get room current state', { caroMap, nextType, playerWinner, style })
   })
 
   socket.on('change type', ({ type }) => {

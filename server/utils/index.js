@@ -43,7 +43,7 @@ const utils = {
     }
     if (onStart && socket) {
       return {
-        availableType: { isTypeX: 0, isTypeY: -1 }, caroMap, nextType: 'X', playerWinner: '', roomStatus: 'Waiting',
+        availableType: { isTypeX: 0, isTypeY: -1 }, caroMap, nextType: 'X', playerWinner: '', roomStatus: 'Waiting', style: {},
         listUser: [ { id: socket.id, userName: socket.userName, player: 'X', isHost: true, ready: true } ]
       };
     }

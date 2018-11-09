@@ -25,9 +25,39 @@ export default class CaroGame extends Component {
      
     }
 
+    convertPosition({ arrPositionWin = []} = {}) {
+        const fristPosition = arrPositionWin[0]
+        const lastPosition = arrPositionWin[4]
+        const lenghtOfSquare = document.querySelector('.caro-board .square').offsetHeight
+        // const styleBorderWin = document.querySelector('.border-win').style
+        let width = ((lenghtOfSquare - 1) * 5)
+        const left = (fristPosition.x * (lenghtOfSquare - 1) + Math.floor(lenghtOfSquare/2)) + 'px'
+        const top = (fristPosition.y * (lenghtOfSquare - 1) + Math.floor(lenghtOfSquare/2)) + 'px'
+        let transform = 'rotate(0deg)'
+        let marginLeft = -Math.floor(lenghtOfSquare/2)
+
+        if (fristPosition.x !== lastPosition.x && fristPosition.y !== lastPosition.y) {
+            marginLeft = marginLeft * Math.sqrt(2)
+            width = width * Math.sqrt(2)
+            if (fristPosition.x < lastPosition.x) {
+                transform = 'rotate(45deg)'
+            } else {
+                transform = 'rotate(135deg)'
+            }
+        } else if (fristPosition.x === lastPosition.x) {
+            transform = 'rotate(90deg)'
+        }
+        
+        const transformOrigin = -marginLeft + 'px'
+        marginLeft = marginLeft + 'px'
+        width = width + 'px'
+
+        return { width, left, top, display: 'block', transform, transformOrigin, marginLeft }
+    }
+
     onClickSquare({ x, y }) {
         const { roomStatus, nextType, thisUser: { player } } = this.state;
-        // const ftype = isClickX ? 'X' : 'O';
+        console.log(x, y)
         if (roomStatus === 'Playing' && player === nextType) {
             let infoWinner = {}
             nebourArr.every((arrDir) => {
@@ -38,7 +68,12 @@ export default class CaroGame extends Component {
                 return true
             });
             const isWinner = this.checkFinalWin({ infoWinner, player })
-            socket.emit('handle caro map', { x, y, player, isWinner })                   
+            let style = {}
+            if (isWinner) {
+                console.log(infoWinner.arrPositionWin)
+                style = this.convertPosition({ arrPositionWin: infoWinner.arrPositionWin })
+            }
+            socket.emit('handle caro map', { x, y, player, isWinner, style })                   
         }
     }
 
@@ -72,7 +107,7 @@ export default class CaroGame extends Component {
 
         if (count === 4) {
             arrPositionWin.sort((a, b) => {
-                return a.x - b.x ? a.x - b.x : a.y - b.y
+                return a.y - b.y ? a.y - b.y : a.x - b.x
             })
             const constOfChangeX = Math.abs(arrPositionWin[0].x - arrPositionWin[1].x)
             const constOfChangeY = Math.abs(arrPositionWin[0].y - arrPositionWin[1].y)
@@ -265,12 +300,13 @@ export default class CaroGame extends Component {
     }
 
     render() {
-        const { caroMap, playerWinner, listUser, thisUser, availableType: { isTypeX, isTypeY } } = this.state;
+        const { caroMap, playerWinner, listUser, thisUser, availableType: { isTypeX, isTypeY }, style } = this.state;
         let userClassNAme = thisUser.player === 'O' ? 'O-player' : '';
         userClassNAme =   thisUser.player  === 'X' ? 'X-player' : userClassNAme;
 
         return (
             <div className="caro-match">
+                {playerWinner && <h2>The winner is {playerWinner}</h2>}            
                 <div className="custom-list">
                     <h3 className="custom-list-tittle">Users in room</h3>
                     {listUser && listUser.map((user, index) => {
@@ -314,7 +350,10 @@ export default class CaroGame extends Component {
                     <div className={`caro-board ${userClassNAme}`}>
                         { this.renderGameMessage() }
                         {/* {!isWinner && <h2>It's turn: {nextType}</h2>} */}
-                        {playerWinner && <h2>The winner is {playerWinner}</h2>}
+                        <div className='border-win' style={style} />
+                        {/* <div className='border-win .vertical-line' style={style} />
+                        <div className='border-win .diagonal-line-right' style={style} />
+                        <div className='border-win .horizontal-line-left' style={style} /> */}
                         {/* <button onClick={() => this.simulator()}> Click </button> */}
                         {caroMap && caroMap.map((row, y) => {
                             return (
