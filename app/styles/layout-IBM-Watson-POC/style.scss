@@ -18,8 +18,22 @@ div{
 
 	.chat-area {
 		position: fixed;
-		left: 2px;
-		bottom: 2px;
+		margin: 2px;
+
+		.drag-icon{
+			position: absolute;
+			width: 10px;
+			height: 10px;
+			background: black;
+		}
+
+		.resize-icon{
+			position: absolute;
+			right: 0;
+			width: 10px;
+			height: 10px;
+			background: black;
+		}
 
 		.section-room {
 			width: 100px;
@@ -350,25 +364,9 @@ div{
 
 	.user-chatboard{
 		background: rgba(255, 255, 255, 0.5);
-		// position: absolute;
-		// bottom: 0;
 		border: 1px solid $blue-color;
 		box-shadow: 0px 0px 5px 0px $blue-color;
-
-		.drag-icon{
-			position: absolute;
-			width: 10px;
-			height: 10px;
-			background: black;
-		}
-
-		.resize-icon{
-			position: absolute;
-			right: 0;
-			width: 10px;
-			height: 10px;
-			background: black;
-		}
+		height: calc(100% - 25px);
 		
 		.message-area{
 			height: calc(100% - 30px);
