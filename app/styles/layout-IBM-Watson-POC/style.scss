@@ -15,6 +15,50 @@ div{
 .caro-game {
 	position: relative;
 	user-select: none;
+	height: 100vh;
+
+	.fa-user {
+		position: relative;
+		font-size: 25px;
+    margin: 5px 0px 8px 5px;
+		cursor: pointer;
+		
+		.zone {
+			display: none;
+		}
+		
+		&:hover {
+			.zone {
+				position: absolute;
+				padding-left: 5px;
+				display: block;
+				top: 0;
+				left: 10px;
+
+				.handle-user {
+					margin-left: 5px;
+					font-size: 13px;
+					border: 1px solid  rgba(0,0,0,0.15);;
+					background: rgba(0,0,0,0.05);
+	
+				.area {
+					line-height: 1.5;
+					cursor: pointer;
+					padding: 0px 2px;
+	
+					&:hover {
+						background: #dedede;
+					}
+				}
+	
+				.change-pw {
+					width: max-content;
+				}
+			}
+
+			}
+		}
+	}
 
 	.chat-area {
 		position: fixed;

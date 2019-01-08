@@ -7,4 +7,5 @@
 @import './components/spinner.scss';*/
 /* 2. Layouts */
 @import './layout-IBM-Watson-POC/style.scss';
-@import '../components/layout-IBM-Watson-POC/login/style.scss'
+@import '../components/layout-IBM-Watson-POC/popup-form/style.scss';
+@import '../components/layout-IBM-Watson-POC/notification/style.scss';

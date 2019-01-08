@@ -1,0 +1,42 @@
+$error-color: #bd362f;
+$success-color: #51a351;
+$warning-color: #f89406;
+
+.notification {
+  position: absolute;
+  z-index: 9999999;
+  border: 2px solid;
+  border-radius: 25px;
+  color: white;
+  right: 10px;
+  top: 50px;
+
+  &.success {
+    border-color: $success-color;
+    background-color: $success-color;
+  }
+
+  &.warning {
+    border-color: $warning-color;
+    background-color: $warning-color;
+  }
+
+  &.error {
+    border-color: $error-color;
+    background-color: $error-color;
+  }
+
+  &.not-display {
+    display: none;
+  }
+
+  .close-btn {
+    padding-left: 10px;
+    cursor: pointer;
+  }
+
+  .message-error {
+    display: inline-block;
+    padding: 5px 10px;
+  }
+}
