@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react'
 import connect from 'connect-alt'
 import axios from 'axios'
-import CaroGame from './CaroGame'
+import CaroGame from './caroGame'
 import socketIOClient from 'socket.io-client'
 import PopupForm from 'components/layout-IBM-Watson-POC/popup-form'
 import Notification from 'components/layout-IBM-Watson-POC/notification'
