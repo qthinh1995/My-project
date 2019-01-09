@@ -127,7 +127,6 @@ export default class IBMWatsonPOCHome extends Component {
 
     socketOn() {
         socket.on('get user id', (userID) => {
-            console.log('userID', userID)
             this.setState({ userID })
         })
 
@@ -420,7 +419,7 @@ export default class IBMWatsonPOCHome extends Component {
                     <div className="zone" >
                         <div className="handle-user" >
                             <div className="area change-pw" onClick={() => this.onShowChangePwPopUp()} >Change Password </div>
-                            <div className="area log-out">Log out</div>
+                            <div className="area log-out" onClick={() => { location.reload() }} >Log out</div>
                         </div>
                     </div>
                 </i>      

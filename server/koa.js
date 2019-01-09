@@ -269,7 +269,7 @@ io.on('connection', (socket) => {
   })
 });
 
-server.listen(999, () => {
+server.listen(80, () => {
 });
 
 // apiRouter.post('/users', (req, res) => {
