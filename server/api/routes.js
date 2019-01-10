@@ -182,6 +182,12 @@ function removeProperties(obj = {}) {
 }
 
 function routes(router) {
+  // router.get('/checkCookie', async ctx => {
+  //   const { cookies } = ctx
+  //   const userName = cookies.get('id')
+  //   const password = cookies.get('password')
+  // })
+
   router.post('/login', async ctx => {
     console.log(ctx.cookies)
     const { userName = '', password = '' } = ctx.request.body

@@ -251,7 +251,17 @@ div{
 				margin-top: -2px;
 			}
 
-			&&.X-player{
+			&&.X-player {
+				&&.hidden-hover {
+					.empty-square {
+						&&:hover {
+							&&::after {
+								opacity: 0;
+							}
+						}
+					}
+				}
+
 				.empty-square{
 					&&::after{
 						content: 'X';
@@ -275,9 +285,19 @@ div{
 				}
 			}
 
-			&&.O-player{
-				.empty-square{
-					&&::after{
+			&&.O-player {
+				&&.hidden-hover {
+					.empty-square {
+						&&:hover {
+							&&::after {
+								opacity: 0;
+							}
+						}
+					}
+				}
+
+				.empty-square {
+					&&::after {
 						content: 'O';
 						color: #0070ff7f;
 						text-shadow: 0px 0px 3px #0070ff7f;

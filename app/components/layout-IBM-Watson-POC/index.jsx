@@ -120,6 +120,12 @@ export default class IBMWatsonPOCHome extends Component {
         return location.href
     }
 
+    // rememberUser() {
+    //     const res = axios.get('/api/checkCookie')
+
+    //     console.log(res)
+    // }
+
     componentDidMount() {
         socket = socketIOClient(this.getURL())
         this.socketOn()
@@ -206,6 +212,7 @@ export default class IBMWatsonPOCHome extends Component {
 
             const { data: { status, data }} = res
             if (status === 200) {
+                // document.cookie = `id=${userName}; pass=${password}`
                 socket.emit('submit user name', userName)
                 this.setState({ password })
             } else {
@@ -339,6 +346,11 @@ export default class IBMWatsonPOCHome extends Component {
         }
     }
 
+    logoutUser() {
+        document.cookie = ''
+        location.reload()
+    }
+
     renderListRoom() {
         const { userName, currentHosts } = this.state;
         return (
@@ -419,7 +431,7 @@ export default class IBMWatsonPOCHome extends Component {
                     <div className="zone" >
                         <div className="handle-user" >
                             <div className="area change-pw" onClick={() => this.onShowChangePwPopUp()} >Change Password </div>
-                            <div className="area log-out" onClick={() => { location.reload() }} >Log out</div>
+                            <div className="area log-out" onClick={() => this.logoutUser() } >Log out</div>
                         </div>
                     </div>
                 </i>      

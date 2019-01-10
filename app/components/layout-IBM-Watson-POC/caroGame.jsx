@@ -57,7 +57,6 @@ export default class CaroGame extends Component {
 
     onClickSquare({ x, y }) {
         const { roomStatus, nextType, thisUser: { player } } = this.state;
-        console.log(x, y)
         if (roomStatus === 'Playing' && player === nextType) {
             let infoWinner = {}
             nebourArr.every((arrDir) => {
@@ -70,7 +69,6 @@ export default class CaroGame extends Component {
             const isWinner = this.checkFinalWin({ infoWinner, player })
             let style = {}
             if (isWinner) {
-                console.log(infoWinner.arrPositionWin)
                 style = this.convertPosition({ arrPositionWin: infoWinner.arrPositionWin })
             }
             socket.emit('handle caro map', { x, y, player, isWinner, style })                   
@@ -125,7 +123,10 @@ export default class CaroGame extends Component {
         this.state = this.props.roomState;
         this.state.userID = this.props.userID;
         this.getMoreInfo(this.state, this.props.roomState)
-        this.receive();
+    }
+
+    componentDidMount() {
+        this.receive()        
     }
 
     getMoreInfo(currentState, roomState) {
@@ -300,9 +301,9 @@ export default class CaroGame extends Component {
     }
 
     render() {
-        const { caroMap, playerWinner, listUser, thisUser, availableType: { isTypeX, isTypeY }, style } = this.state;
-        let userClassNAme = thisUser.player === 'O' ? 'O-player' : '';
-        userClassNAme =   thisUser.player  === 'X' ? 'X-player' : userClassNAme;
+        const { caroMap, playerWinner, listUser, thisUser, availableType: { isTypeX, isTypeY }, style, nextType, thisUser: { player } } = this.state;
+        let userClassNAme = player === 'O' ? 'O-player' : '';
+        userClassNAme = player  === 'X' ? 'X-player' : userClassNAme;
 
         return (
             <div className="caro-match">
@@ -347,7 +348,7 @@ export default class CaroGame extends Component {
                     })}
                 </div>
                 <div className="right-board">
-                    <div className={`caro-board ${userClassNAme}`}>
+                    <div className={`caro-board ${userClassNAme} ${nextType === player ? '' : 'hidden-hover'} `}>
                         { this.renderGameMessage() }
                         {/* {!isWinner && <h2>It's turn: {nextType}</h2>} */}
                         <div className='border-win' style={style} />
