@@ -19,7 +19,7 @@ import config from '../internals/config/private'
 import { apiPrefix } from '../internals/config/public'
 import http from 'http'
 // import { isEmpty } from 'lodash'
-import { getArrayHost, changeAllowType, getIndexOfArray, defaultRooom, merge } from './utils'
+import { getArrayHost, changeAllowType, getIndexOfArray, defaultRooom, merge, findAvaliableType } from './utils'
 import { get, set, values, filter, cloneDeep, isEmpty } from 'lodash'
 import crypto from 'crypto'
 // const session = require('koa-session');
@@ -133,9 +133,11 @@ io.on('connection', (socket) => {
   
           if (player === 'X') {
             availableType.isTypeX = -1
+            availableType.isTypeY = 0
             isUserPlaying = true;
           } else if (player === 'O') {
             availableType.isTypeY = -1
+            availableType.isTypeX = 0
             isUserPlaying = true;
           }
   
@@ -180,7 +182,7 @@ io.on('connection', (socket) => {
       infoHost.push({ idRoom: socket.roomName, roomName })
       io.sockets.emit('get hosts', infoHost)
     } else {
-      currentHosts[socket.roomName].listUser.push({ id: socket.id, userName: socket.userName })
+      currentHosts[socket.roomName] = findAvaliableType({ roomState: currentHosts[socket.roomName], socket })
     }
 
     socket.join(socket.roomName)

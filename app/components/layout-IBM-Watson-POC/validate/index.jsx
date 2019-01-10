@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react'
 
-const MESS_ERROR = [ 'This field is a required', "ID don't allow a special character or white space" ]
+const MESS_ERROR = [ 'This field is a required', "ID don't allow a special character or white space", 'Limited of the ID is a 15 character' ]
 let messErrorBK = ''
 export default class Validate extends Component {
     static propTypes = {
@@ -18,7 +18,7 @@ export default class Validate extends Component {
     componentDidMount() {
     }
 
-    checkValidate({ typeForm, typeInput, value } = {}) {
+    checkValidate({ typeForm, typeInput, value = '' } = {}) {
       if (typeForm === 'signup' || typeForm === 'changePw') {
         let messError = ''
         if (!value) {
@@ -27,6 +27,8 @@ export default class Validate extends Component {
           const format = /[ !@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/
           if (format.test(value)) {
             messError = MESS_ERROR[1]
+          } else if (value.length > 15) {
+            messError = MESS_ERROR[2]
           } else if (messErrorBK) {
             messError = messErrorBK
           }

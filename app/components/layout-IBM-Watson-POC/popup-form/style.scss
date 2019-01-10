@@ -11,13 +11,6 @@
 
   &.login-form {
     background: rgba(233,239,243);
-
-    .area-form {
-      -webkit-animation-name: appear; /* Safari 4.0 - 8.0 */
-      -webkit-animation-duration: 2s; /* Safari 4.0 - 8.0 */
-      animation-name: appear;
-      animation-duration: 2s;
-    }
   }
 
   .area-form {
@@ -90,16 +83,3 @@
   }
 }
 
-/* Safari 4.0 - 8.0 */
-@-webkit-keyframes appear {
-  0%   { opacity: 1; top: 0px;}
-  75%  { opacity: 0.4; top: 220px; }
-  100% { opacity: 1; top: 200px;}
-}
-
-/* Standard syntax */
-@keyframes appear {
-  0%   { opacity: 1; top: 0px;}
-  75%  { opacity: 0.4; top: 220px; }
-  100% { opacity: 1; top: 200px;}
-}

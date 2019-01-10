@@ -146,7 +146,6 @@ export default class CaroGame extends Component {
 
     receive() {
         socket.on('get room current state', (roomState) => {
-            console.log('get new state', roomState);
             const { playerWinner } = roomState
             const { thisUser: { isHost } } = this.state
 
@@ -159,6 +158,10 @@ export default class CaroGame extends Component {
             this.getMoreInfo(currentState, roomState)
             this.setState(currentState)
         })
+    }
+
+    componentWillUnmount() {
+        socket.off('get room current state')
     }
 
     componentDidUpdate() {
@@ -288,12 +291,14 @@ export default class CaroGame extends Component {
     }
 
     renderGameMessage() {
-        const { roomStatus } = this.state;
+        const { roomStatus, playerWinner, thisUser: { player } } = this.state;
+        const typePlayer = player === 'X' ? 'x-player' : 'o-player'
+        const wrapColor = playerWinner ? 'display' : '' 
 
-        if (roomStatus === 'Waiting') {
+        if (roomStatus === 'Waiting' || playerWinner) {
             return (
-                <div className="wrapper"> 
-                    <div className="game-message">Waiting</div>
+                <div className={`wrapper ${wrapColor} ${typePlayer}`}> 
+                    <div className="game-message">{playerWinner ? `${playerWinner} win` : 'Waiting'}</div>
                 </div>
             )
         }
@@ -301,13 +306,12 @@ export default class CaroGame extends Component {
     }
 
     render() {
-        const { caroMap, playerWinner, listUser, thisUser, availableType: { isTypeX, isTypeY }, style, nextType, thisUser: { player } } = this.state;
+        const { caroMap, playerWinner, listUser, thisUser, availableType: { isTypeX, isTypeY }, style, nextType, thisUser: { player }, roomStatus } = this.state;
         let userClassNAme = player === 'O' ? 'O-player' : '';
         userClassNAme = player  === 'X' ? 'X-player' : userClassNAme;
 
         return (
-            <div className="caro-match">
-                {playerWinner && <h2>The winner is {playerWinner}</h2>}            
+            <div className="caro-match">      
                 <div className="custom-list">
                     <h3 className="custom-list-tittle">Users in room</h3>
                     {listUser && listUser.map((user, index) => {
@@ -328,27 +332,25 @@ export default class CaroGame extends Component {
                                 {user.isHost &&
                                     <i className="fa fa-key"></i>
                                 }
-                                {!user.isHost && thisUser.isHost &&
+                                {/* {!user.isHost && thisUser.isHost &&
                                 <div className="area-control" >
                                     <i className="fa fa-ellipsis-v there-dot" ></i>
                                     <div className="menu-control" >
-                                        { !user.player &&
-                                            <div className="option" onClick={() => this.removeUser({ id: user.id })} >
-                                                remove guest
-                                            </div>
-                                        }
+                                        <div className="option" onClick={() => this.removeUser({ id: user.id })} >
+                                            remove guest
+                                        </div>
                                         <div className="option" >
                                             ib riêng nhẹ
                                         </div>
                                     </div>
                                 </div>
-                                }
+                                } */}
                             </div>
                         )
                     })}
                 </div>
                 <div className="right-board">
-                    <div className={`caro-board ${userClassNAme} ${nextType === player ? '' : 'hidden-hover'} `}>
+                    <div className={`caro-board ${userClassNAme} ${nextType === player && roomStatus !== 'Waiting' && !playerWinner ? '' : 'hidden-hover'} `}>
                         { this.renderGameMessage() }
                         {/* {!isWinner && <h2>It's turn: {nextType}</h2>} */}
                         <div className='border-win' style={style} />

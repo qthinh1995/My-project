@@ -11,6 +11,20 @@ $warning-color: #f89406;
   right: 10px;
   top: 50px;
 
+  &.animation-show {
+    -webkit-animation-name: appear; /* Safari 4.0 - 8.0 */
+    -webkit-animation-duration: 0.5s; /* Safari 4.0 - 8.0 */
+    animation-name: appear;
+    animation-duration: 0.5s;
+  }
+
+  &.animation-disappear {
+    -webkit-animation-name: dis-appear; /* Safari 4.0 - 8.0 */
+    -webkit-animation-duration: 0.5s; /* Safari 4.0 - 8.0 */
+    animation-name: dis-appear;
+    animation-duration: 0.5s;
+  }
+
   &.success {
     border-color: $success-color;
     background-color: $success-color;
@@ -39,4 +53,28 @@ $warning-color: #f89406;
     display: inline-block;
     padding: 5px 10px;
   }
+}
+
+/* Safari 4.0 - 8.0 */
+@-webkit-keyframes appear {
+  0%   { right: -365px; }
+  100% { right: 10px; }
+}
+
+/* Standard syntax */
+@keyframes appear {
+  0%   { right: -365px; }
+  100% { right: 10px; }
+}
+
+/* Safari 4.0 - 8.0 */
+@-webkit-keyframes dis-appear {
+  0%   { right: 10px; }
+  100% { right: -365px; }
+}
+
+/* Standard syntax */
+@keyframes dis-appear {
+  0%   { right: 10px; }
+  100% { right: -365px; }
 }

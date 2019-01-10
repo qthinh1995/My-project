@@ -189,7 +189,6 @@ function routes(router) {
   // })
 
   router.post('/login', async ctx => {
-    console.log(ctx.cookies)
     const { userName = '', password = '' } = ctx.request.body
     await User.findOne({ where: { userName, password }, attributes: [ 'userName', 'password' ]})
       .then((user) => {

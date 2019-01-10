@@ -324,6 +324,13 @@ div{
 				height: 100%;
 				width: 100%;
 				background: #ddffdda6;
+
+				&&.display {
+					.game-message {
+						font-size: 35px;
+						opacity: 0.7;
+					}
+				}
 			}
 
 			.game-message{
@@ -331,7 +338,6 @@ div{
 				left: 50%;
 				top: 50%;
 				transform: translate(-50%, -50%);
-
 				text-shadow: 0px 0px 10px lime;
 				font-size: 70px;
 				font-weight: 400;

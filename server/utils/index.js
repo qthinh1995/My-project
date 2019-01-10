@@ -55,6 +55,26 @@ const utils = {
     Object.keys(newValue).forEach((propertyName) => {
         mergeObj[propertyName] = newValue[propertyName];
     }) 
+  },
+
+  findAvaliableType({ roomState, socket}) {
+    const { availableType: { isTypeX, isTypeY }, listUser } = roomState
+    if (listUser.length === 1) {
+      let player = 'X'
+      let typeAvaliable = 'isTypeX'
+      if (isTypeX === -1) {
+        typeAvaliable = 'isTypeX'
+      } else if (isTypeY === -1) {
+        typeAvaliable = 'isTypeY'
+        player = 'O'
+      }
+      roomState.availableType[typeAvaliable] = 1
+      roomState.listUser.push({ id: socket.id, userName: socket.userName, player })
+    } else {
+      roomState.listUser.push({ id: socket.id, userName: socket.userName })
+    }
+
+    return roomState
   }
 }
 

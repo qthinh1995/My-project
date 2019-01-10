@@ -254,7 +254,11 @@ export default class IBMWatsonPOCHome extends Component {
                 this.refs.notification.showNotification({ type: 'error', message: 'Password confirm not match with password' })
             }
         } else {
-            this.refs.notification.showNotification({ type: 'warning', message: 'Please fill it correctly as required' })
+            let message = 'Please fill it correctly as required'
+            if (isError === 'Limited of the ID is a 15 character') {
+                message = isError
+            }
+            this.refs.notification.showNotification({ type: 'warning', message })
         }
     }
 

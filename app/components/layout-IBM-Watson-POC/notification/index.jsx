@@ -7,15 +7,19 @@ export default class Notification extends Component {
     }
 
     showNotification({ type = 'error', message = '', duration = 3000 }) {
-      const className = `notification ${type}`
-      this.setState({ message, className})
+      const className = `notification animation-show ${type}`
+      this.setState({ message, className, type })
       setTimeout(() => {
         this.onCloseNoti()
       }, duration)
     }
 
     onCloseNoti() {
-      this.setState({ className: 'notification not-display' })
+      const { type } = this.state
+      this.setState({ className: `notification animation-disappear ${type}` })
+      setTimeout(() => {
+        this.setState({ className: 'notification not-display' })
+      }, 500)
     }
 
     render() { 
