@@ -142,7 +142,7 @@ export default class IBMWatsonPOCHome extends Component {
         })
 
         socket.on('submit user name', userName => {
-            const roomName = userName + "'s room";
+            const roomName = userName;
             setTimeout(() => {
                 this.setState({ isLogin: true, userName, roomName })
             }, 1000)
@@ -367,7 +367,7 @@ export default class IBMWatsonPOCHome extends Component {
                         <h3 className="custom-list-tittle">List room</h3>
                         {currentHosts && currentHosts.map((item, i) => {
                             return (
-                                <div className="list-block" key={i} onClick={() => this.johnRoom(item.idRoom)} > <span className="name">{item.roomName}</span>  </div>
+                                <div className="list-block" key={i} onClick={() => this.johnRoom(item.idRoom)} > <div className="name">{item.roomName}</div>  </div>
                             )
                         })}
                     </div>

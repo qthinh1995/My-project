@@ -29,10 +29,9 @@ export default class CaroGame extends Component {
         const fristPosition = arrPositionWin[0]
         const lastPosition = arrPositionWin[4]
         const lenghtOfSquare = document.querySelector('.caro-board .square').offsetHeight
-        // const styleBorderWin = document.querySelector('.border-win').style
-        let width = ((lenghtOfSquare - 1) * 5)
-        const left = (fristPosition.x * (lenghtOfSquare - 1) + Math.floor(lenghtOfSquare/2)) + 'px'
-        const top = (fristPosition.y * (lenghtOfSquare - 1) + Math.floor(lenghtOfSquare/2)) + 'px'
+        let width = 5 * 100 / 32 
+        const left = (fristPosition.x + 0.5) / 32 * 100 + '%'
+        const top = (fristPosition.y + 0.5) /20 * 100 + '%'
         let transform = 'rotate(0deg)'
         let marginLeft = -Math.floor(lenghtOfSquare/2)
 
@@ -50,7 +49,7 @@ export default class CaroGame extends Component {
         
         const transformOrigin = -marginLeft + 'px'
         marginLeft = marginLeft + 'px'
-        width = width + 'px'
+        width = width + '%'
 
         return { width, left, top, display: 'block', transform, transformOrigin, marginLeft }
     }
@@ -317,7 +316,7 @@ export default class CaroGame extends Component {
                     {listUser && listUser.map((user, index) => {
                         return (
                             <div className={`list-block ${user.id === thisUser.id ? 'this-user' : ''}`} key={index}>
-                                <span className="name">{user.userName}</span>
+                                <div className="name">{user.userName}</div>
                                 {user.player &&
                                     <span className="user-rule">
                                         {user.player}
@@ -352,12 +351,7 @@ export default class CaroGame extends Component {
                 <div className="right-board">
                     <div className={`caro-board ${userClassNAme} ${nextType === player && roomStatus !== 'Waiting' && !playerWinner ? '' : 'hidden-hover'} `}>
                         { this.renderGameMessage() }
-                        {/* {!isWinner && <h2>It's turn: {nextType}</h2>} */}
                         <div className='border-win' style={style} />
-                        {/* <div className='border-win .vertical-line' style={style} />
-                        <div className='border-win .diagonal-line-right' style={style} />
-                        <div className='border-win .horizontal-line-left' style={style} /> */}
-                        {/* <button onClick={() => this.simulator()}> Click </button> */}
                         {caroMap && caroMap.map((row, y) => {
                             return (
                                 <div className="row-caro" key={y} >
