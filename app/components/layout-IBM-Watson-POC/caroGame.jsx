@@ -276,7 +276,7 @@ export default class CaroGame extends Component {
             const {listUser} = this.state;
             const isActive = oponentIndex === -1 ? false : listUser[oponentIndex].ready;
             return (
-                <input type="button" className="btn btn-info btn-ready" value="Start" disabled={!isActive} onClick={() => socket.emit('start')}/>
+                <input type="button" className={`btn btn-info btn-ready ${isActive ? '' : 'not-allow'} `} value="Start" disabled={!isActive} onClick={() => socket.emit('start')}/>
             )
         }
         return (
