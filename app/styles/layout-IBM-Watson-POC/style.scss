@@ -192,6 +192,10 @@ div{
 				font-size: 22px;
 				font-weight: 600;
 				margin-left: 15px;
+				display: inline-block;
+				max-width: 70%;
+				text-overflow: ellipsis;
+				overflow: auto;
 			}
 
 			.user-rule{
@@ -281,8 +285,6 @@ div{
 					
 					&&:active{
 						box-shadow: 0px 0px 2px 1px #ff00007f;
-						height: 30px;
-						width: 30px;
 						box-sizing: border-box;
 					}
 				}
@@ -501,5 +503,49 @@ div{
 	
 	&.near-square {
 		background: blue
+	}
+}
+
+@media (min-width: 1799px) {
+	.caro-game .caro-match .right-board {
+		flex: 1 1088px;
+	}
+
+	.square {
+		height: 35px;
+		width: 35px;
+	}
+}
+
+@media (min-width: 1899px) {
+	.caro-game .caro-match .right-board {
+		flex: 1 1248px;
+	}
+
+	.square {
+		height: 40px;
+		width: 40px;
+	}
+}
+
+@media (max-width: 1320px) {
+	.caro-game .caro-match .right-board {
+		flex: 1 790px;
+	}
+
+	.square {
+		height: 27px;
+		width: 27px;
+	}
+}
+
+@media (max-width: 1160px) {
+	.caro-game .caro-match .right-board {
+		flex: 1 666px;
+	}
+
+	.square {
+		height: 23px;
+		width: 23px;
 	}
 }
