@@ -50,6 +50,7 @@ export default class IBMWatsonPOCHome extends Component {
         isReset: false,
         showChangePwPopUp: false,
         showSignUpPopUp: false,
+        showLoading: false,
         password: ''
     }
 
@@ -189,13 +190,17 @@ export default class IBMWatsonPOCHome extends Component {
     }
 
     onSubmit() {
-        const { typeForm } = this.dataUser
-        if (typeForm === 'signup') {
-            this.signup()
-        } else if (typeForm === 'login') {
-            this.login()
-        } else if (typeForm === 'changePw') {
-            this.updatePassword()
+        const {showLoading} = this.state;
+        if (!showLoading) {
+            this.setState({ showLoading: true })
+            const { typeForm } = this.dataUser
+            if (typeForm === 'signup') {
+                this.signup()
+            } else if (typeForm === 'login') {
+                this.login()
+            } else if (typeForm === 'changePw') {
+                this.updatePassword()
+            }
         }
     }
 
@@ -204,6 +209,7 @@ export default class IBMWatsonPOCHome extends Component {
 
         if (!userName || !password) {
             this.refs.notification.showNotification({ type: 'error', message: 'The ID or password you entered is incorrect' })
+            this.setState({showLoading: false})
         } else {
             const res = await axios.post('/api/login', {
                 userName,
@@ -214,9 +220,10 @@ export default class IBMWatsonPOCHome extends Component {
             if (status === 200) {
                 // document.cookie = `id=${userName}; pass=${password}`
                 socket.emit('submit user name', userName)
-                this.setState({ password })
+                this.setState({ password });
             } else {
-                this.refs.notification.showNotification({ type: 'error', message: data.error.message })
+                this.refs.notification.showNotification({ type: 'error', message: data.error.message });
+                this.setState({showLoading: false})
             }
         }
     }
@@ -260,6 +267,7 @@ export default class IBMWatsonPOCHome extends Component {
             }
             this.refs.notification.showNotification({ type: 'warning', message })
         }
+        this.setState({showLoading: false})
     }
 
     async updatePassword() {
@@ -303,6 +311,7 @@ export default class IBMWatsonPOCHome extends Component {
         } else {
             this.refs.notification.showNotification({ type: 'warning', message: 'Please fill it correctly as required' })
         }
+        this.setState({showLoading: false})
     }
 
     onLeaveRoom() {
@@ -325,7 +334,7 @@ export default class IBMWatsonPOCHome extends Component {
 
     onClosePopUp() {
         this.dataUser.typeForm = 'login'
-        this.setState({ showSignUpPopUp: false, showChangePwPopUp: false })
+        this.setState({ showSignUpPopUp: false, showChangePwPopUp: false})
     }
 
     onShowChangePwPopUp() {
@@ -380,11 +389,22 @@ export default class IBMWatsonPOCHome extends Component {
         )
     }
 
+    renderLoading() {
+        const loadingDot = [];
+        for (let i = 0; i < 10; i++) {
+          loadingDot.push(<div className="moving-point" style={{ animationDelay: i * 0.02 + 's'}}></div>);
+        }
+        return loadingDot;
+      }
+
     render() {
-        const { gameMode, roomState, isLogin, isInRoom, userID, isReset, showSignUpPopUp, showChangePwPopUp } = this.state;
+        const { gameMode, roomState, isLogin, isInRoom, userID, isReset, showSignUpPopUp, showChangePwPopUp, showLoading } = this.state;
 
         return (
             <div className="caro-game" >
+              {showLoading&& !isLogin && <div className="popup-Loading"> 
+                {this.renderLoading()}
+              </div>}
                 { !isLogin &&
                     <PopupForm
                         ref="popupForm"
