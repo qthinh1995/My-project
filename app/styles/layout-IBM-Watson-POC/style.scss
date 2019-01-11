@@ -320,8 +320,6 @@ div{
 
 					&&:active{
 						box-shadow: 0px 0px 2px 1px #0070ff7f;
-						height: 30px;
-						width: 30px;
 						box-sizing: border-box;
 					}
 				}
@@ -390,6 +388,7 @@ div{
 					color: $disabled-color;
 					font-size: 50px;
 					text-shadow: 0px 0px 5px $disabled-color;
+					text-align: center;
 				}
 
 				&.choose-typeX {
