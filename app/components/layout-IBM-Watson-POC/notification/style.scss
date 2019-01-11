@@ -3,26 +3,19 @@ $success-color: #51a351;
 $warning-color: #f89406;
 
 .notification {
-  position: absolute;
+  position: fixed;
   z-index: 9999999;
   border: 2px solid;
   border-radius: 25px;
   color: white;
-  right: 10px;
+  right: -365px;
   top: 50px;
 
   &.animation-show {
     -webkit-animation-name: appear; /* Safari 4.0 - 8.0 */
     -webkit-animation-duration: 0.5s; /* Safari 4.0 - 8.0 */
     animation-name: appear;
-    animation-duration: 0.5s;
-  }
-
-  &.animation-disappear {
-    -webkit-animation-name: dis-appear; /* Safari 4.0 - 8.0 */
-    -webkit-animation-duration: 0.5s; /* Safari 4.0 - 8.0 */
-    animation-name: dis-appear;
-    animation-duration: 0.5s;
+    animation-duration: 2s;
   }
 
   &.success {
@@ -58,23 +51,16 @@ $warning-color: #f89406;
 /* Safari 4.0 - 8.0 */
 @-webkit-keyframes appear {
   0%   { right: -365px; }
-  100% { right: 10px; }
+  15% { right: 10px; }
+  85% { right: 10px; }
+  0%   { right: -365px; }
+
 }
 
 /* Standard syntax */
 @keyframes appear {
   0%   { right: -365px; }
-  100% { right: 10px; }
-}
-
-/* Safari 4.0 - 8.0 */
-@-webkit-keyframes dis-appear {
-  0%   { right: 10px; }
-  100% { right: -365px; }
-}
-
-/* Standard syntax */
-@keyframes dis-appear {
-  0%   { right: 10px; }
-  100% { right: -365px; }
+  10% { right: 10px; }
+  90% { right: 10px; }
+  0%   { right: -365px; }
 }

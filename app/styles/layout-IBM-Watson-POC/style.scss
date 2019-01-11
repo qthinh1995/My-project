@@ -247,6 +247,9 @@ div{
 		.caro-board{
 			display: inline-block;
 			position: relative;
+			.canvas-waiting{
+				position: absolute;
+			}
 
 			.border-win {
 				position: absolute;

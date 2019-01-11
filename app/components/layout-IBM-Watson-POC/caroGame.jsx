@@ -2,7 +2,7 @@ import React, { Component, PropTypes } from 'react'
 import connect from 'connect-alt'
 import { get, set, values, filter, cloneDeep, isEmpty, find } from 'lodash'
 // import socketIOClient from 'socket.io-client';
-
+import CanvasBoudingBalls from 'components/layout-IBM-Watson-POC/canvas-bouding-balls'
 
 const nearbyPoints = []
 const futureNearbyPoints = {}
@@ -350,6 +350,7 @@ export default class CaroGame extends Component {
                 </div>
                 <div className="right-board">
                     <div className={`caro-board ${userClassNAme} ${nextType === player && roomStatus !== 'Waiting' && !playerWinner ? '' : 'hidden-hover'} `}>
+                        <CanvasBoudingBalls/>
                         { this.renderGameMessage() }
                         <div className='border-win' style={style} />
                         {caroMap && caroMap.map((row, y) => {
