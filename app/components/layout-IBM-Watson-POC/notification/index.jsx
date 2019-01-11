@@ -6,7 +6,7 @@ export default class Notification extends Component {
       className: 'notification not-display'
     }
 
-    showNotification({ type = 'error', message = '', duration = 3000 }) {
+    showNotification({ type = 'error', message = '', duration = 2500 }) {
       const className = `notification animation-show ${type}`
       this.setState({ message, className, type })
       setTimeout(() => {
@@ -16,17 +16,13 @@ export default class Notification extends Component {
 
     onCloseNoti() {
       const { type } = this.state
-      this.setState({ className: `notification animation-disappear ${type}` })
-      setTimeout(() => {
-        this.setState({ className: 'notification not-display' })
-      }, 500)
+      this.setState({ className: `notification ${type}` })
     }
 
     render() { 
       const { message, className } = this.state
       return (
         <div className={className} >
-          <i className="fa fa-times close-btn" aria-hidden="true" onClick={() => this.onCloseNoti()} ></i>
           <div className="message-error" > {message} </div>
         </div>
       )
