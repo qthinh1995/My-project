@@ -9,6 +9,12 @@ export default class Notification extends Component {
     componentDidMount() {
         const canvas = document.querySelector('canvas');
         const ctx = canvas.getContext('2d');
+
+        window.addEventListener('resize', () => {
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = canvas.parentElement.clientHeight;
+        })
+
         canvas.width = canvas.parentElement.clientWidth;
         canvas.height = canvas.parentElement.clientHeight;
 
