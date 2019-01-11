@@ -280,7 +280,7 @@ export default class Notification extends Component {
             // this.circleArray = [ new Circle(100, 100, 0, 0, 50, 0, this.bounding)];
             this.circleArray = [];
             this.slowMotion = false;
-            this.maxBall = 150;
+            this.maxBall = 100;
 
 
             this.initMouseBall = function (x, y) {
