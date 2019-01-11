@@ -297,6 +297,7 @@ export default class CaroGame extends Component {
         if (roomStatus === 'Waiting' || playerWinner) {
             return (
                 <div className={`wrapper ${wrapColor} ${typePlayer}`}> 
+                    <CanvasBoudingBalls/>
                     <div className="game-message">{playerWinner ? `${playerWinner} win` : 'Waiting'}</div>
                 </div>
             )
@@ -350,7 +351,6 @@ export default class CaroGame extends Component {
                 </div>
                 <div className="right-board">
                     <div className={`caro-board ${userClassNAme} ${nextType === player && roomStatus !== 'Waiting' && !playerWinner ? '' : 'hidden-hover'} `}>
-                        <CanvasBoudingBalls/>
                         { this.renderGameMessage() }
                         <div className='border-win' style={style} />
                         {caroMap && caroMap.map((row, y) => {

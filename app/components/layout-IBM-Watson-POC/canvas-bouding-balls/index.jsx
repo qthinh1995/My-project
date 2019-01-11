@@ -44,7 +44,7 @@ export default class Notification extends Component {
             this.index = index;
             this.verticalbouding = false;
 
-            this.draw = function (opacity = 0.5) {
+            this.draw = function (opacity = 0.3) {
                 ctx.fillStyle = this.color;
                 // ctx.font = '18px Arial';
                 // ctx.fillText(this.index, this.x - 7, this.y);
@@ -302,7 +302,7 @@ export default class Notification extends Component {
 
             this.initGame = function (ballAmount = 1) {
                 for (let i = 0; i < ballAmount; i++) {
-                    const radius = 16;
+                    const radius = 12;
 
                     //for text
                     // const x = Math.randomRange(radius, canvas.width - radius);
