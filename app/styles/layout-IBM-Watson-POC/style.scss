@@ -112,17 +112,20 @@ div{
 			background: black;
 		}
 
-		.section-room {
-			width: 100px;
-			border: 1px solid #0095f1;
-			background: #dedede;
-			border-top: none;
-			float: left;
+		.room-nav {
+			.section-room {
+				display: inline-block;
+				width: 150px;
+				border: 1px solid #0095f1;
+				background: #dedede;
+				border-top: none;
 
-			&.is-selected {
-				background: white
+				&.is-selected {
+					background: white
+				}
 			}
 		}
+
 		
 		.disappear {
 			display: none;
@@ -502,7 +505,12 @@ div{
 		background: rgba(255, 255, 255, 0.5);
 		border: 1px solid $blue-color;
 		box-shadow: 0px 0px 5px 0px $blue-color;
-		height: calc(100% - 25px);
+		
+		&.visiable {
+			height: 325px;
+			animation-name: show-message;
+			animation-duration: 1s;
+		}
 		
 		.message-area{
 			height: calc(100% - 30px);
@@ -613,4 +621,16 @@ div{
   0%   { top: 40%; left: 20%; }
 	50%  { top: 35%; left: 15%; }
 	100% { top: 40%; left: 20%; }
+}
+
+@keyframes show-message {
+	0% { width: 0px; height: 0px }
+	50% {
+		width: 150px;
+		height: 160px;
+		border: 1px solid #0095f1;
+		box-shadow: 0px 0px 5px 0px #0095f1;
+		border-radius: 25px;
+	}
+	100% { width: 300px; height: 325px }
 }

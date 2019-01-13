@@ -24,7 +24,7 @@ export default class Chat extends Component {
         room: 'global room',
         isInRoom: false,
         info: {
-            mode: 'global',
+            mode: '',
             reference: 'messageArea1'
         }
     }
@@ -178,15 +178,13 @@ export default class Chat extends Component {
 
     onResizeChatBoard(e) {
         if (!isEmpty(mousePosition)) {
-            const newPosition = { x: e.screenX, y: e.screenY };
+            const newPosition = { y: e.screenY };
             const chatBoard = document.querySelector('#chatBoard');
-            let {height, width} = chatBoardState;
+            let { height } = chatBoardState;
 
             height = height - newPosition.y + mousePosition.y;
-            width = width + newPosition.x - mousePosition.x;
 
             chatBoard.style.height = height + 'px';
-            chatBoard.style.width = width + 'px';
         }
     }
 
@@ -203,12 +201,12 @@ export default class Chat extends Component {
         // const privateRoom = mode === 'private'
 
         return (
-          <div className="chat-area" id="chatBoard" style={{ height: '340px', width: '550px', bottom: 0}}>
+          <div className="chat-area" id="chatBoard" style={{ width: '300px', bottom: 0}}>
 			<div className="drag-icon" onMouseUp={() => { this.onStopDragChatBoard() }} onMouseDown={(e) => this.startDragChatBoard(e)}></div>
 			<div className="resize-icon" onMouseUp={() => { this.onStopResizeChatBoard() }} onMouseDown={(e) => this.startResizeChatBoard(e)}></div>
             <UserChat className={`disappear ${globalRoom ? 'visiable' : ''} `} socket={socket} info={info} reference='messageArea1' />          
             <UserChat className={`disappear ${gameRoom ? 'visiable' : ''} `} socket={socket} info={info} reference='messageArea2' />
-            <div>
+            <div className="room-nav" >
                 <div className={`section-room ${globalRoom ? 'is-selected' : ''} `} onClick={() => this.onChooseRoom('global')} >
                     global room
                 </div>
