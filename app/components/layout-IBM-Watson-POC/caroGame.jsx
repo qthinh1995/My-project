@@ -22,7 +22,7 @@ export default class CaroGame extends Component {
     }
 
     state = {
-     
+        showHandPoint: true
     }
 
     convertPosition({ arrPositionWin = []} = {}) {
@@ -119,7 +119,7 @@ export default class CaroGame extends Component {
 
     componentWillMount() {
         socket = this.props.socket;
-        this.state = this.props.roomState;
+        this.merge(this.state, this.props.roomState);
         this.state.userID = this.props.userID;
         this.getMoreInfo(this.state, this.props.roomState)
     }
@@ -268,7 +268,7 @@ export default class CaroGame extends Component {
         if (thisUser.player) {
             if (!thisUser.isHost) {
                 return (
-                    <input type="button" className="btn btn-info btn-ready" value="Ready" onClick={() => socket.emit('ready')}/>
+                    <input type="button" className="btn btn-info btn-ready" value="Ready" onClick={() => { socket.emit('ready'); this.setState({ showHandPoint: false }) }}/>
                 )
             }
 
@@ -276,15 +276,15 @@ export default class CaroGame extends Component {
             const {listUser} = this.state;
             const isActive = oponentIndex === -1 ? false : listUser[oponentIndex].ready;
             return (
-                <input type="button" className={`btn btn-info btn-ready ${isActive ? '' : 'not-allow'} `} value="Start" disabled={!isActive} onClick={() => socket.emit('start')}/>
+                <input type="button" className={`btn btn-info btn-ready ${isActive ? '' : 'not-allow'} `} title={`${isActive ? '' : 'Waiting for other players to be ready'}`} value="Start" disabled={!isActive} onClick={() => socket.emit('start')}/>
             )
         }
         return (
             <div className="center" >
-                <div>Total time</div>
-                <div className="time-counter">
+                <div>Observe</div>
+                {/* <div className="time-counter">
                     10:50
-                </div>
+                </div> */}
             </div>
         );
     }
@@ -306,9 +306,11 @@ export default class CaroGame extends Component {
     }
 
     render() {
-        const { caroMap, playerWinner, listUser, thisUser, availableType: { isTypeX, isTypeY }, style, nextType, thisUser: { player }, roomStatus } = this.state;
+        const { caroMap, playerWinner, listUser, thisUser, availableType: { isTypeX, isTypeY }, style, nextType, thisUser: { player, isHost }, roomStatus } = this.state;
+        let { showHandPoint } = this.state
         let userClassNAme = player === 'O' ? 'O-player' : '';
         userClassNAme = player  === 'X' ? 'X-player' : userClassNAme;
+        showHandPoint = showHandPoint && player && !isHost
 
         return (
             <div className="caro-match">      
@@ -374,6 +376,7 @@ export default class CaroGame extends Component {
                         })}
                     </div>
                     <div className="user-board">
+                        {showHandPoint && <i className="fa fa-hand-o-right hand-point" aria-hidden="true" ></i>}
                         <div className={`user-area ${isTypeX > -1 ? 'choose-typeX' : ''}`} onClick={isTypeX > -1 ? '' : () => this.selectType('X')} >
                             <div className="center" >
                                 <div>{isTypeX > -1 ? listUser[isTypeX].userName : ''}</div>
