@@ -1,3 +1,13 @@
+@-webkit-keyframes loading {
+  0%   { transform: rotate(0deg); }
+  100%   { transform: rotate(360deg); }
+}
+
+@keyframes loading {
+  0%   { transform: rotate(0deg); }
+  100%   { transform: rotate(360deg); }
+}
+
 .popup-form {
   position: fixed;
   width: 100%;

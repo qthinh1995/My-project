@@ -17,6 +17,36 @@ div{
 	user-select: none;
 	height: 100vh;
 
+	.popup-Loading{
+		position: fixed;
+		top: 0;
+		left: 0;
+		height: 100vh;
+		width: 100vw;
+		background: #000000b8;
+		z-index: 100;
+		.moving-point{
+		  width: 10px;
+		  height: 10px;
+		  top: 50%;
+		  border-radius: 50%;
+		  left: 50%;
+		  margin-left: -50px;
+		  transform-origin: center 50px;
+		  position: absolute;
+		  background: white;
+		  transform: rotate(0deg);
+	
+		  -webkit-animation-name: loading; /* Safari 4.0 - 8.0 */
+		  -webkit-animation-duration: 2s; /* Safari 4.0 - 8.0 */
+		  animation-name: loading;
+		  animation-duration: 2s;
+		  animation-iteration-count: infinite;
+		}
+	
+	
+	  }
+
 	.fa-user {
 		position: relative;
 		font-size: 45px;

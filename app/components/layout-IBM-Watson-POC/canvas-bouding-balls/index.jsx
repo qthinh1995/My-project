@@ -280,30 +280,12 @@ export default class Notification extends Component {
             // this.circleArray = [ new Circle(100, 100, 0, 0, 50, 0, this.bounding)];
             this.circleArray = [];
             this.slowMotion = false;
-            this.maxBall = 100;
-
-
-            this.initMouseBall = function (x, y) {
-                const radius = 70;
-                // if (this.circleArray.length === 0) {
-                //     const newCircle = new Circle(x, y, 0, 0, radius, this.gravity, this.bounding);
-                //     this.circleArray.push(newCircle);
-                // } else {
-                if (this.circleArray.length === 0) {
-                    this.circleArray[0] = new Circle(x, y, 0, 0, radius, this.gravity, this.bounding);
-                } else {
-                    this.circleArray[0].x = x;
-                    this.circleArray[0].y = y;
-                }
-                if (!this.animateFrame) {
-                    this.animate()
-                }
-            }
+            this.maxBall = 140;
 
             this.initGame = function (ballAmount = 1) {
                 for (let i = 0; i < ballAmount; i++) {
-                    const radius = 12;
-
+                    const radius = 11 * (window.innerWidth /1440);
+                    
                     //for text
                     // const x = Math.randomRange(radius, canvas.width - radius);
                     // const y = Math.randomRange(300, 301);
