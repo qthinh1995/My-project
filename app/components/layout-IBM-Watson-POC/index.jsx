@@ -392,7 +392,7 @@ export default class IBMWatsonPOCHome extends Component {
     renderLoading() {
         const loadingDot = [];
         for (let i = 0; i < 10; i++) {
-          loadingDot.push(<div className="moving-point" style={{ animationDelay: i * 0.02 + 's'}}></div>);
+          loadingDot.push(<div className="moving-point" key={i} style={{ animationDelay: i * 0.02 + 's'}}></div>);
         }
         return loadingDot;
       }
