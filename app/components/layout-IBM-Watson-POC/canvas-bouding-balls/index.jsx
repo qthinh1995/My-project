@@ -44,7 +44,7 @@ export default class Notification extends Component {
             this.index = index;
             this.verticalbouding = false;
 
-            this.draw = function (opacity = 0.3) {
+            this.draw = function (opacity = 1) {
                 ctx.fillStyle = this.color;
                 // ctx.font = '18px Arial';
                 // ctx.fillText(this.index, this.x - 7, this.y);
@@ -280,11 +280,11 @@ export default class Notification extends Component {
             // this.circleArray = [ new Circle(100, 100, 0, 0, 50, 0, this.bounding)];
             this.circleArray = [];
             this.slowMotion = false;
-            this.maxBall = 140;
+            this.maxBall = 120;
 
             this.initGame = function (ballAmount = 1) {
                 for (let i = 0; i < ballAmount; i++) {
-                    const radius = 11 * (window.innerWidth /1440);
+                    const radius = Math.randomRange(12, 17) * (window.innerWidth /1440);
                     
                     //for text
                     // const x = Math.randomRange(radius, canvas.width - radius);
@@ -316,6 +316,11 @@ export default class Notification extends Component {
                     }
                     if (time < maxTime) {
                         this.circleArray.push(newCircle);
+                    }
+                    if (this.circleArray.length > this.maxBall - 15) {
+                        for (let j = 0; j < this.circleArray.length -  (this.maxBall - 15); j++) {
+                            this.circleArray[j].radius = this.circleArray[j].radius > 2 ? this.circleArray[j].radius - 1 : this.circleArray[j].radius;
+                        }
                     }
                     if (this.circleArray.length > this.maxBall) {
                         this.circleArray.shift();
