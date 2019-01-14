@@ -188,15 +188,13 @@ export default class Chat extends Component {
 
     onResizeChatBoard(e) {
         if (!isEmpty(mousePosition)) {
-            const newPosition = { x: e.screenX, y: e.screenY };
+            const newPosition = { y: e.screenY };
             const chatBoard = document.querySelector('#chatBoard');
-            let {height, width} = chatBoardState;
+            let { height } = chatBoardState;
 
             height = height - newPosition.y + mousePosition.y;
-            width = width + newPosition.x - mousePosition.x;
 
             chatBoard.style.height = height + 'px';
-            chatBoard.style.width = width + 'px';
         }
     }
 

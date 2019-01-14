@@ -69,7 +69,7 @@ export default class IBMWatsonPOCHome extends Component {
 
                 <div className="message-area" ref={reference} ></div>
                 <div className="type-area">
-                    <input ref="messageInput" />
+                    <input className="message-input" ref="messageInput" />
                     <input ref="sendBtn"type="button" value="Send" onClick={() => { this.sendMessage() }} />
                 </div>
             </div >

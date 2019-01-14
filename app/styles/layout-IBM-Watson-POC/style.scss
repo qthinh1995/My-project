@@ -113,7 +113,7 @@ div{
 		}
 
 		.section-room {
-			width: 100px;
+			width: 150px;
 			border: 1px solid #0095f1;
 			background: #dedede;
 			border-top: none;
@@ -504,6 +504,14 @@ div{
 		border: 1px solid $blue-color;
 		box-shadow: 0px 0px 5px 0px $blue-color;
 		height: calc(100% - 25px);
+
+		.type-area {
+			display: flex;
+			
+			.message-input {
+				flex: 1;
+			}
+		}
 		
 		.message-area{
 			height: calc(100% - 30px);
