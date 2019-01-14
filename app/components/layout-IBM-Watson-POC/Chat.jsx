@@ -41,6 +41,16 @@ export default class Chat extends Component {
         socket = this.props.socket;
     }
 
+    componentDidMount() {
+        const self = this;
+        window.addEventListener('mouseup', () => {
+            if (mousePosition) {
+                self.onStopDragChatBoard()
+                self.onStopResizeChatBoard()
+            }
+        })
+    }
+
     onChooseRoom(type = '') {
         let { info } = this.state
 
@@ -203,9 +213,9 @@ export default class Chat extends Component {
         // const privateRoom = mode === 'private'
 
         return (
-          <div className="chat-area" id="chatBoard" style={{ height: '340px', width: '550px', bottom: 0}}>
-			<div className="drag-icon" onMouseUp={() => { this.onStopDragChatBoard() }} onMouseDown={(e) => this.startDragChatBoard(e)}></div>
-			<div className="resize-icon" onMouseUp={() => { this.onStopResizeChatBoard() }} onMouseDown={(e) => this.startResizeChatBoard(e)}></div>
+          <div className="chat-area" id="chatBoard" style={{ maxHeight: '500px', minHeight: '300px', height: '340px', minWidth: '300px', maxWidth: '400px', width: '300px', bottom: 0}}>
+			<div className="drag-icon" onMouseDown={(e) => this.startDragChatBoard(e)}></div>
+			<div className="resize-icon" onMouseDown={(e) => this.startResizeChatBoard(e)}></div>
             <UserChat className={`disappear ${globalRoom ? 'visiable' : ''} `} socket={socket} info={info} reference='messageArea1' />          
             <UserChat className={`disappear ${gameRoom ? 'visiable' : ''} `} socket={socket} info={info} reference='messageArea2' />
             <div>
