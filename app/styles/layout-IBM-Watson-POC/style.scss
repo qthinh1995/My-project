@@ -403,6 +403,21 @@ div{
 			position: relative;
 			margin: 5px;
 
+			.hand-point {
+				position: absolute;
+				z-index: 1;
+				font-size: 30px;
+				top: 40%;
+				left: 20%;
+				transform: rotate(45deg);	
+				-webkit-animation-name: moving; /* Safari 4.0 - 8.0 */
+				-webkit-animation-duration: 1s; /* Safari 4.0 - 8.0 */
+				-webkit-animation-iteration-count: infinite; /* Safari 4.0 - 8.0 */
+				animation-name: moving;
+				animation-duration: 1s;
+				animation-iteration-count: infinite;	
+			}
+
 			.user-area {
 				flex: 2;
 				display: flex;
@@ -585,4 +600,18 @@ div{
 		height: 23px;
 		width: 23px;
 	}
+}
+
+/* Safari 4.0 - 8.0 */
+@-webkit-keyframes moving {
+  0%   { top: 40%; left: 20%; }
+	50%  { top: 35%; left: 15%; }
+	100% { top: 40%; left: 20%; }
+}
+
+/* Standard syntax */
+@keyframes moving {
+  0%   { top: 40%; left: 20%; }
+	50%  { top: 35%; left: 15%; }
+	100% { top: 40%; left: 20%; }
 }

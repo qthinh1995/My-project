@@ -51,10 +51,9 @@ $warning-color: #f89406;
 /* Safari 4.0 - 8.0 */
 @-webkit-keyframes appear {
   0%   { right: -365px; }
-  15% { right: 10px; }
-  85% { right: 10px; }
-  0%   { right: -365px; }
-
+  10% { right: 10px; }
+  90% { right: 10px; }
+  100%   { right: -365px; }
 }
 
 /* Standard syntax */
@@ -62,5 +61,5 @@ $warning-color: #f89406;
   0%   { right: -365px; }
   10% { right: 10px; }
   90% { right: 10px; }
-  0%   { right: -365px; }
+  100%   { right: -365px; }
 }
