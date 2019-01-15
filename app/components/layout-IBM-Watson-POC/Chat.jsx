@@ -8,6 +8,7 @@ import { isEmpty, cloneDeep } from 'lodash'
 let socket = {};
 let mousePosition = {};
 let chatBoardState = {};
+let resizeDirection = {};
 
 export default class Chat extends Component {
     static propTypes = {
@@ -46,7 +47,6 @@ export default class Chat extends Component {
         window.addEventListener('mouseup', () => {
             if (mousePosition) {
                 self.onStopDragChatBoard()
-                self.onStopResizeChatBoard()
             }
         })
     }
@@ -122,9 +122,6 @@ export default class Chat extends Component {
 		child.style[childCenter.xDirection] = childCenter.x - width /2 + 'px';
 		child.style[childCenter.yDirection] = childCenter.y - height/2 + 'px';
 		
-		console.log(childCenter, newChildCenter)
-	
-        
         setTimeout(() => {
 			child.style.transitionDuration = '0.5s';
 			child.style.transitionTimingFunction = 'cubic-bezier(0.38, 0.92, 0.47, 1.11)';
@@ -140,16 +137,17 @@ export default class Chat extends Component {
 	
     startDragChatBoard(e) {
         mousePosition = { x: e.screenX, y: e.screenY };
-        const chatBoard = e.target.parentElement;
+        const chatBoard = e.target;
 
         this.getPosition(chatBoard);
 
         const {left, top} = chatBoardState;
-
+        
         chatBoard.style.top = top + 'px';
         chatBoard.style.left = left + 'px';
         chatBoard.style.removeProperty('bottom');
         chatBoard.style.removeProperty('right');
+        chatBoard.style.cursor = 'all-scroll';
 
         window.addEventListener('mousemove', this.onDragChatBoard)
     }
@@ -169,41 +167,54 @@ export default class Chat extends Component {
     }
 
     onStopDragChatBoard() {
-        console.log('mouse up')
         const chatBoard = document.querySelector('#chatBoard');
         this.findTheNearest(chatBoard);
-       
+        
+        chatBoard.querySelector('.message-area').style.removeProperty('cursor');
+
         mousePosition = {};
         window.removeEventListener('mousemove', this.onDragChatBoard)
+        window.removeEventListener('mousemove', this.onResizeChatBoard)
     }
 
-    startResizeChatBoard(e) {
-        console.log('mouse down')
+    startResizeChatBoard(e, direction) {
+        resizeDirection = direction;
+        e.preventDefault();
+        e.stopPropagation();
         mousePosition = { x: e.screenX, y: e.screenY };
         const chatBoard = e.target.parentElement;
 
         this.getPosition(chatBoard);
+        const {left, top} = chatBoardState;
+
+        chatBoard.style.top = top + 'px';
+        chatBoard.style.left = left + 'px';
+        chatBoard.style.removeProperty('bottom');
+        chatBoard.style.removeProperty('right');
         window.addEventListener('mousemove', this.onResizeChatBoard)
     }
 
     onResizeChatBoard(e) {
-        if (!isEmpty(mousePosition)) {
+        if (!isEmpty(mousePosition) && resizeDirection) {
             const newPosition = { x: e.screenX, y: e.screenY };
             const chatBoard = document.querySelector('#chatBoard');
-            let { height, width } = chatBoardState;
+            let { height, width, top, left } = chatBoardState;
+            const {minHeight, maxHeight, minWidth, maxWidth } = chatBoard.style;
+            
+            height = resizeDirection.top ? height - newPosition.y + mousePosition.y : height + newPosition.y - mousePosition.y;
+            width = resizeDirection.left ? width - newPosition.x + mousePosition.x : width + newPosition.x - mousePosition.x;
 
-            height = height - newPosition.y + mousePosition.y;
-            width = width + newPosition.x - mousePosition.x;
-
-            chatBoard.style.height = height + 'px';
-            chatBoard.style.width = width + 'px';
+            if (height > Number.parseInt(minHeight, 10) && height < Number.parseInt(maxHeight, 10)) {
+                top = resizeDirection.top ? top + newPosition.y - mousePosition.y : top;
+                chatBoard.style.height = height + 'px';
+                chatBoard.style.top = top + 'px';
+            }
+            if (width > Number.parseInt(minWidth, 10) && width < Number.parseInt(maxWidth, 10)) {
+                left = resizeDirection.left ? left + newPosition.x - mousePosition.x : left;
+                chatBoard.style.width = width + 'px';
+                chatBoard.style.left = left + 'px';
+            }
         }
-    }
-
-    onStopResizeChatBoard() {
-        console.log('mouse up')
-        mousePosition = {};
-        window.removeEventListener('mousemove', this.onResizeChatBoard)
     }
 
     render() {
@@ -213,9 +224,16 @@ export default class Chat extends Component {
         // const privateRoom = mode === 'private'
 
         return (
-          <div className="chat-area" id="chatBoard" style={{ maxHeight: '500px', minHeight: '300px', height: '340px', minWidth: '300px', maxWidth: '400px', width: '300px', bottom: 0}}>
-			<div className="drag-icon" onMouseDown={(e) => this.startDragChatBoard(e)}></div>
-			<div className="resize-icon" onMouseDown={(e) => this.startResizeChatBoard(e)}></div>
+          <div className="chat-area" id="chatBoard" onMouseDown={(e) => this.startDragChatBoard(e)} style={{ maxHeight: '500px', minHeight: '300px', height: '340px', minWidth: '300px', maxWidth: '400px', width: '300px', bottom: 0}}>
+			<div className="resize-icon top-left" onMouseDown={(e) => this.startResizeChatBoard(e, {top: true, left: true})}></div>
+			<div className="resize-icon top-right" onMouseDown={(e) => this.startResizeChatBoard(e, {top: true, right: true})}></div>
+            <div className="resize-icon bottom-left" onMouseDown={(e) => this.startResizeChatBoard(e, {bottom: true, left: true})}></div>
+            <div className="resize-icon bottom-right" onMouseDown={(e) => this.startResizeChatBoard(e, {bottom: true, right: true})}></div>
+
+            <div className="resize-icon top" onMouseDown={(e) => this.startResizeChatBoard(e, {top: true})}></div>
+            <div className="resize-icon bottom" onMouseDown={(e) => this.startResizeChatBoard(e, {bottom: true})}></div>
+            <div className="resize-icon left" onMouseDown={(e) => this.startResizeChatBoard(e, {left: true})}></div>
+            <div className="resize-icon right" onMouseDown={(e) => this.startResizeChatBoard(e, {right: true})}></div>
             <UserChat className={`disappear ${globalRoom ? 'visiable' : ''} `} socket={socket} info={info} reference='messageArea1' />          
             <UserChat className={`disappear ${gameRoom ? 'visiable' : ''} `} socket={socket} info={info} reference='messageArea2' />
             <div>
