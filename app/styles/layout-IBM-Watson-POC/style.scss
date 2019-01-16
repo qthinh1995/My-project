@@ -12,6 +12,11 @@ $disabled-bg: #F5F5F5;
 div{
 	font-weight: normal;
 }
+html{
+	@media (max-width: 768px) {
+		font-size: calc(5px + 1vw);
+	}
+}
 .caro-game {
 	position: relative;
 	user-select: none;
@@ -97,7 +102,7 @@ div{
 		position: fixed;
 		margin: 2px;
 		@media (max-width: 764px){
-			height: 25% !important;
+			height: 24% !important;
 			width: 70% !important;
 			min-width: 300px !important;
 			min-height: 0px !important;
@@ -219,6 +224,9 @@ div{
 
 		@media (max-width: 768px) {
 			flex: 0;
+			@media (max-width: 640px) {
+				display: none;
+			}
 		}
 
 		&.selectable {
@@ -723,6 +731,11 @@ div{
 @media (max-width: 768px) {
 	.caro-game .caro-match .right-board {
 		flex: 1;
+	}
+	.square {
+		height: 20px;
+		width: 20px;
+		line-height: 20px;
 	}
 }
 
