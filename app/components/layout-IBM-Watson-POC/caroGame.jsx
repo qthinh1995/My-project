@@ -314,7 +314,7 @@ export default class CaroGame extends Component {
 
         return (
             <div className="caro-match">      
-                <div className="custom-list">
+                <div className="custom-list small-screen-disabled">
                     <h3 className="custom-list-tittle">Users in room</h3>
                     {listUser && listUser.map((user, index) => {
                         return (

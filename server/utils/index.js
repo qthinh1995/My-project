@@ -36,7 +36,7 @@ const utils = {
     return index
   },
 
-  defaultRooom({ row = 20, col = 32, onStart = false, socket } = {}) {
+  defaultRooom({ row = 20, col = 25, onStart = false, socket } = {}) {
     const caroMap = Array(row)
     for (let i = 0; i < caroMap.length; i++) {
       caroMap[i] = Array(col).fill(null)
