@@ -743,6 +743,17 @@ html{
 		width: calc(4vw + 0.5px);
 		line-height: 20px;
 	}
+	
+	.caro-game {
+		.popup-form { 
+			display: flex;
+
+			.area-form {
+				top: 0px;
+			}
+		}
+	}
+
 }
 
 /* Safari 4.0 - 8.0 */
