@@ -376,7 +376,6 @@ export default class CaroGame extends Component {
                         })}
                     </div>
                     <div className="user-board">
-                        {showHandPoint && <i className="fa fa-hand-o-right hand-point" aria-hidden="true" ></i>}
                         <div className={`user-area ${isTypeX > -1 ? 'choose-typeX' : ''}`} onClick={isTypeX > -1 ? '' : () => this.selectType('X')} >
                             <div className="center" >
                                 <div>{isTypeX > -1 ? listUser[isTypeX].userName : ''}</div>
@@ -387,6 +386,7 @@ export default class CaroGame extends Component {
                             </div>
                         </div>
                         <div className="user-area time-area">
+                            {showHandPoint && <i className="fa fa-hand-o-right hand-point" aria-hidden="true" ></i>}                        
                             {this.renderButtonStart()}
                         </div>
                         <div className={`user-area ${isTypeY > -1 ? 'choose-typeY' : ''}`} onClick={isTypeY > -1 ? '' : () => this.selectType('O')} >
