@@ -361,12 +361,13 @@ html{
 		
 		@media (max-width: 768px) {
 			flex-direction: column;
-			height: calc(100% - 225px);
+			height: calc(100vw + 100px);
 			margin: 0;
 			min-height: 64%;
-			@media (max-width: 768px) {
-				height: calc(100% - 300px);
-				min-height: 700px;
+			@media (max-height: 768px) {
+				@media (min-width: 500px) {
+					height: 100vw;
+				}
 			}
 		}
 	
