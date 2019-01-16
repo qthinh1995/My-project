@@ -50,7 +50,7 @@ div{
 	.fa-user {
 		position: relative;
 		font-size: 45px;
-    margin: 5px 0px 12px 5px;
+    	margin: 5px 0px 12px 5px;
 		cursor: pointer;
 		color: lightskyblue;
 		
@@ -96,6 +96,12 @@ div{
 	.chat-area {
 		position: fixed;
 		margin: 2px;
+		@media (max-width: 764px){
+			height: 25% !important;
+			width: 70% !important;
+			min-width: 300px !important;
+			min-height: 0px !important;
+		}
 
 		.drag-icon{
 			position: absolute;
@@ -199,7 +205,6 @@ div{
 
 	.custom-list {
 		flex: 1;
-		width: 280px;
 		display: inline-block;
 		border: 1px solid black;
 		vertical-align: top;
@@ -211,6 +216,10 @@ div{
 		border: 1px solid lightskyblue;
 		border-radius: 5px;
 		box-shadow: 0px 0px 2px 1px lightsteelblue;
+
+		@media (max-width: 768px) {
+			flex: 0;
+		}
 
 		&.selectable {
 			.list-block{
@@ -239,6 +248,11 @@ div{
 			border-radius: 5px;
 			box-shadow: 0px 0px 2px 1px $blue-color;
 			color: #0048a5;
+
+			@media (max-width: 768px) {
+				height: 40px;
+				padding: 3px 5px;
+			}
 
 			.area-control {
 				.menu-control {
@@ -328,12 +342,27 @@ div{
 		display: flex;
 		flex-direction: row;
 		margin-top: 30px;
-	
 		
+		@media (max-width: 768px) {
+			flex-direction: column;
+			height: calc(100% - 225px);
+			margin: 0;
+			min-height: 64%;
+		}
 	
 		.caro-board{
 			display: inline-block;
 			position: relative;
+
+			@media (max-width: 768px) {
+				order: 1;
+
+				.caro-scroll{
+					overflow: auto;
+					width: 100%;
+					height: 30vh;
+				}
+			}
 			.canvas-waiting{
 				position: absolute;
 				opacity: 0.3;
@@ -451,6 +480,10 @@ div{
 			border-radius: 5px;
 			box-shadow: 0px 0px 2px 1px $blue-color;
 			margin: 5px;
+
+			@media (max-width: 768px) {
+				flex-direction: column;
+			}
 		}
 	
 		.user-board{
@@ -459,6 +492,9 @@ div{
 			flex-direction: column;
 			position: relative;
 			margin: 5px;
+			@media (max-width: 768px) {
+				flex-direction: row;
+			}
 
 			.hand-point {
 				position: absolute;
@@ -492,6 +528,10 @@ div{
 					font-size: 50px;
 					text-shadow: 0px 0px 5px $disabled-color;
 					text-align: center;
+
+					@media (max-width: 768px) {
+						line-height: 35px;
+					}
 				}
 
 				&.choose-typeX {
@@ -503,7 +543,6 @@ div{
 					.label {
 						color: red;
 						text-shadow: 0px 0px 10px red;
-						background: $red-bg;
 					}
 
 					&.ready{
@@ -543,6 +582,11 @@ div{
 				z-index: 1;
 				width: 85px;
 				cursor: default;
+
+				@media (max-width: 768px) {
+					height: 30px;
+					width: 60px;
+				}
 			}
 		}
 	}
@@ -557,7 +601,7 @@ div{
 	}
 
 	.user-chatboard{
-		background: rgba(255, 255, 255, 0.5);
+		background: rgba(255, 255, 255, 0.8);
 		border: 1px solid $blue-color;
 		box-shadow: 0px 0px 5px 0px $blue-color;
 		height: calc(100% - 25px);
@@ -624,6 +668,18 @@ div{
 	}
 }
 
+@media (min-width: 1899px) {
+	.caro-game .caro-match .right-board {
+		flex: 1 1248px;
+	}
+
+	.square {
+		height: 40px;
+		width: 40px;
+		line-height: 40px;
+	}
+}
+
 @media (min-width: 1799px) {
 	.caro-game .caro-match .right-board {
 		flex: 1 1088px;
@@ -636,17 +692,7 @@ div{
 	}
 }
 
-@media (min-width: 1899px) {
-	.caro-game .caro-match .right-board {
-		flex: 1 1248px;
-	}
 
-	.square {
-		height: 40px;
-		width: 40px;
-		line-height: 40px;
-	}
-}
 
 @media (max-width: 1320px) {
 	.caro-game .caro-match .right-board {
@@ -660,6 +706,8 @@ div{
 	}
 }
 
+
+
 @media (max-width: 1160px) {
 	.caro-game .caro-match .right-board {
 		flex: 1 666px;
@@ -669,6 +717,12 @@ div{
 		height: 23px;
 		width: 23px;
 		line-height: 23px;
+	}
+}
+
+@media (max-width: 768px) {
+	.caro-game .caro-match .right-board {
+		flex: 1;
 	}
 }
 

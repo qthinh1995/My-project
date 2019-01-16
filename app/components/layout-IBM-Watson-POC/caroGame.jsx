@@ -355,25 +355,27 @@ export default class CaroGame extends Component {
                     <div className={`caro-board ${userClassNAme} ${nextType === player && roomStatus !== 'Waiting' && !playerWinner ? '' : 'hidden-hover'} `}>
                         { this.renderGameMessage() }
                         <div className='border-win' style={style} />
-                        {caroMap && caroMap.map((row, y) => {
-                            return (
-                                <div className="row-caro" key={y} >
-                                    {row.map((square, x) => {
-                                        const value = get(square, 'value')
-                                        let color = value === 'O' ? 'square-blue' : 'empty-square';
-                                        color =  value === 'X' ? 'square-red' : color;
-                                        return (
-                                            <div
-                                                className={`square ${color} `}
-                                                key={`${x}-${y}`}
-                                                onClick={playerWinner || (value && !playerWinner) ? '' : () => { this.onClickSquare({ x, y }) }}>
-                                                {value}
-                                            </div>
-                                        )
-                                    })}
-                                </div>
-                            )
-                        })}
+                        <div className='caro-scroll'>
+                            {caroMap && caroMap.map((row, y) => {
+                                return (
+                                    <div className="row-caro" key={y} >
+                                        {row.map((square, x) => {
+                                            const value = get(square, 'value')
+                                            let color = value === 'O' ? 'square-blue' : 'empty-square';
+                                            color =  value === 'X' ? 'square-red' : color;
+                                            return (
+                                                <div
+                                                    className={`square ${color} `}
+                                                    key={`${x}-${y}`}
+                                                    onClick={playerWinner || (value && !playerWinner) ? '' : () => { this.onClickSquare({ x, y }) }}>
+                                                    {value}
+                                                </div>
+                                            )
+                                        })}
+                                    </div>
+                                )
+                            })}
+                        </div>
                     </div>
                     <div className="user-board">
                         {showHandPoint && <i className="fa fa-hand-o-right hand-point" aria-hidden="true" ></i>}

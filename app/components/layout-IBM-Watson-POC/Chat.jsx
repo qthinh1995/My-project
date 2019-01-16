@@ -49,6 +49,11 @@ export default class Chat extends Component {
                 self.onStopDragChatBoard()
             }
         })
+        window.addEventListener('touchend', () => {
+            if (mousePosition) {
+                self.onStopDragChatBoard()
+            }
+        })
     }
 
     onChooseRoom(type = '') {
@@ -136,6 +141,8 @@ export default class Chat extends Component {
     }
 	
     startDragChatBoard(e) {
+        console.log('touch')
+        e.touches ? e = e.touches[0]: e;
         mousePosition = { x: e.screenX, y: e.screenY };
         const chatBoard = e.target;
 
@@ -150,10 +157,13 @@ export default class Chat extends Component {
         chatBoard.style.cursor = 'all-scroll';
 
         window.addEventListener('mousemove', this.onDragChatBoard)
+        window.addEventListener('touchmove', this.onDragChatBoard)
     }
 
     onDragChatBoard(e) {
+        console.log('move')
         if (!isEmpty(mousePosition)) {
+            e.touches ? e = e.touches[0]: e;
             const newPosition = { x: e.screenX, y: e.screenY };
             const chatBoard = document.querySelector('#chatBoard');
             let {left, top} = chatBoardState;
@@ -174,13 +184,14 @@ export default class Chat extends Component {
 
         mousePosition = {};
         window.removeEventListener('mousemove', this.onDragChatBoard)
-        window.removeEventListener('mousemove', this.onResizeChatBoard)
+        window.removeEventListener('touchmove', this.onResizeChatBoard)
     }
 
     startResizeChatBoard(e, direction) {
         resizeDirection = direction;
         e.preventDefault();
         e.stopPropagation();
+        e.touches ? e = e.touches[0]: e;
         mousePosition = { x: e.screenX, y: e.screenY };
         const chatBoard = e.target.parentElement;
 
@@ -192,10 +203,12 @@ export default class Chat extends Component {
         chatBoard.style.removeProperty('bottom');
         chatBoard.style.removeProperty('right');
         window.addEventListener('mousemove', this.onResizeChatBoard)
+        window.addEventListener('touchmove', this.onResizeChatBoard)
     }
 
     onResizeChatBoard(e) {
         if (!isEmpty(mousePosition) && resizeDirection) {
+            e.touches ? e = e.touches[0]: e;
             const newPosition = { x: e.screenX, y: e.screenY };
             const chatBoard = document.querySelector('#chatBoard');
             let { height, width, top, left } = chatBoardState;
@@ -224,11 +237,11 @@ export default class Chat extends Component {
         // const privateRoom = mode === 'private'
 
         return (
-          <div className="chat-area" id="chatBoard" onMouseDown={(e) => this.startDragChatBoard(e)} style={{ maxHeight: '500px', minHeight: '300px', height: '340px', minWidth: '300px', maxWidth: '400px', width: '300px', bottom: 0}}>
+          <div className="chat-area" id="chatBoard" onTouchStart={(e) => this.startDragChatBoard(e)} onMouseDown={(e) => this.startDragChatBoard(e)} style={{ maxHeight: '30%', minHeight: '200px', height: '340px', minWidth: '200px', maxWidth: '400px', width: '300px', bottom: 0}}>
 			<div className="resize-icon top-left" onMouseDown={(e) => this.startResizeChatBoard(e, {top: true, left: true})}></div>
 			<div className="resize-icon top-right" onMouseDown={(e) => this.startResizeChatBoard(e, {top: true, right: true})}></div>
             <div className="resize-icon bottom-left" onMouseDown={(e) => this.startResizeChatBoard(e, {bottom: true, left: true})}></div>
-            <div className="resize-icon bottom-right" onMouseDown={(e) => this.startResizeChatBoard(e, {bottom: true, right: true})}></div>
+            <div className="resize-icon bottom-right"  onMouseDown={(e) => this.startResizeChatBoard(e, {bottom: true, right: true})}></div>
 
             <div className="resize-icon top" onMouseDown={(e) => this.startResizeChatBoard(e, {top: true})}></div>
             <div className="resize-icon bottom" onMouseDown={(e) => this.startResizeChatBoard(e, {bottom: true})}></div>
