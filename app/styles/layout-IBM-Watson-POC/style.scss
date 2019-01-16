@@ -58,6 +58,10 @@ html{
     	margin: 5px 0px 12px 5px;
 		cursor: pointer;
 		color: lightskyblue;
+
+		@media (max-width: 768px) {
+			font-size: 2rem;
+		}
 		
 		.zone {
 			display: none;
@@ -101,7 +105,7 @@ html{
 	.chat-area {
 		position: fixed;
 		margin: 2px;
-		@media (max-width: 764px){
+		@media (max-width: 768px){
 			height: 24% !important;
 			width: 70% !important;
 			min-width: 300px !important;
@@ -224,7 +228,7 @@ html{
 
 		@media (max-width: 768px) {
 			flex: 0;
-			@media (max-width: 640px) {
+			@media (max-height: 640px) {
 				display: none;
 			}
 		}
@@ -356,6 +360,9 @@ html{
 			height: calc(100% - 225px);
 			margin: 0;
 			min-height: 64%;
+			@media (max-width: 768px) {
+				height: calc(100% - 300px);
+			}
 		}
 	
 		.caro-board{
