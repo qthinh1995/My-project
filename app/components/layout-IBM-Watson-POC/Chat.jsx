@@ -224,7 +224,7 @@ export default class Chat extends Component {
         // const privateRoom = mode === 'private'
 
         return (
-          <div className="chat-area" id="chatBoard" onMouseDown={(e) => this.startDragChatBoard(e)} style={{ maxHeight: '500px', minHeight: '300px', height: '340px', minWidth: '300px', maxWidth: '400px', width: '300px', bottom: 0}}>
+          <div className="chat-area" id="chatBoard" onMouseDown={(e) => this.startDragChatBoard(e)} style={{ maxHeight: '30%', minHeight: '300px', height: '340px', minWidth: '300px', maxWidth: '400px', width: '300px', bottom: 0}}>
 			<div className="resize-icon top-left" onMouseDown={(e) => this.startResizeChatBoard(e, {top: true, left: true})}></div>
 			<div className="resize-icon top-right" onMouseDown={(e) => this.startResizeChatBoard(e, {top: true, right: true})}></div>
             <div className="resize-icon bottom-left" onMouseDown={(e) => this.startResizeChatBoard(e, {bottom: true, left: true})}></div>
